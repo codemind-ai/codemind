@@ -21,6 +21,8 @@ from .commands.mcp import serve
 from .commands.hooks import install, uninstall
 from .commands.pr import pr
 from .commands.doctor import doctor
+from .commands.gateway import gateway
+from .commands.notify import notify
 
 
 @click.group()
@@ -49,6 +51,8 @@ cli.add_command(install)
 cli.add_command(uninstall)
 cli.add_command(pr)
 cli.add_command(doctor)
+cli.add_command(gateway)
+cli.add_command(notify)
 
 
 def main():

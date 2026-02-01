@@ -62,9 +62,11 @@
                     <a href="#cmd-run" class="sidebar-link">run</a>
                     <a href="#cmd-commit" class="sidebar-link">commit</a>
                     <a href="#cmd-pr" class="sidebar-link">pr</a>
+                    <a href="#cmd-gateway" class="sidebar-link">gateway</a>
+                    <a href="#cmd-notify" class="sidebar-link">notify</a>
                     <a href="#cmd-rules" class="sidebar-link">rules</a>
                     <a href="#cmd-ci" class="sidebar-link">ci</a>
-                    <a href="#cmd-config" class="sidebar-link">config</a>
+ strata             <a href="#cmd-config" class="sidebar-link">config</a>
                     <a href="#cmd-doctor" class="sidebar-link">doctor</a>
                     <a href="#cmd-template" class="sidebar-link">template</a>
                     <a href="#cmd-detect" class="sidebar-link">detect</a>
@@ -307,6 +309,27 @@ codemind ci info</code></pre>
                             <pre><code>codemind pr create [--base BRANCH] [--copy]</code></pre>
                         </div>
                         <p>Automates the creation of professional summaries including Overview, Key Changes, and Impact.</p>
+                    </article>
+
+                    <article id="cmd-gateway">
+                        <h3><code>codemind gateway</code></h3>
+                        <p>Manage the CodeMind REST API Gateway.</p>
+                        
+                        <div class="code-block">
+                            <pre><code>codemind gateway start [--host HOST] [--port PORT] [--reload]</code></pre>
+                        </div>
+                        <p>Starts the FastAPI server to expose CodeMind functionality over REST.</p>
+                    </article>
+
+                    <article id="cmd-notify">
+                        <h3><code>codemind notify</code></h3>
+                        <p>Send review summaries to Slack or Discord.</p>
+                        
+                        <div class="code-block">
+                            <pre><code>codemind notify slack WEBHOOK_URL
+codemind notify discord WEBHOOK_URL</code></pre>
+                        </div>
+                        <p>Pushes latest review results to team communication channels.</p>
                     </article>
 
                         <h4>Examples</h4>
