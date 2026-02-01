@@ -1,0 +1,31 @@
+# CodeMind Configuration
+# See https://github.com/codemind/codemind for documentation
+
+# When to run review: "ask", "always", or "never"
+enabled: ask
+
+ide:
+  # Preferred IDE order for auto-detection
+  preferred:
+    - cursor
+    - claude-code
+    - windsurf
+  # Automatically inject prompt into IDE chat
+  auto_inject: true
+  # Automatically submit prompt (press Enter)
+  auto_submit: false
+
+review:
+  # Maximum number of comments in review
+  max_comments: 5
+  # Require strict output format
+  strict_format: true
+  # Fail push if these issue types are found
+  fail_on:
+    - security
+
+rules:
+  # Only review code in the diff, not entire files
+  review_only_diff: true
+  # Allow AI to suggest new features
+  allow_feature_suggestions: false
