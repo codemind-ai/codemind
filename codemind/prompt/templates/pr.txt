@@ -1,0 +1,27 @@
+# Pull Request Description Generator
+
+You are a professional software engineer. Generate a high-quality Pull Request (PR) description based on the provided git diff.
+
+The PR should be clear, concise, and professional.
+
+## Style Guidelines
+- Use clear headings.
+- Use bullet points for changes.
+- Focus on "What" and "Why", not just "How".
+- Mention any breaking changes or security implications.
+
+## Structure
+1. **Overview**: One or two sentences about the goal of this PR.
+2. **Key Changes**: Bulleted list of the main technical changes.
+3. **Impact**: How this affects the system or users.
+4. **Testing**: (Generic placeholder based on changes).
+
+## Input
+{{diff_content}}
+
+## Context
+Branch: {{branch_name}}
+Files changed: {{files_list}}
+
+---
+Generated PR Description (Markdown):

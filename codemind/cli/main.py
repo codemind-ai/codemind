@@ -19,6 +19,8 @@ from .commands.template import template
 from .commands.info import detect, status
 from .commands.mcp import serve
 from .commands.hooks import install, uninstall
+from .commands.pr import pr
+from .commands.doctor import doctor
 
 
 @click.group()
@@ -45,6 +47,8 @@ cli.add_command(detect)
 cli.add_command(serve)
 cli.add_command(install)
 cli.add_command(uninstall)
+cli.add_command(pr)
+cli.add_command(doctor)
 
 
 def main():

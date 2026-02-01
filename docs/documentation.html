@@ -61,9 +61,11 @@
                     <a href="#cmd-uninstall" class="sidebar-link">uninstall</a>
                     <a href="#cmd-run" class="sidebar-link">run</a>
                     <a href="#cmd-commit" class="sidebar-link">commit</a>
+                    <a href="#cmd-pr" class="sidebar-link">pr</a>
                     <a href="#cmd-rules" class="sidebar-link">rules</a>
                     <a href="#cmd-ci" class="sidebar-link">ci</a>
                     <a href="#cmd-config" class="sidebar-link">config</a>
+                    <a href="#cmd-doctor" class="sidebar-link">doctor</a>
                     <a href="#cmd-template" class="sidebar-link">template</a>
                     <a href="#cmd-detect" class="sidebar-link">detect</a>
                     <a href="#cmd-history" class="sidebar-link">history</a>
@@ -229,6 +231,10 @@ git push origin main
                                     <td><strong>Interactive Mode:</strong> Review and resolve issues in the terminal</td>
                                 </tr>
                                 <tr>
+                                    <td><code>--vibe</code></td>
+                                    <td><strong>Vibecoding Mode:</strong> High-energy, performance-focused review</td>
+                                </tr>
+                                <tr>
                                     <td><code>--no-inject</code></td>
                                     <td>Don't auto-inject, just copy to clipboard</td>
                                 </tr>
@@ -293,6 +299,16 @@ codemind ci info</code></pre>
                         <p>Automatically generates a GitHub Actions workflow that runs CodeMind on every pull request.</p>
                     </article>
 
+                    <article id="cmd-pr">
+                        <h3><code>codemind pr create</code></h3>
+                        <p>Generate high-quality Pull Request descriptions from branch changes.</p>
+                        
+                        <div class="code-block">
+                            <pre><code>codemind pr create [--base BRANCH] [--copy]</code></pre>
+                        </div>
+                        <p>Automates the creation of professional summaries including Overview, Key Changes, and Impact.</p>
+                    </article>
+
                         <h4>Examples</h4>
                         <div class="code-block">
                             <pre><code><span class="code-comment"># Review current changes</span>
@@ -330,14 +346,27 @@ codemind run --no-inject</code></pre>
                         <p>Manage configuration files and team sharing.</p>
                         
                         <div class="code-block">
-                            <pre><code>codemind config init
+                            <pre><code>codemind config init [--wizard]
 codemind config show
 codemind config export [--output PATH]
 codemind config import SOURCE</code></pre>
                         </div>
 
+                        <h4>Interactive Wizard</h4>
+                        <p>Run <code>codemind config init --wizard</code> for a guided 30-second setup experience including IDE detection and hook installation.</p>
+
                         <h4>Team Sharing</h4>
                         <p>Sync your review standards across the team by exporting your config and sharing the file, or a URL to the config.</p>
+                    </article>
+
+                    <article id="cmd-doctor">
+                        <h3><code>codemind doctor</code></h3>
+                        <p>Run comprehensive system health and diagnostic checks.</p>
+                        
+                        <div class="code-block">
+                            <pre><code>codemind doctor</code></pre>
+                        </div>
+                        <p>Checks Git repo health, hook integrity, config validity, IDE connectivity, and Standalone LLM status.</p>
                     </article>
 
                         <div class="code-block">

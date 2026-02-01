@@ -102,6 +102,12 @@ class PromptBuilder:
             diff_content=diff_content
         )
         
+        # Add project intelligence context
+        if context and context.project_summary:
+            intel_section = f"\nPROJECT CONTEXT:\n{context.project_summary}\n"
+            # Insert at the beginning or after initial instructions
+            prompt_content = f"{intel_section}\n{prompt_content}"
+        
         # Add extra rules if configured
         if self.config.extra_rules:
             extra_section = "\n\nADDITIONAL RULES:\n" + "\n".join(

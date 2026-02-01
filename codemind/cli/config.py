@@ -49,6 +49,15 @@ class RulesConfig:
     allow_feature_suggestions: bool = False
 
 
+@dataclass
+class LLMConfig:
+    """Standalone LLM configuration."""
+    provider: str = "ide"  # "ide", "openai", "ollama"
+    model: Optional[str] = None
+    api_key: Optional[str] = None
+    base_url: Optional[str] = None
+
+
 @dataclass  
 class Config:
     """Main configuration object."""
@@ -57,6 +66,7 @@ class Config:
     review: ReviewConfig = field(default_factory=ReviewConfig)
     rules: RulesConfig = field(default_factory=RulesConfig)
     prompt: PromptConfig = field(default_factory=PromptConfig)
+    llm: LLMConfig = field(default_factory=LLMConfig)
     
     # Internal
     config_path: Optional[Path] = None
@@ -175,6 +185,16 @@ class ConfigLoader:
                 if "extra_rules" in prompt and not isinstance(prompt["extra_rules"], list):
                     errors.append("'prompt.extra_rules' must be a list")
         
+        # Validate 'llm' section
+        if "llm" in data:
+            if not isinstance(data["llm"], dict):
+                errors.append("'llm' must be a dictionary")
+            else:
+                llm = data["llm"]
+                valid_providers = ("ide", "openai", "ollama")
+                if "provider" in llm and llm["provider"] not in valid_providers:
+                    errors.append(f"'llm.provider' must be one of {valid_providers}")
+        
         return errors
     
     def _parse_config(self, data: dict[str, Any], path: Path) -> Config:
@@ -217,6 +237,16 @@ class ConfigLoader:
             config.prompt = PromptConfig(
                 template_path=prompt_data.get("template_path"),
                 extra_rules=prompt_data.get("extra_rules", []),
+            )
+        
+        # LLM settings
+        if "llm" in data and isinstance(data["llm"], dict):
+            llm_data = data["llm"]
+            config.llm = LLMConfig(
+                provider=llm_data.get("provider", config.llm.provider),
+                model=llm_data.get("model", config.llm.model),
+                api_key=llm_data.get("api_key", config.llm.api_key),
+                base_url=llm_data.get("base_url", config.llm.base_url),
             )
         
         return config
@@ -266,6 +296,14 @@ prompt:
   # template_path: ./my-template.txt
   # Additional review rules to include
   extra_rules: []
+
+llm:
+  # AI Provider: "ide" (default), "openai", or "ollama"
+  provider: ide
+  # Model to use (e.g. "gpt-4", "codellama")
+  # model: gpt-4
+  # api_key: YOUR_API_KEY
+  # base_url: https://api.openai.com/v1
 '''
 
 

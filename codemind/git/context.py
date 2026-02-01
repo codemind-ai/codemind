@@ -20,6 +20,7 @@ class GitContext:
     is_dirty: bool = False
     has_staged: bool = False
     commit_count: int = 0  # Commits ahead of upstream
+    project_summary: Optional[str] = None  # README + structure
 
 
 class ContextDetector:
@@ -46,6 +47,7 @@ class ContextDetector:
         is_dirty = self._is_dirty()
         has_staged = self._has_staged()
         commit_count = self._get_commit_count(upstream_branch)
+        project_summary = self._get_project_summary(repo_root)
         
         return GitContext(
             repo_root=repo_root,
@@ -54,7 +56,8 @@ class ContextDetector:
             remote_name=remote_name,
             is_dirty=is_dirty,
             has_staged=has_staged,
-            commit_count=commit_count
+            commit_count=commit_count,
+            project_summary=project_summary
         )
     
     def _get_repo_root(self) -> Path:
@@ -108,6 +111,37 @@ class ContextDetector:
             return int(output)
         except ValueError:
             return 0
+
+    def _get_project_summary(self, repo_root: Path) -> str:
+        """Get a summary of the project (README + structure)."""
+        summary = []
+        
+        # 1. README
+        for name in ["README.md", "README.txt", "README"]:
+            readme_path = repo_root / name
+            if readme_path.exists():
+                try:
+                    content = readme_path.read_text(encoding="utf-8")[:2000]
+                    summary.append(f"--- {name} ---\n{content}\n")
+                    break
+                except Exception:
+                    pass
+        
+        # 2. Structure
+        try:
+            items = []
+            for item in repo_root.iterdir():
+                if item.name.startswith('.') or item.name == "__pycache__":
+                    continue
+                type_str = "DIR " if item.is_dir() else "FILE"
+                items.append(f"[{type_str}] {item.name}")
+            
+            if items:
+                summary.append("--- Project Structure ---\n" + "\n".join(items[:20]))
+        except Exception:
+            pass
+            
+        return "\n".join(summary)
     
     def get_best_base(self) -> str:
         """

@@ -30,9 +30,15 @@ def config(ctx):
 
 
 @config.command()
-def init():
+@click.option("--wizard", "-w", is_flag=True, help="Run interactive setup wizard")
+def init(wizard: bool):
     """Create a default configuration file."""
     terminal.print_header()
+    
+    if wizard:
+        run_wizard()
+        return
+        
     config_path = Path.cwd() / ".codemind.yml"
     if config_path.exists():
         terminal.print_warning(f"Config already exists: {config_path}")
@@ -108,3 +114,59 @@ def config_import(source: str):
     except Exception as e:
         terminal.print_error(f"Import failed: {e}")
         sys.exit(1)
+
+
+def run_wizard():
+    """Interactive onboarding wizard."""
+    terminal.console.print("\n[bold cyan]✨ Welcome to the CodeMind Onboarding Wizard! ✨[/bold cyan]")
+    terminal.console.print("[dim]We'll help you set up CodeMind for your project in 3 simple steps.[/dim]\n")
+    
+    # Step 1: IDE Detection
+    terminal.console.print("[bold]Step 1: AI Provider[/bold]")
+    use_standalone = click.confirm("Do you want to use a standalone LLM (OpenAI/Ollama) instead of an IDE's AI?")
+    
+    llm_node = ""
+    if use_standalone:
+        provider = click.prompt("Choose provider", type=click.Choice(["openai", "ollama"]), default="openai")
+        if provider == "openai":
+            model = click.prompt("Model (e.g. gpt-4o)", default="gpt-4o")
+            api_key = click.prompt("OpenAI API Key (optional, will use env if empty)", default="", show_default=False)
+            llm_node = f"\nllm:\n  provider: openai\n  model: {model}\n"
+            if api_key:
+                llm_node += f"  api_key: {api_key}\n"
+        else:
+            model = click.prompt("Ollama model (e.g. codellama)", default="codellama")
+            llm_node = f"\nllm:\n  provider: ollama\n  model: {model}\n"
+    
+    # Step 2: Hook Installation
+    terminal.console.print("\n[bold]Step 2: Workflow Integration[/bold]")
+    install_hook = click.confirm("Do you want to install the Git pre-push hook now?")
+    
+    # Step 3: Rules
+    terminal.console.print("\n[bold]Step 3: Review Rules[/bold]")
+    preset = click.prompt("Choose a starting rule preset", type=click.Choice(["minimal", "security-strict", "python", "javascript"]), default="minimal")
+    
+    # Finalize
+    config_path = Path.cwd() / ".codemind.yml"
+    if config_path.exists():
+        if not click.confirm(f"\n.codemind.yml already exists. Overwrite?"):
+            terminal.print_info("Setup cancelled.")
+            return
+
+    base_config = get_default_config_content()
+    # Inject wizard choices
+    if llm_node:
+        base_config += llm_node
+    
+    config_path.write_text(base_config, encoding="utf-8")
+    terminal.print_success(f"Config created: {config_path}")
+    
+    if install_hook:
+        from ..install import install_hook
+        try:
+            install_hook(force=True)
+            terminal.print_success("Git pre-push hook installed!")
+        except Exception as e:
+            terminal.print_error(f"Failed to install hook: {e}")
+
+    terminal.console.print("\n[bold green]🚀 You're all set! Try running 'codemind status' or 'codemind run'.[/bold green]")

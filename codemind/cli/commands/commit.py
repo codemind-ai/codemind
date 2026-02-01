@@ -3,6 +3,8 @@
 import sys
 import click
 
+from ...ui import terminal
+from ...ide.inject import inject_prompt, InjectionResult
 from ..config import load_config
 from ...commit.generator import CommitStyle, get_staged_diff, generate_commit_prompt
 from ...ide.detect import IDEType, IDE_TYPE_MAP

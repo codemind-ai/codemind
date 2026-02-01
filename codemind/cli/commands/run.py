@@ -6,6 +6,10 @@ from typing import Optional
 
 import click
 
+from ...ui import terminal
+from ...ide.inject import inject_prompt, InjectionResult
+from ...history import save_review
+from ...llm import get_llm_provider
 from ..config import load_config
 from ...git.diff import get_diff, DiffExtractor
 from ...git.context import get_context
@@ -20,7 +24,8 @@ from ...ide.detect import IDEType, IDE_TYPE_MAP
 @click.option("--dry-run", is_flag=True, help="Show what would happen without injecting")
 @click.option("--preview", is_flag=True, help="Show the prompt before injecting")
 @click.option("--interactive", "-i", is_flag=True, help="Interactive mode for reviewing AI feedback")
-def run(hook: bool, base: Optional[str], no_inject: bool, dry_run: bool, preview: bool, interactive: bool):
+@click.option("--vibe", is_flag=True, help="Enable 'Vibecoding' mode (encouraging, high-performance focus)")
+def run(hook: bool, base: Optional[str], no_inject: bool, dry_run: bool, preview: bool, interactive: bool, vibe: bool):
     """Run AI code review on current changes."""
     terminal.print_header()
     
@@ -63,7 +68,10 @@ def run(hook: bool, base: Optional[str], no_inject: bool, dry_run: bool, preview
         
         # Build prompt with custom template if configured
         template_path = None
-        if config.prompt.template_path:
+        
+        if vibe:
+            template_path = Path(__file__).parent.parent.parent / "prompt" / "templates" / "vibe.txt"
+        elif config.prompt.template_path:
             template_path = Path(config.prompt.template_path)
             if not template_path.is_absolute():
                 # Resolve relative to config file directory
@@ -98,8 +106,33 @@ def run(hook: bool, base: Optional[str], no_inject: bool, dry_run: bool, preview
             terminal.print_info("Dry run complete. No prompt was injected.")
             sys.exit(0)
         
-        # Inject or copy prompt
-        if no_inject or not config.ide.auto_inject:
+        # Inject or copy or direct LLM run
+        ai_response = None
+        
+        if config.llm.provider != "ide":
+            # Standalone LLM Mode
+            with terminal.ui.spinner(f"Running review via {config.llm.provider}...") as progress:
+                progress.add_task(f"Generating review using {config.llm.model or 'default'} model", total=None)
+                try:
+                    llm = get_llm_provider(
+                        provider_type=config.llm.provider,
+                        model=config.llm.model,
+                        api_key=config.llm.api_key,
+                        base_url=config.llm.base_url
+                    )
+                    response = llm.generate(built_prompt.content)
+                    ai_response = response.content
+                    terminal.print_success(f"Review completed via {config.llm.provider}")
+                except Exception as e:
+                    terminal.print_error(f"Standalone LLM failed: {e}")
+                    terminal.print_info("Falling back to IDE/Clipboard...")
+        
+        if ai_response:
+            # We already have the response from standalone LLM
+            terminal.console.print("\n[bold cyan]━━━ AI Review Feedback ━━━[/bold cyan]\n")
+            terminal.console.print(ai_response)
+            terminal.console.print("\n[bold cyan]━━━━━━━━━━━━━━━━━━━━━━━━━[/bold cyan]\n")
+        elif no_inject or not config.ide.auto_inject:
             # Just copy to clipboard
             from ...ide.inject import copy_to_clipboard
             copy_to_clipboard(built_prompt.content)
@@ -134,20 +167,21 @@ def run(hook: bool, base: Optional[str], no_inject: bool, dry_run: bool, preview
         if interactive:
             from ...interactive.session import InteractiveSession
             
-            terminal.console.print("\n[bold]Paste the AI review response below, then press Enter twice:[/bold]\n")
-            
-            # Collect multi-line input
-            lines = []
-            try:
-                while True:
-                    line = input()
-                    if line == "" and lines and lines[-1] == "":
-                        break
-                    lines.append(line)
-            except EOFError:
-                pass
-            
-            ai_response = "\n".join(lines)
+            if not ai_response:
+                terminal.console.print("\n[bold]Paste the AI review response below, then press Enter twice:[/bold]\n")
+                
+                # Collect multi-line input
+                lines = []
+                try:
+                    while True:
+                        line = input()
+                        if line == "" and lines and lines[-1] == "":
+                            break
+                        lines.append(line)
+                except EOFError:
+                    pass
+                
+                ai_response = "\n".join(lines)
             
             if ai_response.strip():
                 session = InteractiveSession()
