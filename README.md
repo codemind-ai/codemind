@@ -26,13 +26,14 @@
 
 | Feature | Description |
 |---------|-------------|
-| 🔒 **Privacy-First** | Code never leaves your machine |
-| 🎯 **IDE Integration** | Auto-injects prompts into Cursor, Claude Code, Windsurf, VS Code |
-| 📝 **AI Commit Messages** | Generate conventional commit messages with AI |
-| 🔍 **Rules Engine** | Custom security & best practice rules |
-| 🚀 **GitHub Actions** | CI/CD integration ready |
-| 💬 **Interactive Mode** | TUI for reviewing AI feedback |
-| 🔌 **MCP Server** | Model Context Protocol support |
+| 🔒 **Privacy-First** | Code never leaves your machine. Local LLM support via Ollama. |
+| 🤖 **Standalone AI** | Use OpenAI, Claude, or local models. No IDE subscription required. |
+| 📝 **PR Generator** | Instantly generate professional Pull Request descriptions. |
+| 🩺 **Smart Doctor** | Automated health checks and zero-friction onboarding. |
+| 🚀 **API Gateway** | Full REST API (`codemind gateway`) for custom automation. |
+| 💬 **Vibecoding** | Performance-focused reviews with high-energy AI coaching. |
+| 🔌 **MCP Server** | Model Context Protocol support for LLM context injection. |
+| 🔔 **Team Sync** | Automated Slack and Discord review notifications. |
 
 ## 📦 Installation
 
@@ -68,11 +69,26 @@ codemind commit --apply            # Auto-commit with AI message
 codemind run -i                    # Review AI feedback in TUI
 ```
 
-### Security Check
-
+### Pull Request Description
 ```bash
-codemind rules list                # Show available presets
-codemind rules check -p security-strict  # Check for secrets/vulnerabilities
+codemind pr create                 # Generate professional PR summary
+```
+
+### Standalone Review (Ollama/OpenAI)
+```bash
+codemind run --vibe                # High-energy "Vibecoding" mode
+```
+
+### Network & Integrations
+```bash
+codemind gateway start             # Launch REST API server
+codemind notify slack <webhook>    # Push results to Slack
+```
+
+### System Health
+```bash
+codemind doctor                    # Diagnostic checkup
+codemind init --wizard             # 30-second interactive setup
 ```
 
 ### CI/CD Setup
@@ -86,13 +102,15 @@ codemind ci init                   # Generate GitHub Actions workflow
 ```bash
 codemind install      # Install git pre-push hook
 codemind uninstall    # Remove hook
-codemind run          # Run review manually
-codemind run -i       # Interactive mode
+codemind run          # Run review manually (--vibe for vibe mode)
 codemind commit       # Generate AI commit message
-codemind rules list   # List rule presets
-codemind rules check  # Check code against rules
-codemind ci init      # Generate CI workflow
-codemind config       # Show/create configuration
+codemind pr create    # Generate AI PR description
+codemind doctor       # Run system health diagnostics
+codemind gateway      # Start CodeMind REST API server
+codemind notify       # Slack/Discord notification sync
+codemind rules        # Manage and check review rules
+codemind ci           # CI/CD (GitHub Actions) setup
+codemind config       # Config management (--wizard for setup)
 codemind serve        # Run as MCP server
 codemind history      # View review history
 ```
@@ -118,25 +136,25 @@ codemind history      # View review history
 
 ## ⚙️ Configuration
 
-Create `.codemind.yml` in your repo:
+Create `.codemind.yml` (or `.codemind.json`) in your repo:
 
 ```yaml
-enabled: ask  # ask, always, or never
+# When to run review: ask, always, or never
+enabled: ask
 
-ide:
-  preferred: [cursor, claude-code, windsurf]
-  auto_inject: true
+# Standard AI Provider (ide, openai, or ollama)
+llm:
+  provider: ide
+  model: gpt-4
 
+# Custom review behavior
 review:
   max_comments: 5
-  fail_on: [security]
+  vibe: true              # High-energy feedback
 
-rules:
-  preset: security-strict
-  custom:
-    - name: no-console-log
-      pattern: "console\\.log"
-      severity: warning
+# Team Integrations
+notifications:
+  slack: https://hooks.slack.com/services/...
 ```
 
 ## 🔒 Rule Presets

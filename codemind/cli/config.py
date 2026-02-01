@@ -8,14 +8,17 @@ from pathlib import Path
 from typing import Optional, Any
 
 import yaml
+import json
 
 
 # Config file names (in priority order)
 CONFIG_FILES = [
     ".codemind.yml",
     ".codemind.yaml",
+    ".codemind.json",
     "codemind.yml",
     "codemind.yaml",
+    "codemind.json",
 ]
 
 
@@ -106,10 +109,14 @@ class ConfigLoader:
         return None
     
     def _load_from_file(self, path: Path) -> Config:
-        """Load config from a YAML file."""
+        """Load config from a YAML or JSON file."""
         try:
             content = path.read_text(encoding="utf-8")
-            data = yaml.safe_load(content) or {}
+            
+            if path.suffix.lower() == ".json":
+                data = json.loads(content) or {}
+            else:
+                data = yaml.safe_load(content) or {}
             
             # Validate schema before parsing
             errors = self._validate_schema(data)
@@ -117,8 +124,8 @@ class ConfigLoader:
                 raise ValueError(f"Invalid config in {path}:\n  - " + "\n  - ".join(errors))
             
             return self._parse_config(data, path)
-        except yaml.YAMLError as e:
-            raise ValueError(f"Invalid YAML in {path}: {e}")
+        except (yaml.YAMLError, json.JSONDecodeError) as e:
+            raise ValueError(f"Invalid format in {path}: {e}")
     
     def _validate_schema(self, data: dict[str, Any]) -> list[str]:
         """Validate configuration schema. Returns list of errors."""
