@@ -60,7 +60,9 @@
                     <a href="#cmd-install" class="sidebar-link">install</a>
                     <a href="#cmd-uninstall" class="sidebar-link">uninstall</a>
                     <a href="#cmd-run" class="sidebar-link">run</a>
-                    <a href="#cmd-status" class="sidebar-link">status</a>
+                    <a href="#cmd-commit" class="sidebar-link">commit</a>
+                    <a href="#cmd-rules" class="sidebar-link">rules</a>
+                    <a href="#cmd-ci" class="sidebar-link">ci</a>
                     <a href="#cmd-config" class="sidebar-link">config</a>
                     <a href="#cmd-template" class="sidebar-link">template</a>
                     <a href="#cmd-detect" class="sidebar-link">detect</a>
@@ -223,6 +225,10 @@ git push origin main
                                     <td>Base ref for diff (default: auto-detect)</td>
                                 </tr>
                                 <tr>
+                                    <td><code>--interactive, -i</code></td>
+                                    <td><strong>Interactive Mode:</strong> Review and resolve issues in the terminal</td>
+                                </tr>
+                                <tr>
                                     <td><code>--no-inject</code></td>
                                     <td>Don't auto-inject, just copy to clipboard</td>
                                 </tr>
@@ -236,6 +242,56 @@ git push origin main
                                 </tr>
                             </tbody>
                         </table>
+
+                        <h4>Interactive Mode</h4>
+                        <p>When running with <code>-i</code>, CodeMind will prompt you to paste the AI's response. It then parses the feedback and lets you interactively review each issue.</p>
+                    </article>
+
+                    <article id="cmd-commit">
+                        <h3><code>codemind commit</code></h3>
+                        <p>Generate professional AI commit messages from staged changes.</p>
+                        
+                        <div class="code-block">
+                            <pre><code>codemind commit [--style STYLE] [--apply]</code></pre>
+                        </div>
+
+                        <table class="options-table">
+                            <thead>
+                                <tr><th>Option</th><th>Description</th></tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><code>--style, -s</code></td>
+                                    <td>Style: <code>conventional</code>, <code>simple</code>, <code>descriptive</code></td>
+                                </tr>
+                                <tr>
+                                    <td><code>--apply, -a</code></td>
+                                    <td>Apply the commit directly after generating</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </article>
+
+                    <article id="cmd-rules">
+                        <h3><code>codemind rules</code></h3>
+                        <p>Manage and run custom review rules.</p>
+                        
+                        <div class="code-block">
+                            <pre><code>codemind rules list [--preset PRESET]
+codemind rules check [-p PRESET] [-f FILE]</code></pre>
+                        </div>
+                    </article>
+
+                    <article id="cmd-ci">
+                        <h3><code>codemind ci</code></h3>
+                        <p>Integrate CodeMind into your CI/CD pipeline.</p>
+                        
+                        <div class="code-block">
+                            <pre><code>codemind ci init [--output PATH]
+codemind ci info</code></pre>
+                        </div>
+                        <p>Automatically generates a GitHub Actions workflow that runs CodeMind on every pull request.</p>
+                    </article>
 
                         <h4>Examples</h4>
                         <div class="code-block">
@@ -271,27 +327,18 @@ codemind run --no-inject</code></pre>
 
                     <article id="cmd-config">
                         <h3><code>codemind config</code></h3>
-                        <p>Manage configuration files.</p>
+                        <p>Manage configuration files and team sharing.</p>
                         
                         <div class="code-block">
-                            <pre><code>codemind config [OPTIONS]</code></pre>
+                            <pre><code>codemind config init
+codemind config show
+codemind config export [--output PATH]
+codemind config import SOURCE</code></pre>
                         </div>
 
-                        <table class="options-table">
-                            <thead>
-                                <tr><th>Option</th><th>Description</th></tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td><code>--init</code></td>
-                                    <td>Create default <code>.codemind.yml</code> config file</td>
-                                </tr>
-                                <tr>
-                                    <td><code>--show</code></td>
-                                    <td>Show current configuration</td>
-                                </tr>
-                            </tbody>
-                        </table>
+                        <h4>Team Sharing</h4>
+                        <p>Sync your review standards across the team by exporting your config and sharing the file, or a URL to the config.</p>
+                    </article>
 
                         <div class="code-block">
                             <pre><code><span class="code-comment"># Create config file</span>

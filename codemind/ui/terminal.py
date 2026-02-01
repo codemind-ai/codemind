@@ -3,6 +3,8 @@
 Professional terminal output for CodeMind.
 """
 
+import sys
+import os
 from typing import Optional
 
 from rich.console import Console
@@ -19,6 +21,36 @@ from ..git.diff import DiffResult
 console = Console()
 
 
+def _get_tty_input(prompt: str = "", default: str = "") -> str:
+    """Get input from TTY even when stdin is redirected (git hooks)."""
+    # Try to read from /dev/tty (Unix) or CON (Windows)
+    tty_path = "CON" if sys.platform == "win32" else "/dev/tty"
+    
+    try:
+        with open(tty_path, "r") as tty:
+            console.print(prompt, end="")
+            return tty.readline().strip() or default
+    except (FileNotFoundError, OSError):
+        # Fallback to regular input if TTY not available
+        try:
+            return input(prompt) or default
+        except EOFError:
+            return default
+
+
+def _confirm_tty(prompt: str, default: bool = True) -> bool:
+    """Confirm from TTY even when stdin is redirected."""
+    default_str = "Y/n" if default else "y/N"
+    full_prompt = f"{prompt} [{default_str}]: "
+    
+    response = _get_tty_input(full_prompt).lower().strip()
+    
+    if not response:
+        return default
+    
+    return response in ("y", "yes", "true", "1")
+
+
 class TerminalUI:
     """Terminal UI for CodeMind."""
     
@@ -29,39 +61,43 @@ class TerminalUI:
         """Print the CodeMind header."""
         self.console.print()
         self.console.print(
-            "[bold blue]CodeMind[/bold blue] [dim]— Pre-push code review[/dim]"
+            "[bold cyan]🧠 CodeMind[/bold cyan] [dim]— Think before ship.[/dim]"
         )
-        self.console.print()
+        self.console.print("[dim]────────────────────────────────────────────────────[/dim]")
     
     def print_diff_summary(self, diff: DiffResult) -> None:
         """Print a summary of the diff."""
-        table = Table(box=box.ROUNDED, show_header=False, padding=(0, 1))
-        table.add_column("Label", style="dim")
-        table.add_column("Value", style="bold")
+        table = Table(box=box.SIMPLE, show_header=False, padding=(0, 2))
+        table.add_column("Label", style="dim cyan")
+        table.add_column("Value", style="bold white")
         
-        table.add_row("Files", str(diff.total_files))
+        table.add_row("Files changed", str(diff.total_files))
         table.add_row(
             "Lines",
-            f"[green]+{diff.total_additions}[/green] / [red]-{diff.total_deletions}[/red]"
+            f"[bold green]+{diff.total_additions}[/bold green]  [bold red]-{diff.total_deletions}[/bold red]"
         )
         
         if diff.files:
             file_list = ", ".join(f.path for f in diff.files[:5])
             if len(diff.files) > 5:
                 file_list += f" [dim](+{len(diff.files) - 5} more)[/dim]"
-            table.add_row("Changed", file_list)
+            table.add_row("Files", file_list)
         
-        self.console.print(Panel(table, title="Changes Detected", border_style="blue"))
+        self.console.print(
+            Panel(
+                table, 
+                title="[bold blue]📊 Diff Summary[/bold blue]", 
+                border_style="cyan",
+                padding=(1, 2)
+            )
+        )
     
     def ask_review(self) -> str:
         """
         Ask user if they want to run a review.
-        
-        Returns:
-            'y' (yes), 'n' (no), 'a' (always), 's' (skip once)
         """
         self.console.print(
-            "\n[bold]Run AI review before push?[/bold]"
+            "\n[bold white]Ready to run AI review?[/bold white]"
         )
         self.console.print(
             "[dim]  [y] Yes   [n] No   [a] Always   [s] Skip once[/dim]"
@@ -83,11 +119,12 @@ class TerminalUI:
         """Print message that prompt is ready."""
         if ide_name:
             self.console.print(
-                f"\n[green]>[/green] Prompt injected into [bold]{ide_name}[/bold]"
+                f"\n[bold green]✅ Success![/bold green] Prompt injected into [bold cyan]{ide_name}[/bold cyan]"
             )
+            self.console.print("[dim]Check your IDE chat to review the AI feedback.[/dim]")
         else:
             self.console.print(
-                "\n[yellow]>[/yellow] Prompt copied to clipboard"
+                "\n[bold yellow]📋 Ready![/bold yellow] Prompt copied to clipboard"
             )
             self.console.print(
                 "[dim]Paste into your IDE AI chat and run the review.[/dim]"
@@ -96,50 +133,55 @@ class TerminalUI:
     def wait_for_review(self) -> None:
         """Wait for user to complete the AI review."""
         self.console.print()
-        Prompt.ask(
-            "[bold]Press ENTER when AI review is complete[/bold]",
-            default=""
-        )
+        try:
+            Prompt.ask(
+                "[bold white]Press ENTER when AI review is complete[/bold white]",
+                default=""
+            )
+        except Exception:
+            _get_tty_input("Press ENTER when AI review is complete: ")
     
     def print_warning(self, message: str) -> None:
         """Print a warning message."""
-        self.console.print(f"[yellow]! {message}[/yellow]")
+        self.console.print(f"[bold yellow]⚠️  {message}[/bold yellow]")
     
     def print_error(self, message: str) -> None:
         """Print an error message."""
-        self.console.print(f"[red]x {message}[/red]")
+        self.console.print(f"[bold red]❌ {message}[/bold red]")
     
     def print_success(self, message: str) -> None:
         """Print a success message."""
-        self.console.print(f"[green]> {message}[/green]")
+        self.console.print(f"[bold green]✨ {message}[/bold green]")
     
     def print_info(self, message: str) -> None:
         """Print an info message."""
-        self.console.print(f"[blue]i {message}[/blue]")
+        self.console.print(f"[bold blue]ℹ️  {message}[/bold blue]")
     
     def confirm_push(self) -> bool:
         """Ask user to confirm the push."""
-        return Confirm.ask(
-            "\n[bold]Proceed with push?[/bold]",
-            default=True
-        )
+        try:
+            return Confirm.ask(
+                "\n[bold white]Does the review look good? Proceed with push?[/bold white]",
+                default=True
+            )
+        except Exception:
+            return _confirm_tty("Proceed with push?", default=True)
     
     def print_push_aborted(self) -> None:
         """Print message that push was aborted."""
         self.console.print(
-            "\n[yellow]Aborted.[/yellow] "
-            "[dim]Fix issues and try again.[/dim]"
+            "\n[bold red]🛑 Push Aborted.[/bold red] [dim]Fix issues and try again.[/dim]"
         )
     
     def print_push_continuing(self) -> None:
         """Print message that push is continuing."""
-        self.console.print("\n[green]> Pushing...[/green]")
+        self.console.print("\n[bold green]🚀 Launching...[/bold green] [dim](Pushing to remote)[/dim]")
     
     def spinner(self, message: str):
         """Get a spinner context manager."""
         return Progress(
-            SpinnerColumn(),
-            TextColumn("[progress.description]{task.description}"),
+            SpinnerColumn(spinner_name="dots"),
+            TextColumn("[bold cyan]{task.description}"),
             console=self.console,
             transient=True
         )
@@ -184,3 +226,6 @@ def print_push_aborted() -> None:
 
 def print_push_continuing() -> None:
     ui.print_push_continuing()
+
+
+

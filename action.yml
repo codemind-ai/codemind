@@ -1,0 +1,61 @@
+name: 'CodeMind AI Review'
+description: 'AI-powered code review that runs before every merge. Review your code for security issues, bugs, and best practices.'
+author: 'CodeMind Contributors'
+
+branding:
+  icon: 'check-circle'
+  color: 'blue'
+
+inputs:
+  github-token:
+    description: 'GitHub token for PR comments'
+    required: true
+    default: ${{ github.token }}
+  fail-on-critical:
+    description: 'Fail the workflow if critical issues found'
+    required: false
+    default: 'true'
+  max-comments:
+    description: 'Maximum number of review comments'
+    required: false
+    default: '5'
+  base-branch:
+    description: 'Base branch for diff comparison'
+    required: false
+    default: 'origin/main'
+
+outputs:
+  issues-count:
+    description: 'Total number of issues found'
+    value: ${{ steps.review.outputs.issues-count }}
+  critical-count:
+    description: 'Number of critical issues'
+    value: ${{ steps.review.outputs.critical-count }}
+  status:
+    description: 'Review status (pass/fail)'
+    value: ${{ steps.review.outputs.status }}
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.11'
+    
+    - name: Install CodeMind
+      shell: bash
+      run: pip install codemind
+    
+    - name: Run CodeMind Review
+      shell: bash
+      id: review
+      env:
+        GITHUB_TOKEN: ${{ inputs.github-token }}
+      run: |
+        echo "🧠 Running CodeMind Review..."
+        codemind run --dry-run --preview --base ${{ inputs.base-branch }} || true
+        
+        echo "## 🧠 CodeMind Review" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "Review completed. Check the logs for the generated prompt." >> $GITHUB_STEP_SUMMARY

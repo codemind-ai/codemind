@@ -19,6 +19,15 @@ class IDEType(Enum):
     UNKNOWN = "unknown"
 
 
+# Map config names to IDEType
+IDE_TYPE_MAP = {
+    "cursor": IDEType.CURSOR,
+    "claude-code": IDEType.CLAUDE_CODE,
+    "windsurf": IDEType.WINDSURF,
+    "vscode": IDEType.VSCODE,
+}
+
+
 @dataclass
 class DetectedIDE:
     """A detected IDE window."""
