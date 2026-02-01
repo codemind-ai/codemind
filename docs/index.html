@@ -5,39 +5,58 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="CodeMind - Local, pre-push AI code review orchestrator. Review your code before every push with AI assistance from your favorite IDE.">
     <meta name="keywords" content="code review, AI, git, pre-push, CLI, developer tools, Cursor, VS Code, Claude">
-    <meta name="author" content="CodeMind Team">
+    <meta name="author" content="CodeMind">
     <meta property="og:title" content="CodeMind - AI Code Review Before Every Push">
-    <meta property="og:description" content="Local, privacy-first AI code review orchestrator that works with your IDE.">
+    <meta property="og:description" content="Local, privacy-first AI code review orchestrator that works with your IDE. No API keys. No cloud. Just better code.">
     <meta property="og:type" content="website">
     <meta property="og:image" content="assets/images/og-image.png">
     <meta name="twitter:card" content="summary_large_image">
+    <meta name="theme-color" content="#6366f1">
     
     <title>CodeMind - AI Code Review Before Every Push</title>
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="assets/css/style.css">
     <link rel="icon" type="image/svg+xml" href="assets/images/favicon.svg">
 </head>
 <body>
+    <!-- Announcement Bar -->
+    <div class="announcement-bar">
+        <div class="container">
+            <span class="announcement-badge">NEW</span>
+            <span>CodeMind v0.1 is now available!</span>
+            <a href="https://github.com/SzymonnSowula/codemind" target="_blank">Star on GitHub →</a>
+        </div>
+    </div>
+
     <!-- Navigation -->
     <nav class="nav" id="nav">
         <div class="nav-container">
             <a href="#" class="nav-logo">
-                <span class="logo-icon">🧠</span>
+                <div class="logo-mark">
+                    <svg width="28" height="28" viewBox="0 0 32 32" fill="none">
+                        <rect width="32" height="32" rx="8" fill="#3B82F6"/>
+                        <path d="M10 16L14 20L22 12" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </div>
                 <span class="logo-text">CodeMind</span>
             </a>
-            <div class="nav-links">
+            <div class="nav-links" id="navLinks">
                 <a href="#features">Features</a>
                 <a href="#how-it-works">How It Works</a>
-                <a href="#installation">Install</a>
-                <a href="https://github.com/SzymonnSowula/codemind" target="_blank" class="nav-github">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                <a href="#ides">IDE Support</a>
+                <a href="documentation.html">Docs</a>
+            </div>
+            <div class="nav-actions">
+                <a href="https://github.com/SzymonnSowula/codemind" target="_blank" class="btn btn-ghost btn-sm">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
                         <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/>
                     </svg>
                     GitHub
                 </a>
+                <a href="#installation" class="btn btn-primary btn-sm">Get Started</a>
             </div>
             <button class="nav-toggle" id="navToggle" aria-label="Toggle menu">
                 <span></span>
@@ -50,96 +69,299 @@
     <!-- Hero Section -->
     <header class="hero">
         <div class="hero-bg">
-            <div class="hero-gradient"></div>
+            <div class="hero-glow"></div>
             <div class="hero-grid"></div>
+            <div class="hero-noise"></div>
         </div>
-        <div class="hero-content">
-            <div class="hero-badge">
-                <span class="badge-dot"></span>
-                Open Source & Privacy-First
-            </div>
-            <h1 class="hero-title">
-                AI Code Review<br>
-                <span class="gradient-text">Before Every Push</span>
-            </h1>
-            <p class="hero-subtitle">
-                Local, pre-push AI code review orchestrator that leverages your IDE's AI.
-                No API keys. No cloud. Just better code.
-            </p>
-            <div class="hero-actions">
-                <a href="#installation" class="btn btn-primary">
-                    <span>Get Started</span>
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M5 12h14M12 5l7 7-7 7"/>
-                    </svg>
-                </a>
-                <a href="https://github.com/SzymonnSowula/codemind" target="_blank" class="btn btn-secondary">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-                        <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/>
-                    </svg>
-                    View on GitHub
-                </a>
-            </div>
-            <div class="hero-terminal">
-                <div class="terminal-header">
-                    <div class="terminal-dots">
-                        <span class="dot red"></span>
-                        <span class="dot yellow"></span>
-                        <span class="dot green"></span>
-                    </div>
-                    <span class="terminal-title">Terminal</span>
+        <div class="container">
+            <div class="hero-content">
+                <div class="hero-eyebrow">
+                    <span>Local-first • Privacy-focused • Open Source</span>
                 </div>
-                <div class="terminal-body">
-                    <div class="terminal-line">
-                        <span class="prompt">$</span>
-                        <span class="command typing" id="typingCommand">pip install codemind</span>
+                <h1 class="hero-title">
+                    <span class="title-highlight">Think</span> befo<span class="title-underline">re ship</span>
+                </h1>
+                <p class="hero-description">
+                    AI-powered code review that runs before every push. 
+                    Catch bugs, security issues, and code smells — all locally, with zero API keys.
+                </p>
+                <div class="hero-cta">
+                    <a href="#installation" class="btn btn-primary btn-lg">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/>
+                            <polyline points="7 10 12 15 17 10"/>
+                            <line x1="12" y1="15" x2="12" y2="3"/>
+                        </svg>
+                        Install Now — It's Free
+                    </a>
+                    <a href="https://github.com/SzymonnSowula/codemind" target="_blank" class="btn btn-outline btn-lg">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/>
+                        </svg>
+                        View Source
+                    </a>
+                </div>
+                <div class="hero-stats">
+                    <div class="stat">
+                        <span class="stat-value">100%</span>
+                        <span class="stat-label">Local & Private</span>
                     </div>
-                    <div class="terminal-line output" id="output1">
-                        <span class="success">✓</span> Successfully installed codemind-0.1.0
+                    <div class="stat-divider"></div>
+                    <div class="stat">
+                        <span class="stat-value">4</span>
+                        <span class="stat-label">IDEs Supported</span>
                     </div>
-                    <div class="terminal-line" id="line2">
-                        <span class="prompt">$</span>
-                        <span class="command">codemind install</span>
+                    <div class="stat-divider"></div>
+                    <div class="stat">
+                        <span class="stat-value">0</span>
+                        <span class="stat-label">API Keys Needed</span>
                     </div>
-                    <div class="terminal-line output" id="output2">
-                        <span class="success">✓</span> Pre-push hook installed
+                </div>
+            </div>
+            <div class="hero-visual">
+                <div class="terminal-window">
+                    <div class="terminal-header">
+                        <div class="terminal-dots">
+                            <span class="dot dot-red"></span>
+                            <span class="dot dot-yellow"></span>
+                            <span class="dot dot-green"></span>
+                        </div>
+                        <span class="terminal-title">Terminal — codemind</span>
+                        <div class="terminal-actions">
+                            <button class="terminal-action" aria-label="Copy">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
+                                    <path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/>
+                                </svg>
+                            </button>
+                        </div>
                     </div>
-                    <div class="terminal-line" id="line3">
-                        <span class="prompt">$</span>
-                        <span class="command">git push origin main</span>
-                    </div>
-                    <div class="terminal-line output" id="output3">
-                        <span class="info">🧠</span> CodeMind reviewing 3 files...
+                    <div class="terminal-body">
+                        <div class="terminal-line" data-delay="0">
+                            <span class="line-prompt">~</span>
+                            <span class="line-command">pip install codemind</span>
+                        </div>
+                        <div class="terminal-line terminal-output" data-delay="800">
+                            <span class="output-success">✓</span>
+                            <span>Successfully installed codemind-0.1.0</span>
+                        </div>
+                        <div class="terminal-line" data-delay="1600">
+                            <span class="line-prompt">~</span>
+                            <span class="line-command">codemind install</span>
+                        </div>
+                        <div class="terminal-line terminal-output" data-delay="2400">
+                            <span class="output-success">✓</span>
+                            <span>Pre-push hook installed in .git/hooks</span>
+                        </div>
+                        <div class="terminal-line" data-delay="3200">
+                            <span class="line-prompt">~</span>
+                            <span class="line-command">git push origin main</span>
+                        </div>
+                        <div class="terminal-line terminal-output highlight" data-delay="4000">
+                            <span class="output-info">🧠</span>
+                            <span>CodeMind reviewing 3 files...</span>
+                        </div>
+                        <div class="terminal-line terminal-output" data-delay="4800">
+                            <span class="output-info">📋</span>
+                            <span>Prompt injected into Cursor AI</span>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </header>
 
+    <!-- Works Everywhere Section -->
+    <section class="compatibility-section">
+        <div class="container">
+            <div class="compatibility-header">
+                <h2>Works with <span class="highlight">any AI</span> in <span class="highlight">any IDE</span></h2>
+                <p>One tool. Every AI-powered code editor. No configuration needed.</p>
+            </div>
+            <div class="marquee-wrapper">
+                <div class="marquee">
+                    <div class="marquee-content">
+                        <div class="marquee-item">
+                            <img src="assets/images/cursor.svg" alt="Cursor" width="24" height="24">
+                            <span>Cursor</span>
+                        </div>
+                        <div class="marquee-item">
+                            <img src="assets/images/claude-code.svg" alt="Claude Code" width="24" height="24">
+                            <span>Claude Code</span>
+                        </div>
+                        <div class="marquee-item">
+                            <img src="assets/images/windsurf.svg" alt="Windsurf" width="24" height="24">
+                            <span>Windsurf</span>
+                        </div>
+                        <div class="marquee-item">
+                            <img src="assets/images/vscode.svg" alt="VS Code" width="24" height="24">
+                            <span>VS Code + Copilot</span>
+                        </div>
+                        <div class="marquee-item marquee-item-ai">
+                            <span class="ai-badge">AI</span>
+                            <span>GPT-4</span>
+                        </div>
+                        <div class="marquee-item marquee-item-ai">
+                            <span class="ai-badge">AI</span>
+                            <span>Claude</span>
+                        </div>
+                        <div class="marquee-item marquee-item-ai">
+                            <span class="ai-badge">AI</span>
+                            <span>Gemini</span>
+                        </div>
+                        <div class="marquee-item">
+                            <img src="assets/images/cursor.svg" alt="Cursor" width="24" height="24">
+                            <span>Cursor</span>
+                        </div>
+                        <div class="marquee-item">
+                            <img src="assets/images/claude-code.svg" alt="Claude Code" width="24" height="24">
+                            <span>Claude Code</span>
+                        </div>
+                        <div class="marquee-item">
+                            <img src="assets/images/windsurf.svg" alt="Windsurf" width="24" height="24">
+                            <span>Windsurf</span>
+                        </div>
+                        <div class="marquee-item">
+                            <img src="assets/images/vscode.svg" alt="VS Code" width="24" height="24">
+                            <span>VS Code + Copilot</span>
+                        </div>
+                        <div class="marquee-item marquee-item-ai">
+                            <span class="ai-badge">AI</span>
+                            <span>GPT-4</span>
+                        </div>
+                        <div class="marquee-item marquee-item-ai">
+                            <span class="ai-badge">AI</span>
+                            <span>Claude</span>
+                        </div>
+                        <div class="marquee-item marquee-item-ai">
+                            <span class="ai-badge">AI</span>
+                            <span>Gemini</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="compatibility-features">
+                <div class="compat-feature">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="20 6 9 17 4 12"/>
+                    </svg>
+                    <span>Auto-detects your IDE</span>
+                </div>
+                <div class="compat-feature">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="20 6 9 17 4 12"/>
+                    </svg>
+                    <span>Uses your existing AI subscription</span>
+                </div>
+                <div class="compat-feature">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="20 6 9 17 4 12"/>
+                    </svg>
+                    <span>Zero configuration required</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Problem Section -->
+    <section class="problem-section">
+        <div class="container">
+            <div class="problem-grid">
+                <div class="problem-content">
+                    <span class="section-label">The Problem</span>
+                    <h2>Code reviews happen too late</h2>
+                    <p>
+                        You push code, open a PR, wait for reviews, get feedback, fix issues, push again. 
+                        This loop wastes hours every week. What if you could catch issues <em>before</em> they 
+                        even reach your teammates?
+                    </p>
+                    <ul class="problem-list">
+                        <li>
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="12" cy="12" r="10"/>
+                                <line x1="15" y1="9" x2="9" y2="15"/>
+                                <line x1="9" y1="9" x2="15" y2="15"/>
+                            </svg>
+                            Security issues discovered in production
+                        </li>
+                        <li>
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="12" cy="12" r="10"/>
+                                <line x1="15" y1="9" x2="9" y2="15"/>
+                                <line x1="9" y1="9" x2="15" y2="15"/>
+                            </svg>
+                            Endless review cycles on PRs
+                        </li>
+                        <li>
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="12" cy="12" r="10"/>
+                                <line x1="15" y1="9" x2="9" y2="15"/>
+                                <line x1="9" y1="9" x2="15" y2="15"/>
+                            </svg>
+                            Inconsistent review quality
+                        </li>
+                    </ul>
+                </div>
+                <div class="solution-content">
+                    <span class="section-label section-label-primary">The Solution</span>
+                    <h2>Review before you push</h2>
+                    <p>
+                        CodeMind intercepts your <code>git push</code> and runs an AI-powered review 
+                        using your IDE's built-in AI. You fix issues immediately, before anyone else sees them.
+                    </p>
+                    <ul class="solution-list">
+                        <li>
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+                                <polyline points="22 4 12 14.01 9 11.01"/>
+                            </svg>
+                            Catch bugs before they reach code review
+                        </li>
+                        <li>
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+                                <polyline points="22 4 12 14.01 9 11.01"/>
+                            </svg>
+                            Security-focused checklist every time
+                        </li>
+                        <li>
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+                                <polyline points="22 4 12 14.01 9 11.01"/>
+                            </svg>
+                            Zero cloud, zero API keys
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
     <!-- Features Section -->
     <section class="features" id="features">
         <div class="container">
             <div class="section-header">
-                <span class="section-badge">Features</span>
-                <h2 class="section-title">Why CodeMind?</h2>
-                <p class="section-subtitle">
-                    Designed for developers who care about code quality without sacrificing privacy or speed.
+                <span class="section-label">Features</span>
+                <h2 class="section-title">Everything you need for<br><span class="gradient-text">better code reviews</span></h2>
+                <p class="section-description">
+                    Designed for developers who care about code quality without sacrificing privacy.
                 </p>
             </div>
             <div class="features-grid">
-                <div class="feature-card">
-                    <div class="feature-icon">
+                <div class="feature-card feature-card-large">
+                    <div class="feature-icon feature-icon-primary">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                            <path d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+                            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
                         </svg>
                     </div>
                     <h3>100% Local & Private</h3>
-                    <p>Your code never leaves your machine. No cloud APIs, no data collection, no privacy concerns.</p>
+                    <p>Your code never leaves your machine. No cloud APIs, no data collection. Everything runs locally using your IDE's AI capabilities.</p>
+                    <div class="feature-tag">Privacy First</div>
                 </div>
                 <div class="feature-card">
                     <div class="feature-icon">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                            <path d="M13 10V3L4 14h7v7l9-11h-7z"/>
+                            <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/>
                         </svg>
                     </div>
                     <h3>Uses Your IDE's AI</h3>
@@ -161,7 +383,7 @@
                         </svg>
                     </div>
                     <h3>Automatic on Push</h3>
-                    <p>Git pre-push hook triggers review automatically. Never forget to review your code again.</p>
+                    <p>Git pre-push hook triggers review automatically. Never forget to review again.</p>
                 </div>
                 <div class="feature-card">
                     <div class="feature-icon">
@@ -176,11 +398,11 @@
                     <div class="feature-icon">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
                             <path d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
-                            <path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                            <circle cx="12" cy="12" r="3"/>
                         </svg>
                     </div>
                     <h3>Fully Configurable</h3>
-                    <p>Custom templates, rules, and review settings. Adapt CodeMind to your team's workflow.</p>
+                    <p>Custom templates, rules, and settings. Adapt CodeMind to your team's workflow.</p>
                 </div>
             </div>
         </div>
@@ -190,76 +412,97 @@
     <section class="how-it-works" id="how-it-works">
         <div class="container">
             <div class="section-header">
-                <span class="section-badge">How It Works</span>
-                <h2 class="section-title">Simple, Yet Powerful</h2>
-                <p class="section-subtitle">
-                    Three simple steps to better code reviews.
-                </p>
+                <span class="section-label">How It Works</span>
+                <h2 class="section-title">Three steps to better code</h2>
+                <p class="section-description">Get started in under 30 seconds</p>
             </div>
-            <div class="steps">
+            <div class="steps-container">
                 <div class="step">
-                    <div class="step-number">01</div>
+                    <div class="step-number">1</div>
                     <div class="step-content">
-                        <h3>Install & Configure</h3>
-                        <p>One command installs the CLI. Another sets up the git hook. You're ready in 30 seconds.</p>
+                        <h3>Install the CLI</h3>
+                        <p>One command installs CodeMind globally. Works on macOS, Linux, and Windows.</p>
                         <div class="step-code">
-                            <code>pip install codemind && codemind install</code>
+                            <code>pip install codemind</code>
                         </div>
                     </div>
                 </div>
-                <div class="step">
-                    <div class="step-number">02</div>
-                    <div class="step-content">
-                        <h3>Push Your Code</h3>
-                        <p>When you run <code>git push</code>, CodeMind automatically analyzes your diff and generates a security-focused review prompt.</p>
-                    </div>
+                <div class="step-connector">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="12" y1="5" x2="12" y2="19"/>
+                        <polyline points="19 12 12 19 5 12"/>
+                    </svg>
                 </div>
                 <div class="step">
-                    <div class="step-number">03</div>
+                    <div class="step-number">2</div>
                     <div class="step-content">
-                        <h3>Review in Your IDE</h3>
-                        <p>The prompt is injected into your IDE's AI chat. Review the findings, fix issues, and push with confidence.</p>
+                        <h3>Setup the Git Hook</h3>
+                        <p>Run one command in your repo. CodeMind installs a pre-push hook that triggers automatically.</p>
+                        <div class="step-code">
+                            <code>codemind install</code>
+                        </div>
+                    </div>
+                </div>
+                <div class="step-connector">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="12" y1="5" x2="12" y2="19"/>
+                        <polyline points="19 12 12 19 5 12"/>
+                    </svg>
+                </div>
+                <div class="step">
+                    <div class="step-number">3</div>
+                    <div class="step-content">
+                        <h3>Push & Review</h3>
+                        <p>When you push, CodeMind analyzes your diff, generates a review prompt, and injects it into your IDE's AI chat.</p>
+                        <div class="step-code">
+                            <code>git push origin main</code>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- IDE Support Section -->
-    <section class="ides">
+    <!-- IDE Section -->
+    <section class="ides-section" id="ides">
         <div class="container">
             <div class="section-header">
-                <span class="section-badge">IDE Support</span>
-                <h2 class="section-title">Works With Your Favorite IDE</h2>
+                <span class="section-label">IDE Support</span>
+                <h2 class="section-title">Works with your favorite IDE</h2>
+                <p class="section-description">CodeMind auto-detects your IDE and injects prompts directly into its AI chat.</p>
             </div>
-            <div class="ide-grid">
+            <div class="ides-grid">
                 <div class="ide-card">
-                    <div class="ide-logo">
+                    <div class="ide-icon">
                         <img src="assets/images/cursor.svg" alt="Cursor" width="48" height="48">
                     </div>
-                    <span class="ide-name">Cursor</span>
-                    <span class="ide-status supported">Supported</span>
+                    <h3>Cursor</h3>
+                    <p>Full support with auto-injection via Ctrl+L</p>
+                    <span class="ide-badge ide-badge-supported">Supported</span>
                 </div>
                 <div class="ide-card">
-                    <div class="ide-logo">
+                    <div class="ide-icon">
                         <img src="assets/images/claude-code.svg" alt="Claude Code" width="48" height="48">
                     </div>
-                    <span class="ide-name">Claude Code</span>
-                    <span class="ide-status supported">Supported</span>
+                    <h3>Claude Code</h3>
+                    <p>Native integration with Claude's AI assistant</p>
+                    <span class="ide-badge ide-badge-supported">Supported</span>
                 </div>
                 <div class="ide-card">
-                    <div class="ide-logo">
+                    <div class="ide-icon">
                         <img src="assets/images/windsurf.svg" alt="Windsurf" width="48" height="48">
                     </div>
-                    <span class="ide-name">Windsurf</span>
-                    <span class="ide-status supported">Supported</span>
+                    <h3>Windsurf</h3>
+                    <p>Works with Codeium's Cascade AI</p>
+                    <span class="ide-badge ide-badge-supported">Supported</span>
                 </div>
                 <div class="ide-card">
-                    <div class="ide-logo">
+                    <div class="ide-icon">
                         <img src="assets/images/vscode.svg" alt="VS Code" width="48" height="48">
                     </div>
-                    <span class="ide-name">VS Code</span>
-                    <span class="ide-status supported">Copilot</span>
+                    <h3>VS Code</h3>
+                    <p>Works with GitHub Copilot Chat</p>
+                    <span class="ide-badge ide-badge-copilot">Copilot</span>
                 </div>
             </div>
         </div>
@@ -268,59 +511,54 @@
     <!-- Installation Section -->
     <section class="installation" id="installation">
         <div class="container">
-            <div class="section-header">
-                <span class="section-badge">Installation</span>
-                <h2 class="section-title">Get Started in Seconds</h2>
-            </div>
-            <div class="install-card">
-                <div class="install-tabs">
-                    <button class="install-tab active" data-tab="pip">pip</button>
-                    <button class="install-tab" data-tab="pipx">pipx</button>
-                </div>
+            <div class="install-wrapper">
                 <div class="install-content">
-                    <div class="install-pane active" id="pip">
-                        <div class="code-block">
-                            <div class="code-header">
-                                <span>Install with pip</span>
-                                <button class="copy-btn" data-copy="pip install codemind">
-                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                        <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
-                                        <path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"></path>
-                                    </svg>
-                                </button>
-                            </div>
-                            <pre><code><span class="prompt">$</span> pip install codemind</code></pre>
+                    <span class="section-label">Get Started</span>
+                    <h2>Install in seconds</h2>
+                    <p>CodeMind is distributed via pip. Install globally and you're ready to go.</p>
+                    <div class="install-methods">
+                        <div class="install-method active" data-method="pip">
+                            <span class="method-label">pip</span>
                         </div>
-                    </div>
-                    <div class="install-pane" id="pipx">
-                        <div class="code-block">
-                            <div class="code-header">
-                                <span>Install with pipx (recommended)</span>
-                                <button class="copy-btn" data-copy="pipx install codemind">
-                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                        <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
-                                        <path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"></path>
-                                    </svg>
-                                </button>
-                            </div>
-                            <pre><code><span class="prompt">$</span> pipx install codemind</code></pre>
+                        <div class="install-method" data-method="pipx">
+                            <span class="method-label">pipx (recommended)</span>
                         </div>
                     </div>
                 </div>
-                <div class="install-next">
-                    <p>Then, install the git hook:</p>
-                    <div class="code-block">
+                <div class="install-code">
+                    <div class="code-window">
                         <div class="code-header">
-                            <span>Setup git hook</span>
-                            <button class="copy-btn" data-copy="codemind install">
+                            <span>Installation</span>
+                            <button class="code-copy" data-copy="pip install codemind && codemind install">
                                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
-                                    <path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"></path>
+                                    <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
+                                    <path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/>
                                 </svg>
+                                Copy
                             </button>
                         </div>
-                        <pre><code><span class="prompt">$</span> codemind install
-<span class="success">✓</span> Pre-push hook installed successfully!</code></pre>
+                        <div class="code-body">
+                            <div class="code-line">
+                                <span class="code-comment"># Install CodeMind</span>
+                            </div>
+                            <div class="code-line">
+                                <span class="code-prompt">$</span>
+                                <span class="code-command" id="installCommand">pip install codemind</span>
+                            </div>
+                            <div class="code-line">
+                                <span class="code-output">✓ Successfully installed codemind-0.1.0</span>
+                            </div>
+                            <div class="code-line">
+                                <span class="code-comment"># Setup git hook in your repo</span>
+                            </div>
+                            <div class="code-line">
+                                <span class="code-prompt">$</span>
+                                <span class="code-command">codemind install</span>
+                            </div>
+                            <div class="code-line">
+                                <span class="code-output">✓ Pre-push hook installed</span>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -328,18 +566,26 @@
     </section>
 
     <!-- CTA Section -->
-    <section class="cta">
+    <section class="cta-section">
         <div class="container">
-            <div class="cta-content">
-                <h2>Ready to improve your code quality?</h2>
-                <p>Join developers who review their code with AI before every push.</p>
-                <div class="cta-actions">
-                    <a href="https://github.com/SzymonnSowula/codemind" target="_blank" class="btn btn-primary btn-lg">
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
-                            <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/>
-                        </svg>
-                        Star on GitHub
-                    </a>
+            <div class="cta-card">
+                <div class="cta-bg">
+                    <div class="cta-glow"></div>
+                </div>
+                <div class="cta-content">
+                    <h2>Ready to improve your code quality?</h2>
+                    <p>Join developers who review their code with AI before every push. It's free and open source.</p>
+                    <div class="cta-actions">
+                        <a href="https://github.com/SzymonnSowula/codemind" target="_blank" class="btn btn-white btn-lg">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/>
+                            </svg>
+                            Star on GitHub
+                        </a>
+                        <a href="#installation" class="btn btn-ghost-light btn-lg">
+                            Get Started →
+                        </a>
+                    </div>
                 </div>
             </div>
         </div>
@@ -348,19 +594,43 @@
     <!-- Footer -->
     <footer class="footer">
         <div class="container">
-            <div class="footer-content">
+            <div class="footer-top">
                 <div class="footer-brand">
-                    <span class="logo-icon">🧠</span>
-                    <span class="logo-text">CodeMind</span>
+                    <a href="#" class="footer-logo">
+                        <div class="logo-mark">
+                            <svg width="28" height="28" viewBox="0 0 32 32" fill="none">
+                                <rect width="32" height="32" rx="8" fill="#3B82F6"/>
+                                <path d="M10 16L14 20L22 12" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </div>
+                        <span>CodeMind</span>
+                    </a>
+                    <p class="footer-tagline">Think before ship.</p>
                 </div>
                 <div class="footer-links">
-                    <a href="https://github.com/SzymonnSowula/codemind" target="_blank">GitHub</a>
-                    <a href="https://github.com/SzymonnSowula/codemind/issues" target="_blank">Issues</a>
-                    <a href="https://github.com/SzymonnSowula/codemind/blob/main/LICENSE" target="_blank">MIT License</a>
+                    <div class="footer-column">
+                        <h4>Product</h4>
+                        <a href="#features">Features</a>
+                        <a href="#how-it-works">How It Works</a>
+                        <a href="#installation">Installation</a>
+                    </div>
+                    <div class="footer-column">
+                        <h4>Resources</h4>
+                        <a href="https://github.com/SzymonnSowula/codemind" target="_blank">Documentation</a>
+                        <a href="https://github.com/SzymonnSowula/codemind/issues" target="_blank">Report Bug</a>
+                        <a href="https://github.com/SzymonnSowula/codemind" target="_blank">Changelog</a>
+                    </div>
+                    <div class="footer-column">
+                        <h4>Community</h4>
+                        <a href="https://github.com/SzymonnSowula/codemind" target="_blank">GitHub</a>
+                        <a href="https://github.com/SzymonnSowula/codemind/discussions" target="_blank">Discussions</a>
+                        <a href="https://github.com/SzymonnSowula/codemind/blob/main/LICENSE" target="_blank">License</a>
+                    </div>
                 </div>
-                <p class="footer-copy">
-                    Built with ❤️ for developers who care about code quality.
-                </p>
+            </div>
+            <div class="footer-bottom">
+                <p>© 2026 CodeMind. Open source under MIT License.</p>
+                <p>Built with ❤️ for developers who care about code quality.</p>
             </div>
         </div>
     </footer>

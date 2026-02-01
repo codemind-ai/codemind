@@ -1,0 +1,610 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="CodeMind Documentation - Complete guide to CLI commands, configuration, and usage.">
+    <meta name="keywords" content="codemind, documentation, CLI, code review, AI, git hooks">
+    <title>Documentation - CodeMind</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="stylesheet" href="assets/css/docs.css">
+    <link rel="icon" type="image/svg+xml" href="assets/images/favicon.svg">
+</head>
+<body class="docs-page">
+    <!-- Navigation -->
+    <nav class="nav docs-nav" id="nav">
+        <div class="nav-container">
+            <a href="index.html" class="nav-logo">
+                <div class="logo-mark">
+                    <svg width="28" height="28" viewBox="0 0 32 32" fill="none">
+                        <rect width="32" height="32" rx="8" fill="#3B82F6"/>
+                        <path d="M10 16L14 20L22 12" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </div>
+                <span class="logo-text">CodeMind</span>
+            </a>
+            <div class="nav-links" id="navLinks">
+                <a href="index.html">Home</a>
+                <a href="#getting-started">Getting Started</a>
+                <a href="#commands">Commands</a>
+                <a href="#configuration">Config</a>
+            </div>
+            <div class="nav-actions">
+                <a href="https://github.com/SzymonnSowula/codemind" target="_blank" class="btn btn-ghost btn-sm">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/>
+                    </svg>
+                    GitHub
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Docs Layout -->
+    <div class="docs-layout">
+        <!-- Sidebar -->
+        <aside class="docs-sidebar">
+            <div class="sidebar-content">
+                <div class="sidebar-section">
+                    <h4>Getting Started</h4>
+                    <a href="#installation" class="sidebar-link">Installation</a>
+                    <a href="#quick-start" class="sidebar-link">Quick Start</a>
+                    <a href="#how-it-works" class="sidebar-link">How It Works</a>
+                </div>
+                <div class="sidebar-section">
+                    <h4>CLI Commands</h4>
+                    <a href="#cmd-install" class="sidebar-link">install</a>
+                    <a href="#cmd-uninstall" class="sidebar-link">uninstall</a>
+                    <a href="#cmd-run" class="sidebar-link">run</a>
+                    <a href="#cmd-status" class="sidebar-link">status</a>
+                    <a href="#cmd-config" class="sidebar-link">config</a>
+                    <a href="#cmd-template" class="sidebar-link">template</a>
+                    <a href="#cmd-detect" class="sidebar-link">detect</a>
+                    <a href="#cmd-history" class="sidebar-link">history</a>
+                    <a href="#cmd-serve" class="sidebar-link">serve (MCP)</a>
+                </div>
+                <div class="sidebar-section">
+                    <h4>Configuration</h4>
+                    <a href="#config-file" class="sidebar-link">Config File</a>
+                    <a href="#config-options" class="sidebar-link">Options Reference</a>
+                    <a href="#templates" class="sidebar-link">Custom Templates</a>
+                </div>
+                <div class="sidebar-section">
+                    <h4>IDE Support</h4>
+                    <a href="#ide-cursor" class="sidebar-link">Cursor</a>
+                    <a href="#ide-claude" class="sidebar-link">Claude Code</a>
+                    <a href="#ide-windsurf" class="sidebar-link">Windsurf</a>
+                    <a href="#ide-vscode" class="sidebar-link">VS Code</a>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="docs-main">
+            <div class="docs-content">
+                <!-- Header -->
+                <div class="docs-header">
+                    <h1>CodeMind Documentation</h1>
+                    <p class="docs-lead">Complete guide to using CodeMind CLI for AI-powered code reviews.</p>
+                </div>
+
+                <!-- Getting Started -->
+                <section id="getting-started">
+                    <h2>Getting Started</h2>
+                    
+                    <article id="installation">
+                        <h3>Installation</h3>
+                        <p>CodeMind is distributed via pip. Install globally to use in any repository:</p>
+                        
+                        <div class="code-block">
+                            <div class="code-header">
+                                <span>pip (standard)</span>
+                                <button class="code-copy" data-copy="pip install codemind">Copy</button>
+                            </div>
+                            <pre><code>pip install codemind</code></pre>
+                        </div>
+
+                        <div class="code-block">
+                            <div class="code-header">
+                                <span>pipx (recommended)</span>
+                                <button class="code-copy" data-copy="pipx install codemind">Copy</button>
+                            </div>
+                            <pre><code>pipx install codemind</code></pre>
+                        </div>
+
+                        <div class="callout callout-info">
+                            <strong>Why pipx?</strong> pipx installs CLI tools in isolated environments, preventing dependency conflicts with other Python packages.
+                        </div>
+                    </article>
+
+                    <article id="quick-start">
+                        <h3>Quick Start</h3>
+                        <p>Get up and running in 30 seconds:</p>
+                        
+                        <div class="code-block">
+                            <div class="code-header"><span>Terminal</span></div>
+                            <pre><code><span class="code-comment"># 1. Install the git hook in your repository</span>
+cd your-project
+codemind install
+
+<span class="code-comment"># 2. Make some changes and push</span>
+git add .
+git commit -m "feat: new feature"
+git push origin main
+
+<span class="code-comment"># CodeMind automatically reviews your code before push!</span></code></pre>
+                        </div>
+                    </article>
+
+                    <article id="how-it-works">
+                        <h3>How It Works</h3>
+                        <ol class="step-list">
+                            <li>
+                                <strong>Git Hook Trigger</strong>
+                                <p>When you run <code>git push</code>, CodeMind's pre-push hook intercepts the command.</p>
+                            </li>
+                            <li>
+                                <strong>Diff Analysis</strong>
+                                <p>CodeMind extracts your uncommitted changes and generates a structured diff.</p>
+                            </li>
+                            <li>
+                                <strong>Prompt Generation</strong>
+                                <p>A review prompt is built with security checklist, code context, and your custom rules.</p>
+                            </li>
+                            <li>
+                                <strong>IDE Injection</strong>
+                                <p>The prompt is automatically injected into your IDE's AI chat (Cursor, Claude Code, etc.).</p>
+                            </li>
+                            <li>
+                                <strong>Review & Proceed</strong>
+                                <p>Review the AI feedback, fix any issues, then confirm to proceed with the push.</p>
+                            </li>
+                        </ol>
+                    </article>
+                </section>
+
+                <!-- CLI Commands -->
+                <section id="commands">
+                    <h2>CLI Commands</h2>
+
+                    <article id="cmd-install">
+                        <h3><code>codemind install</code></h3>
+                        <p>Install the git pre-push hook in the current repository.</p>
+                        
+                        <div class="code-block">
+                            <pre><code>codemind install [--force]</code></pre>
+                        </div>
+
+                        <table class="options-table">
+                            <thead>
+                                <tr><th>Option</th><th>Description</th></tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><code>--force, -f</code></td>
+                                    <td>Overwrite existing pre-push hook</td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                        <div class="callout callout-warning">
+                            <strong>Note:</strong> This command must be run inside a git repository.
+                        </div>
+                    </article>
+
+                    <article id="cmd-uninstall">
+                        <h3><code>codemind uninstall</code></h3>
+                        <p>Remove the git pre-push hook from the current repository.</p>
+                        
+                        <div class="code-block">
+                            <pre><code>codemind uninstall</code></pre>
+                        </div>
+                    </article>
+
+                    <article id="cmd-run">
+                        <h3><code>codemind run</code></h3>
+                        <p>Manually run AI code review on current changes without pushing.</p>
+                        
+                        <div class="code-block">
+                            <pre><code>codemind run [OPTIONS]</code></pre>
+                        </div>
+
+                        <table class="options-table">
+                            <thead>
+                                <tr><th>Option</th><th>Description</th></tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><code>--base, -b</code></td>
+                                    <td>Base ref for diff (default: auto-detect)</td>
+                                </tr>
+                                <tr>
+                                    <td><code>--no-inject</code></td>
+                                    <td>Don't auto-inject, just copy to clipboard</td>
+                                </tr>
+                                <tr>
+                                    <td><code>--dry-run</code></td>
+                                    <td>Show what would happen without injecting</td>
+                                </tr>
+                                <tr>
+                                    <td><code>--preview</code></td>
+                                    <td>Show the prompt before injecting</td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                        <h4>Examples</h4>
+                        <div class="code-block">
+                            <pre><code><span class="code-comment"># Review current changes</span>
+codemind run
+
+<span class="code-comment"># Preview the prompt without injecting</span>
+codemind run --preview
+
+<span class="code-comment"># Compare against specific branch</span>
+codemind run --base main
+
+<span class="code-comment"># Copy to clipboard instead of auto-inject</span>
+codemind run --no-inject</code></pre>
+                        </div>
+                    </article>
+
+                    <article id="cmd-status">
+                        <h3><code>codemind status</code></h3>
+                        <p>Show CodeMind status including config, hook, and detected IDE.</p>
+                        
+                        <div class="code-block">
+                            <pre><code>codemind status</code></pre>
+                        </div>
+
+                        <p>Output includes:</p>
+                        <ul>
+                            <li>Config file location (or "using defaults")</li>
+                            <li>Hook installation status</li>
+                            <li>Currently detected IDE</li>
+                        </ul>
+                    </article>
+
+                    <article id="cmd-config">
+                        <h3><code>codemind config</code></h3>
+                        <p>Manage configuration files.</p>
+                        
+                        <div class="code-block">
+                            <pre><code>codemind config [OPTIONS]</code></pre>
+                        </div>
+
+                        <table class="options-table">
+                            <thead>
+                                <tr><th>Option</th><th>Description</th></tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><code>--init</code></td>
+                                    <td>Create default <code>.codemind.yml</code> config file</td>
+                                </tr>
+                                <tr>
+                                    <td><code>--show</code></td>
+                                    <td>Show current configuration</td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                        <div class="code-block">
+                            <pre><code><span class="code-comment"># Create config file</span>
+codemind config --init
+
+<span class="code-comment"># View current config</span>
+codemind config --show</code></pre>
+                        </div>
+                    </article>
+
+                    <article id="cmd-template">
+                        <h3><code>codemind template</code></h3>
+                        <p>Manage and customize prompt templates.</p>
+                        
+                        <div class="code-block">
+                            <pre><code>codemind template [OPTIONS]</code></pre>
+                        </div>
+
+                        <table class="options-table">
+                            <thead>
+                                <tr><th>Option</th><th>Description</th></tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><code>--export, -e</code></td>
+                                    <td>Export default template to file</td>
+                                </tr>
+                                <tr>
+                                    <td><code>--output, -o</code></td>
+                                    <td>Output file name (default: codemind-template.txt)</td>
+                                </tr>
+                                <tr>
+                                    <td><code>--show</code></td>
+                                    <td>Show default template content</td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                        <h4>Template Placeholders</h4>
+                        <ul>
+                            <li><code>{max_comments}</code> - Maximum number of comments</li>
+                            <li><code>{branch_name}</code> - Current branch name</li>
+                            <li><code>{file_count}</code> - Number of files changed</li>
+                            <li><code>{additions}</code> - Lines added</li>
+                            <li><code>{deletions}</code> - Lines deleted</li>
+                            <li><code>{diff_content}</code> - The actual diff</li>
+                        </ul>
+                    </article>
+
+                    <article id="cmd-detect">
+                        <h3><code>codemind detect</code></h3>
+                        <p>Detect running IDEs and show their details.</p>
+                        
+                        <div class="code-block">
+                            <pre><code>codemind detect</code></pre>
+                        </div>
+
+                        <p>Shows all detected IDEs with:</p>
+                        <ul>
+                            <li>IDE name and version</li>
+                            <li>Window title</li>
+                            <li>AI chat shortcut key</li>
+                        </ul>
+                    </article>
+
+                    <article id="cmd-history">
+                        <h3><code>codemind history</code></h3>
+                        <p>View review history and statistics.</p>
+                        
+                        <div class="code-block">
+                            <pre><code>codemind history [OPTIONS]</code></pre>
+                        </div>
+
+                        <table class="options-table">
+                            <thead>
+                                <tr><th>Option</th><th>Description</th></tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><code>--list, -l</code></td>
+                                    <td>Show recent reviews</td>
+                                </tr>
+                                <tr>
+                                    <td><code>--stats, -s</code></td>
+                                    <td>Show review statistics</td>
+                                </tr>
+                                <tr>
+                                    <td><code>--clear</code></td>
+                                    <td>Clear all history</td>
+                                </tr>
+                                <tr>
+                                    <td><code>--count, -n</code></td>
+                                    <td>Number of entries to show (default: 10)</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </article>
+
+                    <article id="cmd-serve">
+                        <h3><code>codemind serve</code></h3>
+                        <p>Run CodeMind as an MCP (Model Context Protocol) server.</p>
+                        
+                        <div class="code-block">
+                            <pre><code>codemind serve [OPTIONS]</code></pre>
+                        </div>
+
+                        <table class="options-table">
+                            <thead>
+                                <tr><th>Option</th><th>Description</th></tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><code>--transport, -t</code></td>
+                                    <td>Transport type: <code>stdio</code> or <code>streamable-http</code></td>
+                                </tr>
+                                <tr>
+                                    <td><code>--host</code></td>
+                                    <td>Host for HTTP transport (default: localhost)</td>
+                                </tr>
+                                <tr>
+                                    <td><code>--port</code></td>
+                                    <td>Port for HTTP transport (default: 8000)</td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                        <h4>Available MCP Tools</h4>
+                        <ul>
+                            <li><code>review_diff</code> - Generate review prompt for git changes</li>
+                            <li><code>validate_ai_response</code> - Validate AI review output</li>
+                            <li><code>get_review_history</code> - Get recent reviews</li>
+                            <li><code>get_git_context</code> - Get git repository info</li>
+                        </ul>
+                    </article>
+                </section>
+
+                <!-- Configuration -->
+                <section id="configuration">
+                    <h2>Configuration</h2>
+
+                    <article id="config-file">
+                        <h3>Config File</h3>
+                        <p>Create a <code>.codemind.yml</code> file in your project root:</p>
+                        
+                        <div class="code-block">
+                            <div class="code-header"><span>.codemind.yml</span></div>
+                            <pre><code><span class="code-comment"># When to run reviews: always, ask, never</span>
+enabled: always
+
+ide:
+  <span class="code-comment"># Preferred IDEs (in order)</span>
+  preferred:
+    - cursor
+    - claude-code
+    - windsurf
+    - vscode
+  <span class="code-comment"># Auto-inject prompt into IDE</span>
+  auto_inject: true
+  <span class="code-comment"># Auto-submit the prompt</span>
+  auto_submit: false
+
+review:
+  <span class="code-comment"># Maximum comments per review</span>
+  max_comments: 10
+  <span class="code-comment"># Enforce strict JSON output format</span>
+  strict_format: true
+
+prompt:
+  <span class="code-comment"># Custom template file (optional)</span>
+  template_path: null
+  <span class="code-comment"># Extra rules to include</span>
+  extra_rules: []</code></pre>
+                        </div>
+                    </article>
+
+                    <article id="config-options">
+                        <h3>Options Reference</h3>
+                        
+                        <table class="options-table full-width">
+                            <thead>
+                                <tr><th>Option</th><th>Type</th><th>Default</th><th>Description</th></tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><code>enabled</code></td>
+                                    <td>string</td>
+                                    <td><code>always</code></td>
+                                    <td>When to run reviews: <code>always</code>, <code>ask</code>, <code>never</code></td>
+                                </tr>
+                                <tr>
+                                    <td><code>ide.preferred</code></td>
+                                    <td>array</td>
+                                    <td><code>[cursor, claude-code, ...]</code></td>
+                                    <td>Priority order for IDE detection</td>
+                                </tr>
+                                <tr>
+                                    <td><code>ide.auto_inject</code></td>
+                                    <td>boolean</td>
+                                    <td><code>true</code></td>
+                                    <td>Automatically inject prompt into IDE</td>
+                                </tr>
+                                <tr>
+                                    <td><code>ide.auto_submit</code></td>
+                                    <td>boolean</td>
+                                    <td><code>false</code></td>
+                                    <td>Auto-submit prompt after injection</td>
+                                </tr>
+                                <tr>
+                                    <td><code>review.max_comments</code></td>
+                                    <td>integer</td>
+                                    <td><code>10</code></td>
+                                    <td>Maximum comments per review</td>
+                                </tr>
+                                <tr>
+                                    <td><code>prompt.template_path</code></td>
+                                    <td>string</td>
+                                    <td><code>null</code></td>
+                                    <td>Path to custom template file</td>
+                                </tr>
+                                <tr>
+                                    <td><code>prompt.extra_rules</code></td>
+                                    <td>array</td>
+                                    <td><code>[]</code></td>
+                                    <td>Additional review rules</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </article>
+
+                    <article id="templates">
+                        <h3>Custom Templates</h3>
+                        <p>Create custom prompt templates for your team:</p>
+                        
+                        <div class="code-block">
+                            <pre><code><span class="code-comment"># Export the default template</span>
+codemind template --export -o my-template.txt
+
+<span class="code-comment"># Edit my-template.txt with your customizations</span>
+
+<span class="code-comment"># Reference in config</span>
+prompt:
+  template_path: my-template.txt</code></pre>
+                        </div>
+                    </article>
+                </section>
+
+                <!-- IDE Support -->
+                <section id="ide-support">
+                    <h2>IDE Support</h2>
+
+                    <article id="ide-cursor">
+                        <h3>Cursor</h3>
+                        <p><strong>Status:</strong> <span class="badge badge-green">Full Support</span></p>
+                        <p>CodeMind auto-injects prompts via <code>Ctrl+L</code> into Cursor's AI chat.</p>
+                    </article>
+
+                    <article id="ide-claude">
+                        <h3>Claude Code</h3>
+                        <p><strong>Status:</strong> <span class="badge badge-green">Full Support</span></p>
+                        <p>Native integration with Claude's AI assistant.</p>
+                    </article>
+
+                    <article id="ide-windsurf">
+                        <h3>Windsurf</h3>
+                        <p><strong>Status:</strong> <span class="badge badge-green">Full Support</span></p>
+                        <p>Works with Codeium's Cascade AI.</p>
+                    </article>
+
+                    <article id="ide-vscode">
+                        <h3>VS Code</h3>
+                        <p><strong>Status:</strong> <span class="badge badge-blue">Copilot Required</span></p>
+                        <p>Works with GitHub Copilot Chat extension.</p>
+                    </article>
+                </section>
+
+                <!-- Footer -->
+                <div class="docs-footer">
+                    <p>Need help? <a href="https://github.com/SzymonnSowula/codemind/issues" target="_blank">Open an issue</a> on GitHub.</p>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // Copy button functionality
+        document.querySelectorAll('.code-copy').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const text = btn.dataset.copy || btn.closest('.code-block').querySelector('code').textContent;
+                navigator.clipboard.writeText(text);
+                btn.textContent = 'Copied!';
+                setTimeout(() => btn.textContent = 'Copy', 2000);
+            });
+        });
+
+        // Active sidebar link
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    document.querySelectorAll('.sidebar-link').forEach(link => {
+                        link.classList.remove('active');
+                        if (link.getAttribute('href') === '#' + entry.target.id) {
+                            link.classList.add('active');
+                        }
+                    });
+                }
+            });
+        }, { threshold: 0.5, rootMargin: '-100px 0px -50% 0px' });
+
+        document.querySelectorAll('article[id], section[id]').forEach(section => {
+            observer.observe(section);
+        });
+    </script>
+</body>
+</html>
+</CodeContent>
+<parameter name="EmptyFile">false

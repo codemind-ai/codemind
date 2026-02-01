@@ -1,0 +1,383 @@
+/* ========================================
+   CodeMind - Documentation Styles
+   ======================================== */
+
+/* === Docs Page Layout === */
+.docs-page {
+    padding-top: 80px;
+}
+
+.docs-nav {
+    top: 0;
+    margin-top: 0;
+}
+
+.docs-layout {
+    display: grid;
+    grid-template-columns: 260px 1fr;
+    min-height: calc(100vh - 80px);
+}
+
+/* === Sidebar === */
+.docs-sidebar {
+    position: sticky;
+    top: 80px;
+    height: calc(100vh - 80px);
+    overflow-y: auto;
+    padding: var(--space-8) var(--space-6);
+    background: var(--color-bg-secondary);
+    border-right: 1px solid var(--color-border);
+}
+
+.sidebar-content {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-6);
+}
+
+.sidebar-section h4 {
+    font-family: var(--font-heading);
+    font-size: var(--text-xs);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--color-text-muted);
+    margin-bottom: var(--space-3);
+}
+
+.sidebar-link {
+    display: block;
+    padding: var(--space-2) var(--space-3);
+    font-size: var(--text-sm);
+    color: var(--color-text-secondary);
+    border-radius: var(--radius-md);
+    transition: all var(--transition-fast);
+}
+
+.sidebar-link:hover {
+    color: var(--color-text-primary);
+    background: var(--color-bg-tertiary);
+}
+
+.sidebar-link.active {
+    color: var(--color-brand);
+    background: var(--color-brand-subtle);
+}
+
+/* === Main Content === */
+.docs-main {
+    padding: var(--space-12) var(--space-16);
+    max-width: 900px;
+}
+
+.docs-content {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-16);
+}
+
+.docs-header {
+    margin-bottom: var(--space-8);
+}
+
+.docs-header h1 {
+    font-size: var(--text-5xl);
+    font-weight: 900;
+    margin-bottom: var(--space-4);
+}
+
+.docs-lead {
+    font-size: var(--text-xl);
+    color: var(--color-text-secondary);
+}
+
+/* === Section Styles === */
+.docs-content section {
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-10);
+}
+
+.docs-content section > h2 {
+    font-size: var(--text-3xl);
+    font-weight: 800;
+    padding-bottom: var(--space-4);
+    border-bottom: 1px solid var(--color-border);
+}
+
+.docs-content article {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+}
+
+.docs-content article h3 {
+    font-size: var(--text-xl);
+    font-weight: 700;
+    color: var(--color-text-primary);
+}
+
+.docs-content article h3 code {
+    font-family: var(--font-mono);
+    color: var(--color-brand);
+    background: var(--color-brand-subtle);
+    padding: var(--space-1) var(--space-2);
+    border-radius: var(--radius-md);
+}
+
+.docs-content article h4 {
+    font-size: var(--text-lg);
+    font-weight: 600;
+    margin-top: var(--space-4);
+}
+
+.docs-content p {
+    color: var(--color-text-secondary);
+    line-height: 1.7;
+}
+
+.docs-content ul, 
+.docs-content ol {
+    color: var(--color-text-secondary);
+    padding-left: var(--space-6);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+}
+
+.docs-content li {
+    line-height: 1.6;
+}
+
+.docs-content code {
+    font-family: var(--font-mono);
+    font-size: 0.9em;
+    background: var(--color-bg-tertiary);
+    padding: 2px 6px;
+    border-radius: var(--radius-sm);
+    color: var(--color-brand-light);
+}
+
+/* === Code Blocks === */
+.code-block {
+    background: var(--color-bg-card);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+}
+
+.code-block .code-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: var(--space-3) var(--space-4);
+    background: var(--color-bg-tertiary);
+    border-bottom: 1px solid var(--color-border);
+    font-size: var(--text-sm);
+    color: var(--color-text-muted);
+}
+
+.code-block .code-copy {
+    padding: var(--space-1) var(--space-3);
+    font-size: var(--text-xs);
+    font-weight: 500;
+    color: var(--color-text-muted);
+    background: var(--color-bg-secondary);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+}
+
+.code-block .code-copy:hover {
+    color: var(--color-text-primary);
+    border-color: var(--color-border-light);
+}
+
+.code-block pre {
+    padding: var(--space-4);
+    margin: 0;
+    overflow-x: auto;
+}
+
+.code-block code {
+    font-family: var(--font-mono);
+    font-size: var(--text-sm);
+    color: var(--color-text-primary);
+    background: transparent;
+    padding: 0;
+}
+
+.code-block .code-comment {
+    color: var(--color-text-muted);
+}
+
+/* === Tables === */
+.options-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: var(--text-sm);
+}
+
+.options-table.full-width {
+    display: block;
+    overflow-x: auto;
+}
+
+.options-table thead {
+    background: var(--color-bg-tertiary);
+}
+
+.options-table th {
+    text-align: left;
+    padding: var(--space-3) var(--space-4);
+    font-weight: 600;
+    color: var(--color-text-primary);
+    border-bottom: 1px solid var(--color-border);
+}
+
+.options-table td {
+    padding: var(--space-3) var(--space-4);
+    border-bottom: 1px solid var(--color-border);
+    color: var(--color-text-secondary);
+}
+
+.options-table td code {
+    white-space: nowrap;
+}
+
+/* === Callouts === */
+.callout {
+    padding: var(--space-4);
+    border-radius: var(--radius-lg);
+    border-left: 4px solid;
+}
+
+.callout-info {
+    background: rgba(59, 130, 246, 0.1);
+    border-color: var(--color-brand);
+}
+
+.callout-warning {
+    background: rgba(250, 204, 21, 0.1);
+    border-color: var(--color-accent-yellow);
+}
+
+.callout strong {
+    display: block;
+    margin-bottom: var(--space-2);
+    color: var(--color-text-primary);
+}
+
+/* === Step List === */
+.step-list {
+    list-style: none;
+    padding: 0;
+    counter-reset: step;
+}
+
+.step-list li {
+    position: relative;
+    padding-left: var(--space-12);
+    padding-bottom: var(--space-6);
+    border-left: 2px solid var(--color-border);
+    margin-left: var(--space-4);
+}
+
+.step-list li:last-child {
+    border-left-color: transparent;
+}
+
+.step-list li::before {
+    counter-increment: step;
+    content: counter(step);
+    position: absolute;
+    left: -14px;
+    top: 0;
+    width: 28px;
+    height: 28px;
+    background: var(--color-brand);
+    color: white;
+    font-size: var(--text-sm);
+    font-weight: 700;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.step-list strong {
+    display: block;
+    color: var(--color-text-primary);
+    font-size: var(--text-base);
+    margin-bottom: var(--space-2);
+}
+
+.step-list p {
+    margin: 0;
+    font-size: var(--text-sm);
+}
+
+/* === Badges === */
+.badge {
+    display: inline-block;
+    padding: var(--space-1) var(--space-3);
+    font-size: var(--text-xs);
+    font-weight: 600;
+    border-radius: var(--radius-full);
+}
+
+.badge-green {
+    background: rgba(34, 197, 94, 0.2);
+    color: var(--color-accent-green);
+}
+
+.badge-blue {
+    background: var(--color-brand-subtle);
+    color: var(--color-brand);
+}
+
+/* === Footer === */
+.docs-footer {
+    padding-top: var(--space-12);
+    border-top: 1px solid var(--color-border);
+    text-align: center;
+}
+
+.docs-footer a {
+    color: var(--color-brand);
+}
+
+.docs-footer a:hover {
+    text-decoration: underline;
+}
+
+/* === Responsive === */
+@media (max-width: 1024px) {
+    .docs-layout {
+        grid-template-columns: 1fr;
+    }
+
+    .docs-sidebar {
+        display: none;
+    }
+
+    .docs-main {
+        padding: var(--space-8);
+    }
+}
+
+@media (max-width: 640px) {
+    .docs-header h1 {
+        font-size: var(--text-3xl);
+    }
+
+    .docs-lead {
+        font-size: var(--text-lg);
+    }
+
+    .options-table {
+        font-size: var(--text-xs);
+    }
+}
