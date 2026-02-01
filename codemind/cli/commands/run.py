@@ -157,7 +157,8 @@ def run(hook: bool, base: Optional[str], no_inject: bool, dry_run: bool, preview
             lines_deleted=diff.total_deletions,
             token_estimate=built_prompt.token_estimate,
             prompt_content=built_prompt.content,
-            files=[f.path for f in diff.files[:10]]  # Store first 10 files
+            files=[f.path for f in diff.files[:10]],  # Store first 10 files
+            ai_response=ai_response
         )
         
         # Wait for user to complete review
@@ -184,6 +185,9 @@ def run(hook: bool, base: Optional[str], no_inject: bool, dry_run: bool, preview
                 ai_response = "\n".join(lines)
             
             if ai_response.strip():
+                from ...validate.parser import parse_review
+                parsed = parse_review(ai_response)
+                
                 session = InteractiveSession()
                 session.add_issues_from_text(ai_response)
                 
@@ -191,11 +195,22 @@ def run(hook: bool, base: Optional[str], no_inject: bool, dry_run: bool, preview
                     proceed = session.run_interactive()
                     
                     if proceed and session.critical_count == 0:
-                        terminal.print_push_continuing()
+                        # Offer auto-fix if issues remain
+                        if session.issues and click.confirm("\nIssues detected. Start Magic Fix?"):
+                            from .fix import fix
+                            ctx = click.get_current_context()
+                            ctx.invoke(fix)
+                        else:
+                            terminal.print_push_continuing()
                         sys.exit(0)
                     else:
                         terminal.print_push_aborted()
                         terminal.console.print(f"[dim]{session.critical_count} critical issues remain.[/dim]")
+                        # Offer auto-fix even for critical if user wants
+                        if click.confirm("\nAttempt to auto-fix critical issues?"):
+                            from .fix import fix
+                            ctx = click.get_current_context()
+                            ctx.invoke(fix)
                         sys.exit(1)
                 else:
                     terminal.print_success("No issues found in AI response!")

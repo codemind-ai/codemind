@@ -31,6 +31,7 @@ class ReviewEntry:
     
     # Optional: stored for reference
     files: Optional[list[str]] = None
+    ai_response: Optional[str] = None
     
     def to_dict(self) -> dict:
         return asdict(self)
@@ -135,7 +136,8 @@ def create_review_entry(
     lines_deleted: int,
     token_estimate: int,
     prompt_content: str,
-    files: list[str] = None
+    files: list[str] = None,
+    ai_response: str = None
 ) -> ReviewEntry:
     """Create a new review entry."""
     import hashlib
@@ -150,7 +152,8 @@ def create_review_entry(
         lines_deleted=lines_deleted,
         token_estimate=token_estimate,
         prompt_hash=prompt_hash,
-        files=files or []
+        files=files or [],
+        ai_response=ai_response
     )
 
 
@@ -171,12 +174,13 @@ def save_review(
     lines_deleted: int,
     token_estimate: int,
     prompt_content: str,
-    files: list[str] = None
+    files: list[str] = None,
+    ai_response: str = None
 ) -> None:
     """Save a review to history."""
     entry = create_review_entry(
         branch, files_changed, lines_added, lines_deleted,
-        token_estimate, prompt_content, files
+        token_estimate, prompt_content, files, ai_response
     )
     get_history().add(entry)
 

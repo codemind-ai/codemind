@@ -12,6 +12,8 @@ from rich.panel import Panel
 from rich.prompt import Prompt, Confirm
 from rich.table import Table
 from rich.progress import Progress, SpinnerColumn, TextColumn
+from rich.syntax import Syntax
+from rich.columns import Columns
 from rich import box
 
 from ..git.diff import DiffResult
@@ -176,6 +178,25 @@ class TerminalUI:
     def print_push_continuing(self) -> None:
         """Print message that push is continuing."""
         self.console.print("\n[bold green]🚀 Launching...[/bold green] [dim](Pushing to remote)[/dim]")
+    
+    def print_diff(self, old_content: str, new_content: str, filename: str) -> None:
+        """Print a beautiful diff between old and new content."""
+        import difflib
+        
+        diff = list(difflib.unified_diff(
+            old_content.splitlines(keepends=True),
+            new_content.splitlines(keepends=True),
+            fromfile=f"a/{filename}",
+            tofile=f"b/{filename}"
+        ))
+        
+        if not diff:
+            self.console.print(f"[dim]No changes in {filename}[/dim]")
+            return
+            
+        diff_text = "".join(diff)
+        syntax = Syntax(diff_text, "diff", theme="monokai", line_numbers=True)
+        self.console.print(Panel(syntax, title=f"[bold]Preview: {filename}[/bold]", border_style="cyan"))
     
     def spinner(self, message: str):
         """Get a spinner context manager."""

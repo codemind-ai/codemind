@@ -1,6 +1,6 @@
 [project]
 name = "codemind"
-version = "0.1.0"
+version = "1.0.0"
 description = "Local, pre-push AI code review orchestrator"
 readme = "README.md"
 license = { text = "MIT" }

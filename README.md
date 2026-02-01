@@ -31,6 +31,7 @@
 | 📝 **PR Generator** | Instantly generate professional Pull Request descriptions. |
 | 🩺 **Smart Doctor** | Automated health checks and zero-friction onboarding. |
 | 🚀 **API Gateway** | Full REST API (`codemind gateway`) for custom automation. |
+| ✨ **Magic Fix** | Automatically apply AI-suggested fixes with `codemind fix`. |
 | 💬 **Vibecoding** | Performance-focused reviews with high-energy AI coaching. |
 | 🔌 **MCP Server** | Model Context Protocol support for LLM context injection. |
 | 🔔 **Team Sync** | Automated Slack and Discord review notifications. |
@@ -77,6 +78,12 @@ codemind pr create                 # Generate professional PR summary
 ### Standalone Review (Ollama/OpenAI)
 ```bash
 codemind run --vibe                # High-energy "Vibecoding" mode
+```
+
+### Instant Fixes
+```bash
+codemind fix                       # Automatically apply suggested fixes
+codemind fix -y                    # Auto-apply everything (reckless mode)
 ```
 
 ### Network & Integrations

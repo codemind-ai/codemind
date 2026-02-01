@@ -12,6 +12,7 @@ from .. import __version__
 from .commands.run import run
 from .commands.config import config
 from .commands.rules import rules
+from .commands.fix import fix
 from .commands.ci import ci
 from .commands.commit import commit
 from .commands.history import history
@@ -40,6 +41,7 @@ def cli():
 cli.add_command(run)
 cli.add_command(config)
 cli.add_command(rules)
+cli.add_command(fix)
 cli.add_command(ci)
 cli.add_command(commit)
 cli.add_command(history)
