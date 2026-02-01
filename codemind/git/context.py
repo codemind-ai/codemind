@@ -3,10 +3,11 @@
 Detects branch, remote, and repository context for diff operations.
 """
 
-import subprocess
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Optional
+
+from .utils import run_git_command, GitTimeoutError, GitNotFoundError
 
 
 @dataclass
@@ -30,16 +31,10 @@ class ContextDetector:
     def _run_git(self, *args: str) -> tuple[str, int]:
         """Run a git command and return output + return code."""
         try:
-            result = subprocess.run(
-                ["git"] + list(args),
-                cwd=self.repo_path,
-                capture_output=True,
-                text=True,
-                encoding="utf-8",
-                errors="replace"
-            )
-            return result.stdout.strip(), result.returncode
-        except FileNotFoundError:
+            return run_git_command(*args, cwd=self.repo_path)
+        except GitTimeoutError:
+            raise RuntimeError(f"Git command timed out: git {' '.join(args)}")
+        except GitNotFoundError:
             raise RuntimeError("Git is not installed or not in PATH")
     
     def get_context(self) -> GitContext:
@@ -98,7 +93,6 @@ class ContextDetector:
     
     def _has_staged(self) -> bool:
         """Check if there are staged changes."""
-        output, _ = self._run_git("diff", "--cached", "--quiet")
         # --quiet returns 1 if there are differences
         _, code = self._run_git("diff", "--cached", "--quiet")
         return code != 0

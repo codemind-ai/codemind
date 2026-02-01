@@ -4,6 +4,8 @@ Stores and retrieves past review prompts and metadata.
 """
 
 import json
+import os
+import tempfile
 from dataclasses import dataclass, asdict
 from datetime import datetime
 from pathlib import Path
@@ -28,7 +30,7 @@ class ReviewEntry:
     prompt_hash: str  # First 8 chars of content hash
     
     # Optional: stored for reference
-    files: list[str] = None
+    files: Optional[list[str]] = None
     
     def to_dict(self) -> dict:
         return asdict(self)
@@ -61,11 +63,32 @@ class ReviewHistory:
             return []
     
     def _save(self, entries: list[dict]) -> None:
-        """Save history to file."""
+        """Save history to file atomically.
+        
+        Uses temp file + atomic rename to prevent corruption if interrupted.
+        """
         # Limit entries
         entries = entries[-MAX_HISTORY_ENTRIES:]
         content = json.dumps(entries, indent=2)
-        self.history_file.write_text(content, encoding="utf-8")
+        
+        # Atomic write: write to temp file, then rename
+        fd, temp_path = tempfile.mkstemp(
+            dir=self.history_file.parent,
+            prefix=".history_",
+            suffix=".tmp"
+        )
+        try:
+            with os.fdopen(fd, 'w', encoding='utf-8') as f:
+                f.write(content)
+            # Atomic rename (on same filesystem)
+            os.replace(temp_path, self.history_file)
+        except Exception:
+            # Clean up temp file on error
+            try:
+                os.unlink(temp_path)
+            except OSError:
+                pass
+            raise
     
     def add(self, entry: ReviewEntry) -> None:
         """Add a new review entry to history."""

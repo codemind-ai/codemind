@@ -14,7 +14,7 @@ from typing import Optional
 import click
 
 from .. import __version__
-from ..git.diff import get_diff, DiffResult
+from ..git.diff import get_diff, DiffResult, DiffExtractor
 from ..git.context import get_context, GitContext
 from ..prompt.builder import build_prompt, PromptConfig
 from ..ide.detect import detect_preferred_ide, IDEType
@@ -118,7 +118,6 @@ def run(hook: bool, base: Optional[str], no_inject: bool, dry_run: bool, preview
                 sys.exit(0)
         
         # Check diff size warning
-        from ..git.diff import DiffExtractor
         extractor = DiffExtractor()
         warning = extractor.check_size_warning(diff)
         if warning:

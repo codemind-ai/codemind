@@ -101,9 +101,81 @@ class ConfigLoader:
             content = path.read_text(encoding="utf-8")
             data = yaml.safe_load(content) or {}
             
+            # Validate schema before parsing
+            errors = self._validate_schema(data)
+            if errors:
+                raise ValueError(f"Invalid config in {path}:\n  - " + "\n  - ".join(errors))
+            
             return self._parse_config(data, path)
         except yaml.YAMLError as e:
             raise ValueError(f"Invalid YAML in {path}: {e}")
+    
+    def _validate_schema(self, data: dict[str, Any]) -> list[str]:
+        """Validate configuration schema. Returns list of errors."""
+        errors: list[str] = []
+        
+        # Validate 'enabled'
+        if "enabled" in data:
+            valid_enabled = ("ask", "always", "never")
+            if str(data["enabled"]) not in valid_enabled:
+                errors.append(
+                    f"'enabled' must be one of {valid_enabled}, got: {data['enabled']}"
+                )
+        
+        # Validate 'ide' section
+        if "ide" in data:
+            if not isinstance(data["ide"], dict):
+                errors.append("'ide' must be a dictionary")
+            else:
+                ide = data["ide"]
+                if "preferred" in ide and not isinstance(ide["preferred"], list):
+                    errors.append("'ide.preferred' must be a list")
+                if "auto_inject" in ide and not isinstance(ide["auto_inject"], bool):
+                    errors.append("'ide.auto_inject' must be a boolean")
+                if "auto_submit" in ide and not isinstance(ide["auto_submit"], bool):
+                    errors.append("'ide.auto_submit' must be a boolean")
+        
+        # Validate 'review' section
+        if "review" in data:
+            if not isinstance(data["review"], dict):
+                errors.append("'review' must be a dictionary")
+            else:
+                review = data["review"]
+                if "max_comments" in review:
+                    mc = review["max_comments"]
+                    if not isinstance(mc, int):
+                        errors.append("'review.max_comments' must be an integer")
+                    elif not (1 <= mc <= 100):
+                        errors.append("'review.max_comments' must be between 1 and 100")
+                if "strict_format" in review and not isinstance(review["strict_format"], bool):
+                    errors.append("'review.strict_format' must be a boolean")
+                if "fail_on" in review and not isinstance(review["fail_on"], list):
+                    errors.append("'review.fail_on' must be a list")
+        
+        # Validate 'rules' section
+        if "rules" in data:
+            if not isinstance(data["rules"], dict):
+                errors.append("'rules' must be a dictionary")
+            else:
+                rules = data["rules"]
+                if "review_only_diff" in rules and not isinstance(rules["review_only_diff"], bool):
+                    errors.append("'rules.review_only_diff' must be a boolean")
+                if "allow_feature_suggestions" in rules and not isinstance(rules["allow_feature_suggestions"], bool):
+                    errors.append("'rules.allow_feature_suggestions' must be a boolean")
+        
+        # Validate 'prompt' section
+        if "prompt" in data:
+            if not isinstance(data["prompt"], dict):
+                errors.append("'prompt' must be a dictionary")
+            else:
+                prompt = data["prompt"]
+                if "template_path" in prompt and prompt["template_path"] is not None:
+                    if not isinstance(prompt["template_path"], str):
+                        errors.append("'prompt.template_path' must be a string")
+                if "extra_rules" in prompt and not isinstance(prompt["extra_rules"], list):
+                    errors.append("'prompt.extra_rules' must be a list")
+        
+        return errors
     
     def _parse_config(self, data: dict[str, Any], path: Path) -> Config:
         """Parse configuration dictionary."""

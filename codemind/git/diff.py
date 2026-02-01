@@ -3,11 +3,12 @@
 Extracts and parses unified diffs from git repositories.
 """
 
-import subprocess
 import re
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Optional
+
+from .utils import run_git_command, GitTimeoutError, GitNotFoundError
 
 
 @dataclass
@@ -63,16 +64,10 @@ class DiffExtractor:
     def _run_git(self, *args: str) -> tuple[str, int]:
         """Run a git command and return output + return code."""
         try:
-            result = subprocess.run(
-                ["git"] + list(args),
-                cwd=self.repo_path,
-                capture_output=True,
-                text=True,
-                encoding="utf-8",
-                errors="replace"
-            )
-            return result.stdout, result.returncode
-        except FileNotFoundError:
+            return run_git_command(*args, cwd=self.repo_path)
+        except GitTimeoutError:
+            raise RuntimeError(f"Git command timed out: git {' '.join(args)}")
+        except GitNotFoundError:
             raise RuntimeError("Git is not installed or not in PATH")
     
     def get_diff(self, base: Optional[str] = None, head: str = "HEAD") -> DiffResult:
