@@ -71,7 +71,8 @@
                     <a href="#cmd-template" class="sidebar-link">template</a>
                     <a href="#cmd-detect" class="sidebar-link">detect</a>
                     <a href="#cmd-history" class="sidebar-link">history</a>
-                    <a href="#cmd-serve" class="sidebar-link">serve (MCP)</a>
+                    <a href="#guardian-mode" class="sidebar-link">Guardian Mode (MCP)</a>
+                    <a href="#cmd-serve" class="sidebar-link">serve (MCP Server)</a>
                 </div>
                 <div class="sidebar-section">
                     <h4>Configuration</h4>
@@ -95,8 +96,41 @@
                 <!-- Header -->
                 <div class="docs-header">
                     <h1>CodeMind Documentation</h1>
-                    <p class="docs-lead">Complete guide to using CodeMind CLI for AI-powered code reviews.</p>
+                    <p class="docs-lead">Complete guide to using CodeMind as your MCP Security & Quality Guardian.</p>
                 </div>
+
+                <!-- Guardian Mode -->
+                <section id="guardian-mode">
+                    <h2>🛡️ Guardian Mode</h2>
+                    <p>CodeMind's primary feature is the MCP Guardian, which protects your codebase from security vulnerabilities and "AI slop".</p>
+                    
+                    <article id="use-codemind">
+                        <h3>Activating via "use codemind"</h3>
+                        <p>In any MCP-compatible IDE (Cursor, Windsurf, Claude Code), simply type:</p>
+                        <div class="code-block">
+                            <pre><code>"use codemind"</code></pre>
+                        </div>
+                        <p>This activates the Guardian suite, instructing the AI to audit every line of code it generates using CodeMind's tools.</p>
+                    </article>
+
+                    <article id="mcp-tools">
+                        <h3>Guardian tools</h3>
+                        <ul class="tool-list">
+                            <li>
+                                <strong><code>guard_code</code></strong>
+                                <p>Audits a snippet for security (XSS, SQLi, Secrets) and quality (slop detection).</p>
+                            </li>
+                            <li>
+                                <strong><code>improve_code</code></strong>
+                                <p>Automatically refactors code to fix issues found by the auditor.</p>
+                            </li>
+                            <li>
+                                <strong><code>guardian://best-practices</code></strong>
+                                <p>A resource containing authoritative patterns for safe and clean code.</p>
+                            </li>
+                        </ul>
+                    </article>
+                </section>
 
                 <!-- Getting Started -->
                 <section id="getting-started">

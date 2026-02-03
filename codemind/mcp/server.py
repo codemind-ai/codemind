@@ -23,6 +23,10 @@ from ..history import (
     clear_history,
     ReviewEntry
 )
+from .guard import Guardian, GuardType, GuardReport, GuardIssue
+from ..llm.fixer import CodeFixer
+from ..llm import get_llm_provider
+from ..config import load_config
 
 
 # Initialize MCP Server
@@ -267,6 +271,122 @@ Last Review: {stats['last_review']}
 """
 
 
+@mcp.tool()
+def guard_code(code: str, language: str = "python", filename: str = "snippet.code") -> dict:
+    """
+    Perform a security and quality audit on a code snippet.
+    
+    Checks for security vulnerabilities, 'AI slop', and clean code violations.
+    
+    Args:
+        code: The code content to audit
+        language: Programming language (python, javascript, etc.)
+        filename: Optional filename for context
+    
+    Returns:
+        Audit report including security score and list of issues
+    """
+    guardian = Guardian()
+    report = guardian.audit(code, filename)
+    
+    issues_list = [
+        {
+            "type": issue.type.value,
+            "severity": issue.severity.value,
+            "message": issue.message,
+            "line": issue.line,
+            "snippet": issue.code_snippet
+        }
+        for issue in report.issues
+    ]
+    
+    return {
+        "success": True,
+        "score": report.score,
+        "is_safe": report.is_safe,
+        "is_clean": report.is_clean,
+        "issues": issues_list,
+        "summary": f"Audit complete. Score: {report.score}/100. Found {len(issues_list)} issues."
+    }
+
+
+@mcp.tool()
+def improve_code(code: str, issue_descriptions: Optional[str] = None, filename: str = "snippet.code") -> dict:
+    """
+    Automatically improve code by fixing security and quality issues.
+    
+    If no issue_descriptions are provided, it first runs an audit and fixes found issues.
+    
+    Args:
+        code: Code to improve
+        issue_descriptions: Optional text describing issues to fix
+        filename: Optional filename for context
+    
+    Returns:
+        Improved code and summary of changes
+    """
+    guardian = Guardian()
+    
+    # If no issues provided, find them
+    if not issue_descriptions:
+        report = guardian.audit(code, filename)
+        if not report.issues:
+            return {
+                "success": True,
+                "improved_code": code,
+                "message": "No issues found to improve."
+            }
+        issue_descriptions = "\n".join([f"- {i.message} (line {i.line})" for i in report.issues])
+    
+    try:
+        config = load_config()
+        llm = get_llm_provider(
+            provider_type=config.llm.provider,
+            model=config.llm.model,
+            api_key=config.llm.api_key,
+            base_url=config.llm.base_url
+        )
+        fixer = CodeFixer(llm)
+        
+        improved_code = fixer.generate_fix(filename, code, issue_descriptions)
+        
+        # Verify the fix
+        new_report = guardian.audit(improved_code, filename)
+        
+        return {
+            "success": True,
+            "improved_code": improved_code,
+            "initial_issues": issue_descriptions,
+            "new_score": new_report.score,
+            "is_fixed": new_report.score > 90,
+            "remaining_issues": len(new_report.issues)
+        }
+    except Exception as e:
+        return {
+            "success": False,
+            "error": str(e)
+        }
+
+
+@mcp.resource("guardian://best-practices")
+def guardian_best_practices() -> str:
+    """Get security and clean code best practices."""
+    return """CodeMind Guardian - Best Practices
+=================================
+
+Security:
+1. Never hardcode secrets (passwords, keys, tokens). Use env vars.
+2. Sanitize all user input before using it in database queries or HTML.
+3. Avoid dangerous functions like eval(), exec(), or innerHTML with untrusted data.
+4. Use safe deserialization (e.g., yaml.safe_load instead of yaml.load).
+
+Clean Code & AI Slop Prevention:
+1. Names should be descriptive. Avoid generic names like 'data' or 'result'.
+2. Comments should explain 'why', not 'what'. Avoid redundant comments.
+3. Keep functions focused on a single responsibility (SRP).
+4. Remove debugging statements (print, console.log) before commit.
+"""
+
 @mcp.prompt()
 def code_review_prompt(
     focus_area: str = "general",
@@ -296,6 +416,42 @@ then provide a code review with the following focus:
 Limit your review to {max_comments} comments maximum.
 Use the validate_ai_response tool to verify your response format.
 """
+
+
+@mcp.prompt()
+def secure_implementation_prompt(code: str) -> str:
+    """
+    Generate a prompt to implement code securely.
+    
+    Args:
+        code: The initial code or requirements
+    """
+    return f"""You are implementing the following code:
+{code}
+
+To ensure high quality and security, please follow these steps:
+1. Review the best practices in 'guardian://best-practices'.
+2. Use the 'guard_code' tool to audit your implementation.
+3. If issues are found, use the 'improve_code' tool or refactor until the score is > 90.
+4. Ensure no 'AI slop' (redundant comments, generic names) is present.
+"""
+
+
+@mcp.prompt()
+def codemind() -> str:
+    """
+    Activate the full CodeMind Guardian suite for security, quality, and clean code.
+    Use this to ensure your code is professional, safe, and free of 'AI slop'.
+    """
+    return """You have activated CodeMind Guardian. From now on, you must ensure that every piece of code you generate or modify meets the highest standards of security and cleanliness.
+
+Follow these rules:
+1. **Security First**: Before finalizing any code, use the `guard_code` tool to check for vulnerabilities.
+2. **No AI Slop**: Remove redundant comments (e.g., "// This function adds X"), use descriptive names, and follow SOLID/DRY principles.
+3. **Verify & Improve**: If `guard_code` returns a score < 90, you MUST use it to find issues and then use the `improve_code` tool (or manually refactor) until the code is perfect.
+4. **Best Practices**: Always reference `guardian://best-practices` for authoritative patterns.
+
+Your goal is to produce code that is indistinguishable from that of a senior system architect."""
 
 
 def run_server(transport: str = "stdio"):

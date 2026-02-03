@@ -59,6 +59,30 @@ SECURITY_STRICT = [
         message="JWT token found in code - tokens should not be hardcoded",
         severity=RuleSeverity.WARNING,
     ),
+    CustomRule(
+        name="xss-inner-html",
+        description="Potential XSS via innerHTML",
+        pattern=r'\.innerHTML\s*=\s*[^;]+',
+        message="Potential XSS - avoid using innerHTML with unsanitized data. Use textContent or a sanitization library.",
+        severity=RuleSeverity.WARNING,
+        file_patterns=[r'.*\.(js|ts|jsx|tsx)$'],
+    ),
+    CustomRule(
+        name="unsafe-deserialization",
+        description="Potential unsafe deserialization",
+        pattern=r'\bpickle\.load\(|\byaml\.load\(|\bjsonpickle\.decode\(',
+        message="Unsafe deserialization detected - use safe alternatives (e.g., yaml.safe_load)",
+        severity=RuleSeverity.CRITICAL,
+        file_patterns=[r'.*\.py$'],
+    ),
+    CustomRule(
+        name="path-traversal",
+        description="Potential path traversal",
+        pattern=r'\bos\.path\.join\(.*request\.args|open\(.*request\.args',
+        message="Potential path traversal - sanitize user-provided file paths",
+        severity=RuleSeverity.CRITICAL,
+        file_patterns=[r'.*\.py$'],
+    ),
 ]
 
 
