@@ -307,6 +307,13 @@ code {
     height: 500px;
     box-shadow: var(--shadow-xl);
     position: relative;
+    transition: transform 0.3s ease;
+}
+
+@media (max-width: 1100px) {
+    .ide-container {
+        height: 600px;
+    }
 }
 
 .ide-sidebar {
@@ -488,10 +495,33 @@ code {
 @media (max-width: 1024px) {
     .ide-container {
         height: auto;
-        min-height: 500px;
+        min-height: 600px;
+        flex-direction: column;
+    }
+    .ide-sidebar {
+        width: 100%;
+        height: 50px;
+        flex-direction: row;
+        padding-top: 0;
+        padding-left: var(--space-4);
+        border-right: none;
+        border-bottom: 1px solid #21262d;
+        justify-content: flex-start;
     }
     .ide-chat-panel {
         width: 100%;
+        border-left: none;
+        border-top: 1px solid var(--color-border);
+        min-height: 400px;
+    }
+}
+
+@media (max-width: 640px) {
+    .ide-editor {
+        display: none; /* Hide editor on mobile to focus on chat */
+    }
+    .ide-container {
+        min-height: 500px;
     }
 }
 
