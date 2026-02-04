@@ -165,6 +165,11 @@ code {
     padding: 0 var(--space-6);
 }
 
+.no-break {
+    display: inline-block;
+    white-space: nowrap;
+}
+
 /* === Announcement Bar === */
 .announcement-bar {
     height: var(--announcement-height);
@@ -289,6 +294,191 @@ code {
     }
     .nav-toggle {
         display: flex;
+    }
+}
+
+/* === IDE Chat Component === */
+.ide-container {
+    display: flex;
+    background: #0d1117;
+    border-radius: var(--radius-xl);
+    overflow: hidden;
+    border: 1px solid var(--color-border);
+    height: 500px;
+    box-shadow: var(--shadow-xl);
+    position: relative;
+}
+
+.ide-sidebar {
+    width: 50px;
+    background: #161b22;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-top: var(--space-4);
+    gap: var(--space-4);
+    border-right: 1px solid var(--color-border);
+}
+
+.ide-sidebar-icon {
+    width: 20px;
+    height: 20px;
+    background: #21262d;
+    border-radius: 4px;
+}
+
+.ide-main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.ide-header {
+    height: 35px;
+    background: #161b22;
+    border-bottom: 1px solid var(--color-border);
+    display: flex;
+    align-items: center;
+    padding: 0 var(--space-4);
+    font-size: 11px;
+    color: var(--color-text-muted);
+}
+
+.ide-content {
+    flex: 1;
+    display: flex;
+    position: relative;
+    background: #0d1117;
+}
+
+.ide-editor {
+    flex: 1;
+    padding: var(--space-6);
+    font-family: var(--font-mono);
+    font-size: 13px;
+    color: var(--color-text-secondary);
+    line-height: 1.6;
+}
+
+.ide-chat-panel {
+    width: 320px;
+    background: #0d1117;
+    border-left: 1px solid var(--color-border);
+    display: flex;
+    flex-direction: column;
+    box-shadow: -10px 0 30px rgba(0,0,0,0.3);
+}
+
+.chat-header {
+    padding: var(--space-3) var(--space-4);
+    background: #161b22;
+    border-bottom: 1px solid var(--color-border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--color-text-secondary);
+}
+
+.chat-messages {
+    flex: 1;
+    padding: var(--space-4);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+    overflow-y: auto;
+}
+
+.chat-msg {
+    max-width: 90%;
+    padding: var(--space-3) var(--space-4);
+    border-radius: var(--radius-lg);
+    font-size: 12px;
+    line-height: 1.5;
+}
+
+.chat-msg-user {
+    align-self: flex-end;
+    background: var(--color-brand);
+    color: white;
+    border-bottom-right-radius: 2px;
+}
+
+.chat-msg-ai {
+    align-self: flex-start;
+    background: #1c2128;
+    color: var(--color-text-primary);
+    border: 1px solid var(--color-border);
+    border-bottom-left-radius: 2px;
+}
+
+.chat-msg-ai .ai-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 6px;
+    font-weight: 700;
+    font-size: 10px;
+    color: var(--color-brand-light);
+}
+
+.chat-footer {
+    padding: var(--space-4);
+    background: #161b22;
+    border-top: 1px solid var(--color-border);
+}
+
+.chat-input {
+    background: #0d1117;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    padding: var(--space-3);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+}
+
+.chat-input-text {
+    font-size: 13px;
+    color: var(--color-text-primary);
+    min-height: 20px;
+    text-align: left;
+}
+
+.chat-input-actions {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.chat-pills {
+    display: flex;
+    gap: 6px;
+}
+
+.chat-pill {
+    background: #21262d;
+    border: 1px solid var(--color-border);
+    border-radius: 4px;
+    padding: 2px 8px;
+    font-size: 10px;
+    color: var(--color-text-muted);
+    font-weight: 600;
+}
+
+.chat-pill-active {
+    color: var(--color-brand-light);
+    border-color: var(--color-border-brand);
+}
+
+@media (max-width: 1024px) {
+    .ide-container {
+        height: auto;
+        min-height: 500px;
+    }
+    .ide-chat-panel {
+        width: 100%;
     }
 }
 

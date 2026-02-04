@@ -1,7 +1,7 @@
 [project]
 name = "codemind"
 version = "1.0.0"
-description = "Local, pre-push AI code review orchestrator"
+description = "MCP Security & Quality Guardian for AI-powered development"
 readme = "README.md"
 license = { text = "MIT" }
 requires-python = ">=3.10"

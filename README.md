@@ -1,221 +1,113 @@
 # 🧠 CodeMind
 
 <p align="center">
-  <strong>Think before ship.</strong>
+  <strong>The MCP Security & Quality Guardian.</strong><br>
+  <em>Think before ship.</em>
 </p>
 
 <p align="center">
   <a href="https://codemind-ai.github.io/codemind">📖 Documentation</a> •
-  <a href="https://www.bridgemind.ai/vibeathon">🏆 Vibeathon Entry</a> •
-  <a href="#installation">⚡ Quick Start</a>
+  <a href="https://github.com/upstash/context7">⚡ Inspiration</a> •
+  <a href="#installation">🚀 Quick Start</a>
 </p>
 
 <p align="center">
   <img src="https://img.shields.io/badge/license-MIT-blue.svg" alt="License">
   <img src="https://img.shields.io/badge/python-3.10+-green.svg" alt="Python">
-  <img src="https://img.shields.io/badge/vibeathon-2025-purple.svg" alt="Vibeathon">
+  <img src="https://img.shields.io/badge/MCP-Supported-purple.svg" alt="MCP">
 </p>
 
 ---
 
-**CodeMind** is an open-source, local-first orchestrator for AI code review. It runs **before `git push`** and leverages **your IDE's AI** (Cursor, Claude Code, Windsurf, VS Code) to deliver structured, consistent code reviews.
+**CodeMind** is an open-source **Model Context Protocol (MCP)** server that acts as a resident security and quality auditor for AI-powered development. It bridges your IDE's AI (Cursor, Claude Code, Windsurf, VS Code) with local security rules and clean code standards.
 
-> 🏆 **Built for [Vibeathon 2025](https://www.bridgemind.ai/vibeathon)** — The open-source AI tools competition by Bridgemind.
+## 🛡️ Guardian Mode: "use codemind"
 
-## ✨ Features
+The primary way to use CodeMind is through its **Guardian Mode**. Once connected to your AI assistant via MCP, you can simply trigger it in your chat:
 
-| Feature | Description |
-|---------|-------------|
-| 🔒 **Privacy-First** | Code never leaves your machine. Local LLM support via Ollama. |
-| 🤖 **Standalone AI** | Use OpenAI, Claude, or local models. No IDE subscription required. |
-| 📝 **PR Generator** | Instantly generate professional Pull Request descriptions. |
-| 🩺 **Smart Doctor** | Automated health checks and zero-friction onboarding. |
-| 🚀 **API Gateway** | Full REST API (`codemind gateway`) for custom automation. |
-| ✨ **Magic Fix** | Automatically apply AI-suggested fixes with `codemind fix`. |
-| 💬 **Vibecoding** | Performance-focused reviews with high-energy AI coaching. |
-| 🔌 **MCP Server** | Model Context Protocol support for LLM context injection. |
-| 🔔 **Team Sync** | Automated Slack and Discord review notifications. |
+> **You:** "use codemind"
+>
+> **AI:** "🛡️ Guardian Mode Activated! I've audited your code. Here are the security and quality findings..."
 
-## 📦 Installation
+## ✨ MCP Features
 
+| Tool | Description |
+|------|-------------|
+| 🔍 `guard_code` | Audit any code snippet for vulnerabilities and "AI slop". |
+| ✨ `improve_code` | Automatically fix security issues and refactor for cleanliness. |
+| 📊 `review_diff` | Generate a structured AI review prompt for your current git diff. |
+| 🛡️ `codemind` | Activate the full Guardian suite for current session. |
+| 📖 `best-practices` | Resource: Direct access to security and clean code patterns. |
+
+## 🚀 Quick Start (MCP)
+
+### 1. Install CodeMind
 ```bash
-# Install from source
-pip install -e .
+pip install "codemind[mcp]"
+```
 
-# Install the git hook
+### 2. Add to Claude Desktop
+Add this to your `claude_desktop_config.json`:
+```json
+{
+  "mcpServers": {
+    "codemind": {
+      "command": "codemind",
+      "args": ["serve"]
+    }
+  }
+}
+```
+
+### 3. Use in your IDE
+Just ask your AI: **"Can you audit my code using codemind?"** or **"use codemind"**.
+
+---
+
+## 🛠️ CLI & Git Integration (Secondary)
+
+While the MCP server is the heart of CodeMind, we provide a CLI for local automation and git hooks.
+
+### Installation
+```bash
+# Install git pre-push hook
 codemind install
 ```
 
-## 🚀 Quick Start
-
-### Pre-push Review (Automatic)
+### Git Workflow
+CodeMind intercepts your `git push`, runs an AI review using your IDE's local AI, and catches issues before they reach your team.
 
 ```bash
 git push
-# CodeMind intercepts and runs AI review
+# CodeMind triggers and injects review into your IDE
 ```
 
-### Generate Commit Message
+### CLI Commands
+| Command | Action |
+|---------|--------|
+| `codemind commit` | Generate AI commit messages (Conventional) |
+| `codemind pr create` | Generate AI PR descriptions |
+| `codemind fix` | Apply suggested fixes locally |
+| `codemind doctor` | Health check and wizard setup |
 
-```bash
-git add .
-codemind commit                    # Conventional commits
-codemind commit -s simple          # Simple style
-codemind commit --apply            # Auto-commit with AI message
-```
+---
 
-### Interactive Review
+## 🔒 Privacy & Philosophy
 
-```bash
-codemind run -i                    # Review AI feedback in TUI
-```
-
-### Pull Request Description
-```bash
-codemind pr create                 # Generate professional PR summary
-```
-
-### Standalone Review (Ollama/OpenAI)
-```bash
-codemind run --vibe                # High-energy "Vibecoding" mode
-```
-
-### Instant Fixes
-```bash
-codemind fix                       # Automatically apply suggested fixes
-codemind fix -y                    # Auto-apply everything (reckless mode)
-```
-
-### Network & Integrations
-```bash
-codemind gateway start             # Launch REST API server
-codemind notify slack <webhook>    # Push results to Slack
-```
-
-### System Health
-```bash
-codemind doctor                    # Diagnostic checkup
-codemind init --wizard             # 30-second interactive setup
-```
-
-### CI/CD Setup
-
-```bash
-codemind ci init                   # Generate GitHub Actions workflow
-```
-
-## ⚙️ All Commands
-
-```bash
-codemind install      # Install git pre-push hook
-codemind uninstall    # Remove hook
-codemind run          # Run review manually (--vibe for vibe mode)
-codemind commit       # Generate AI commit message
-codemind pr create    # Generate AI PR description
-codemind doctor       # Run system health diagnostics
-codemind gateway      # Start CodeMind REST API server
-codemind notify       # Slack/Discord notification sync
-codemind rules        # Manage and check review rules
-codemind ci           # CI/CD (GitHub Actions) setup
-codemind config       # Config management (--wizard for setup)
-codemind serve        # Run as MCP server
-codemind history      # View review history
-```
-
-## 🎯 Philosophy
-
-| Principle | ✓ |
-|-----------|---|
-| No code generation by AI | ✅ |
-| No AI API dependency | ✅ |
-| User-owned AI | ✅ |
-| Local-first, privacy-first | ✅ |
-| Lightweight & fast | ✅ |
-
-## 🤖 Supported IDEs
-
-| IDE | Detection | Auto-Inject |
-|-----|-----------|-------------|
-| Cursor | ✅ | ✅ |
-| Claude Code | ✅ | ✅ |
-| Windsurf | ✅ | ✅ |
-| VS Code (Copilot) | ✅ | ✅ |
-
-## ⚙️ Configuration
-
-Create `.codemind.yml` (or `.codemind.json`) in your repo:
-
-```yaml
-# When to run review: ask, always, or never
-enabled: ask
-
-# Standard AI Provider (ide, openai, or ollama)
-llm:
-  provider: ide
-  model: gpt-4
-
-# Custom review behavior
-review:
-  max_comments: 5
-  vibe: true              # High-energy feedback
-
-# Team Integrations
-notifications:
-  slack: https://hooks.slack.com/services/...
-```
-
-## 🔒 Rule Presets
-
-| Preset | Rules | Focus |
-|--------|-------|-------|
-| `security-strict` | 7 | Hardcoded secrets, SQL injection, eval |
-| `python` | 5 | Print statements, bare except, TODOs |
-| `javascript` | 5 | console.log, any type, var usage |
-| `minimal` | 1 | Essential secrets check |
-
-## 🔌 MCP Server Mode
-
-```bash
-pip install codemind[mcp]
-codemind serve
-```
-
-**Tools:** `review_diff`, `validate_ai_response`, `get_review_history`, `get_git_context`
-
-## 🔐 Privacy & Security
-
-- ✅ Code **never leaves your machine**
-- ✅ No API keys required
-- ✅ No telemetry or analytics
-- ✅ Works with private repos
-- ✅ Fully offline capable
+- ✅ **100% Local**: Code never leaves your machine.
+- ✅ **Privacy-First**: No telemetry, no cloud, no API keys required.
+- ✅ **Universal**: Works with Cursor, Claude Code, Windsurf, and VS Code.
+- ✅ **User-Owned AI**: Leverages the AI you're already using.
 
 ## 🎯 Target Audience
 
-- Indie builders & solo founders
-- Privacy-focused developers
-- Small teams without formal code review
-- "Vibe coders" who need structure
-
-## 🏆 Vibeathon
-
-This project is an entry to [Vibeathon 2025](https://www.bridgemind.ai/vibeathon) by Bridgemind — a competition to build open-source tools that solve real problems for AI-assisted developers.
-
-**Evaluation Criteria:**
-- Usefulness (40%)
-- Impact (25%)
-- Execution (20%)
-- Innovation (15%)
+- **AI-Native Developers**: Who want a second set of eyes on AI-generated code.
+- **Privacy-focused Teams**: Who need code quality without cloud dependencies.
+- **"Vibe Coders"**: Who need structure and security without slowing down.
 
 ## 📄 License
 
 MIT License — See [LICENSE](LICENSE) for details.
-
-## 🔗 Links
-
-- 📖 [Documentation](https://codemind-ai.github.io/codemind)
-- 🐙 [GitHub](https://github.com/codemind-ai/codemind)
-- 🏆 [Vibeathon](https://www.bridgemind.ai/vibeathon)
 
 ---
 

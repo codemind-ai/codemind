@@ -134,49 +134,22 @@
 
                 <!-- Getting Started -->
                 <section id="getting-started">
-                    <h2>Getting Started</h2>
+                    <h2>Getting Started (MCP)</h2>
                     
                     <article id="installation">
                         <h3>Installation</h3>
-                        <p>CodeMind is distributed via pip. Install globally to use in any repository:</p>
+                        <p>Install CodeMind with MCP support using pip:</p>
                         
                         <div class="code-block">
                             <div class="code-header">
-                                <span>pip (standard)</span>
-                                <button class="code-copy" data-copy="pip install codemind">Copy</button>
+                                <span>pip</span>
+                                <button class="code-copy" data-copy="pip install 'codemind[mcp]'">Copy</button>
                             </div>
-                            <pre><code>pip install codemind</code></pre>
-                        </div>
-
-                        <div class="code-block">
-                            <div class="code-header">
-                                <span>pipx (recommended)</span>
-                                <button class="code-copy" data-copy="pipx install codemind">Copy</button>
-                            </div>
-                            <pre><code>pipx install codemind</code></pre>
+                            <pre><code>pip install "codemind[mcp]"</code></pre>
                         </div>
 
                         <div class="callout callout-info">
-                            <strong>Why pipx?</strong> pipx installs CLI tools in isolated environments, preventing dependency conflicts with other Python packages.
-                        </div>
-                    </article>
-
-                    <article id="quick-start">
-                        <h3>Quick Start</h3>
-                        <p>Get up and running in 30 seconds:</p>
-                        
-                        <div class="code-block">
-                            <div class="code-header"><span>Terminal</span></div>
-                            <pre><code><span class="code-comment"># 1. Install the git hook in your repository</span>
-cd your-project
-codemind install
-
-<span class="code-comment"># 2. Make some changes and push</span>
-git add .
-git commit -m "feat: new feature"
-git push origin main
-
-<span class="code-comment"># CodeMind automatically reviews your code before push!</span></code></pre>
+                            <strong>Setup Claude Desktop:</strong> Add CodeMind to your <code>claude_desktop_config.json</code> under <code>mcpServers</code> using the command <code>codemind serve</code>.
                         </div>
                     </article>
 
@@ -184,24 +157,16 @@ git push origin main
                         <h3>How It Works</h3>
                         <ol class="step-list">
                             <li>
-                                <strong>Git Hook Trigger</strong>
-                                <p>When you run <code>git push</code>, CodeMind's pre-push hook intercepts the command.</p>
+                                <strong>Server Start</strong>
+                                <p>The MCP server runs locally, exposing security and quality tools to your LLM.</p>
                             </li>
                             <li>
-                                <strong>Diff Analysis</strong>
-                                <p>CodeMind extracts your uncommitted changes and generates a structured diff.</p>
+                                <strong>AI Interaction</strong>
+                                <p>When you say "use codemind", the AI receives instructions to use our Guardian tools.</p>
                             </li>
                             <li>
-                                <strong>Prompt Generation</strong>
-                                <p>A review prompt is built with security checklist, code context, and your custom rules.</p>
-                            </li>
-                            <li>
-                                <strong>IDE Injection</strong>
-                                <p>The prompt is automatically injected into your IDE's AI chat (Cursor, Claude Code, etc.).</p>
-                            </li>
-                            <li>
-                                <strong>Review & Proceed</strong>
-                                <p>Review the AI feedback, fix any issues, then confirm to proceed with the push.</p>
+                                <strong>Local Audit</strong>
+                                <p>Your code stays 100% local. The audit happens on your machine, never in the cloud.</p>
                             </li>
                         </ol>
                     </article>
