@@ -310,21 +310,27 @@ code {
 }
 
 .ide-sidebar {
-    width: 50px;
-    background: #161b22;
+    width: 60px;
+    background: #090c10;
     display: flex;
     flex-direction: column;
     align-items: center;
-    padding-top: var(--space-4);
-    gap: var(--space-4);
-    border-right: 1px solid var(--color-border);
+    padding-top: var(--space-6);
+    gap: var(--space-6);
+    border-right: 1px solid #21262d;
 }
 
 .ide-sidebar-icon {
-    width: 20px;
-    height: 20px;
-    background: #21262d;
-    border-radius: 4px;
+    width: 24px;
+    height: 24px;
+    background: #161b22;
+    border-radius: 6px;
+    transition: all 0.2s;
+    cursor: pointer;
+}
+
+.ide-sidebar-icon:hover {
+    background: #30363d;
 }
 
 .ide-main {
@@ -400,17 +406,20 @@ code {
 
 .chat-msg-user {
     align-self: flex-end;
-    background: var(--color-brand);
+    background: #238636; /* GitHub-style green or stay with brand? Let's use a nice blue for Antigravity */
+    background: #3b82f6;
     color: white;
-    border-bottom-right-radius: 2px;
+    border-bottom-right-radius: 4px;
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.25);
 }
 
 .chat-msg-ai {
     align-self: flex-start;
-    background: #1c2128;
-    color: var(--color-text-primary);
-    border: 1px solid var(--color-border);
-    border-bottom-left-radius: 2px;
+    background: #161b22;
+    color: #e6edf3;
+    border: 1px solid #30363d;
+    border-bottom-left-radius: 4px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
 }
 
 .chat-msg-ai .ai-header {
@@ -458,18 +467,22 @@ code {
 }
 
 .chat-pill {
-    background: #21262d;
-    border: 1px solid var(--color-border);
-    border-radius: 4px;
-    padding: 2px 8px;
+    background: #161b22;
+    border: 1px solid #30363d;
+    border-radius: 6px;
+    padding: 4px 10px;
     font-size: 10px;
-    color: var(--color-text-muted);
+    color: #8b949e;
     font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 4px;
 }
 
 .chat-pill-active {
-    color: var(--color-brand-light);
-    border-color: var(--color-border-brand);
+    color: #58a6ff;
+    border-color: #58a6ff33;
+    background: #58a6ff11;
 }
 
 @media (max-width: 1024px) {

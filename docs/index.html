@@ -132,16 +132,21 @@
                         </div>
                         <div class="ide-content">
                             <div class="ide-editor">
-                                <div style="color: #6a9955;">// Guardian Mode Active</div>
-                                <div style="margin-top: 12px;">
-                                    <span style="color: #569cd6;">class</span> <span style="color: #4ec9b0;">CodeMind</span> {<br>
-                                    &nbsp;&nbsp;<span style="color: #569cd6;">public</span> <span style="color: #dcdcaa;">void</span> activate() {<br>
-                                    &nbsp;&nbsp;&nbsp;&nbsp;<span style="color: #ce9178;">"use codemind"</span>;<br>
-                                    &nbsp;&nbsp;}<br>
-                                    }
+                                <div style="color: #6a9955;">// settings.json</div>
+                                <div style="margin-top: 12px; font-size: 12px;">
+                                    <span style="color: #d4d4d4;">{</span><br>
+                                    &nbsp;&nbsp;<span style="color: #9cdcfe;">"mcp"</span><span style="color: #d4d4d4;">: {</span><br>
+                                    &nbsp;&nbsp;&nbsp;&nbsp;<span style="color: #9cdcfe;">"servers"</span><span style="color: #d4d4d4;">: {</span><br>
+                                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: #9cdcfe;">"CodeMind"</span><span style="color: #d4d4d4;">: {</span><br>
+                                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: #9cdcfe;">"command"</span><span style="color: #d4d4d4;">:</span> <span style="color: #ce9178;">"codemind"</span><span style="color: #d4d4d4;">,</span><br>
+                                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: #9cdcfe;">"args"</span><span style="color: #d4d4d4;">: [</span><span style="color: #ce9178;">"serve"</span><span style="color: #d4d4d4;">]</span><br>
+                                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: #d4d4d4;">}</span><br>
+                                    &nbsp;&nbsp;&nbsp;&nbsp;<span style="color: #d4d4d4;">}</span><br>
+                                    &nbsp;&nbsp;<span style="color: #d4d4d4;">}</span><br>
+                                    <span style="color: #d4d4d4;">}</span>
                                 </div>
                                 <div style="margin-top: 24px; color: var(--color-text-muted);">
-                                    // Click to audit...
+                                    // Proactive Guardian mode
                                 </div>
                             </div>
                             <div class="ide-chat-panel">
@@ -163,9 +168,9 @@
                                         <div class="ai-header">🛡️ CodeMind Guardian</div>
                                         <strong>Guardian Mode Activated.</strong><br>
                                         I will now audit every line of code using:
-                                        <ul style="margin-top: 4px; padding-left: 16px;">
-                                            <li>guard_code</li>
-                                            <li>improve_code</li>
+                                        <ul style="margin-top: 8px; padding-left: 16px; display: flex; flex-direction: column; gap: 4px;">
+                                            <li><code style="background: #0d1117; padding: 2px 4px; border-radius: 4px;">guard_code</code></li>
+                                            <li><code style="background: #0d1117; padding: 2px 4px; border-radius: 4px;">improve_code</code></li>
                                         </ul>
                                     </div>
                                 </div>
