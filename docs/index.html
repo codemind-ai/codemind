@@ -45,6 +45,7 @@
             </a>
             <div class="nav-links" id="navLinks">
                 <a href="#features">Features</a>
+                <a href="#what-is-mcp">MCP</a>
                 <a href="#how-it-works">How It Works</a>
                 <a href="#ides">IDE Support</a>
                 <a href="documentation.html">Docs</a>
@@ -283,6 +284,101 @@
                         <polyline points="20 6 9 17 4 12"/>
                     </svg>
                     <span>Zero configuration required</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- What is MCP Section -->
+    <section class="mcp-section" id="what-is-mcp">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-label">Understanding MCP</span>
+                <h2 class="section-title">What is
+                    <span class="gradient-text">MCP?</span>
+                </h2>
+                <p class="section-description">
+                    Model Context Protocol (MCP) is the new standard that lets AI assistants use external tools. 
+                    Think of it like USB for AI — a universal way to plug capabilities into any AI model.
+                </p>
+            </div>
+            
+            <!-- MCP Architecture Diagram -->
+            <div class="mcp-diagram">
+                <div class="mcp-flow">
+                    <div class="mcp-node mcp-node-ide">
+                        <div class="mcp-node-icon">💻</div>
+                        <div class="mcp-node-label">Your IDE</div>
+                        <div class="mcp-node-examples">Cursor, VS Code, Windsurf</div>
+                    </div>
+                    <div class="mcp-arrow">
+                        <div class="mcp-arrow-line"></div>
+                        <div class="mcp-arrow-label">You ask for code</div>
+                    </div>
+                    <div class="mcp-node mcp-node-ai">
+                        <div class="mcp-node-icon">🤖</div>
+                        <div class="mcp-node-label">AI Assistant</div>
+                        <div class="mcp-node-examples">Claude, GPT-4, Gemini</div>
+                    </div>
+                    <div class="mcp-arrow">
+                        <div class="mcp-arrow-line mcp-arrow-bidirectional"></div>
+                        <div class="mcp-arrow-label">MCP Protocol</div>
+                    </div>
+                    <div class="mcp-node mcp-node-codemind">
+                        <div class="mcp-node-icon">🛡️</div>
+                        <div class="mcp-node-label">CodeMind Server</div>
+                        <div class="mcp-node-examples">Local Security Guardian</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- MCP Benefits -->
+            <div class="mcp-benefits">
+                <div class="mcp-benefit">
+                    <div class="mcp-benefit-icon">🔒</div>
+                    <h4>100% Local</h4>
+                    <p>Your code never leaves your machine. CodeMind runs entirely on your computer.</p>
+                </div>
+                <div class="mcp-benefit">
+                    <div class="mcp-benefit-icon">🔌</div>
+                    <h4>Universal Protocol</h4>
+                    <p>Works with any AI that supports MCP — one tool for all your coding assistants.</p>
+                </div>
+                <div class="mcp-benefit">
+                    <div class="mcp-benefit-icon">⚡</div>
+                    <h4>Real-time Auditing</h4>
+                    <p>Every line gets checked instantly. Security issues caught before they're written.</p>
+                </div>
+            </div>
+            
+            <!-- Before/After Comparison -->
+            <div class="code-comparison">
+                <h3>See the Difference</h3>
+                <div class="comparison-grid">
+                    <div class="comparison-card comparison-before">
+                        <div class="comparison-header">
+                            <span class="comparison-badge comparison-badge-bad">❌ Without CodeMind</span>
+                        </div>
+                        <pre class="comparison-code"><code><span class="code-comment"># AI generates vulnerable code</span>
+<span class="code-keyword">password</span> = <span class="code-string">"secret123"</span>  <span class="code-bad"># Hardcoded!</span>
+
+<span class="code-keyword">query</span> = <span class="code-string">f"SELECT * FROM users WHERE id = </span><span class="code-bad">{user_id}</span><span class="code-string">"</span>
+<span class="code-comment"># SQL Injection vulnerability!</span>
+
+cursor.<span class="code-func">execute</span>(query)</code></pre>
+                    </div>
+                    <div class="comparison-card comparison-after">
+                        <div class="comparison-header">
+                            <span class="comparison-badge comparison-badge-good">✅ With CodeMind</span>
+                        </div>
+                        <pre class="comparison-code"><code><span class="code-comment"># CodeMind enforces security</span>
+<span class="code-keyword">password</span> = os.environ.<span class="code-func">get</span>(<span class="code-string">"DB_PASSWORD"</span>)
+
+<span class="code-keyword">query</span> = <span class="code-string">"SELECT * FROM users WHERE id = ?"</span>
+<span class="code-comment"># Parameterized query - safe!</span>
+
+cursor.<span class="code-func">execute</span>(query, (user_id,))</code></pre>
+                    </div>
                 </div>
             </div>
         </div>
