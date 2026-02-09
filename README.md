@@ -112,8 +112,13 @@ async def login(request: LoginRequest, db = Depends(get_db)):
 ### Install via pip
 
 ```bash
-pip install codemind[mcp]
+# MCP Server (recommended - just works!)
+pip install codemind
+
+# With full CLI automation features (IDE injection, clipboard)
+pip install codemind[cli]
 ```
+
 
 ### Install in Cursor
 
@@ -319,6 +324,40 @@ MIT License — See [LICENSE](LICENSE) for details.
 
 ---
 
+## 🗺️ Roadmap & Future Goals
+
+We're just getting started. Here's our journey from Vibeathon victory to the biggest goal.
+
+```mermaid
+graph TD
+    A[🏆 <b>Vibeathon Win</b><br/>NOW] -->|Weeks 1-4| B[🌱 <b>Community Build</b>]
+    B -->|Months 1-3| C[🚀 <b>Feature Expansion</b>]
+    C -->|Months 3-6| D[💰 <b>Monetization</b>]
+    D -->|Goal| E[🦄 <b>Y Combinator</b>]
+
+    style A fill:#3B82F6,stroke:#3B82F6,color:#fff
+    style B fill:#1c1c22,stroke:#3B82F6
+    style C fill:#1c1c22,stroke:#3B82F6
+    style D fill:#1c1c22,stroke:#3B82F6
+    style E fill:#1c1c22,stroke:#facc15,stroke-width:2px
+```
+
+### ✨ The Journey Details
+
+1.  **🏆 Vibeathon Win (NOW)**: Competing with our MCP Security Guardian.
+    *   *Focus*: Security First, Privacy, and AI-Native experience.
+2.  **🌱 Community Build (Weeks 1-4)**: Growing the open-source community.
+    *   *Focus*: GitHub stars, Discord members, and real user feedback.
+3.  **🚀 Feature Expansion (Months 1-3)**: Professional-grade tooling.
+    *   *Focus*: VS Code Extension, JetBrains support, and Team features.
+4.  **💰 Monetization (Months 3-6)**: Sustainable growth.
+    *   *Focus*: Pro & Enterprise tiers for security-conscious teams.
+5.  **🦄 Y Combinator (Goal)**: Scaling to protect every developer.
+    *   *Focus*: Global adoption and defining the standard for AI code security.
+
+---
+
 <p align="center">
   <strong>CodeMind</strong> — <em>Think before ship.</em>
 </p>
+
