@@ -1,0 +1,9 @@
+{
+  "mcpServers": {
+    "codemind": {
+      "command": "codemind",
+      "args": ["serve"],
+      "env": {}
+    }
+  }
+}

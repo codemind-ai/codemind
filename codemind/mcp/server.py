@@ -506,15 +506,52 @@ def guard_code(code: str, language: str = "python", filename: str = "snippet.cod
     warning_count = sum(1 for i in report.issues if i.severity.value == "warning")
     info_count = sum(1 for i in report.issues if i.severity.value == "info")
     
+    # Build visual score bar
+    def make_score_bar(score: int, width: int = 20) -> str:
+        """Generate a visual progress bar for scores."""
+        filled = int((score / 100) * width)
+        empty = width - filled
+        
+        if score >= 90:
+            color = "🟢"
+            bar_char = "█"
+        elif score >= 70:
+            color = "🟡"
+            bar_char = "█"
+        else:
+            color = "🔴"
+            bar_char = "█"
+        
+        bar = bar_char * filled + "░" * empty
+        return f"{color} [{bar}] {score}/100"
+    
     # Build formatted summary
     status_emoji = "✅" if report.is_safe else "🚨"
     quality_emoji = "✨" if report.is_clean else "⚠️"
     
+    # Calculate separate scores
+    security_score = 100 - (len([i for i in report.issues if i.type == GuardType.SECURITY]) * 10)
+    security_score = max(0, security_score)
+    quality_score = 100 - (len([i for i in report.issues if i.type != GuardType.SECURITY]) * 5)
+    quality_score = max(0, quality_score)
+    
     summary_lines = [
-        f"## 🛡️ Guardian Audit: {report.score}/100",
+        f"## 🛡️ Guardian Audit Report",
         "",
-        f"{status_emoji} **Security**: {'PASSED' if report.is_safe else 'CRITICAL ISSUES FOUND'}",
-        f"{quality_emoji} **Quality**: {'Clean' if report.is_clean else 'Needs improvement'}",
+        f"### Overall Score: {report.score}/100",
+        f"```",
+        f"{make_score_bar(report.score)}",
+        f"```",
+        "",
+        f"### Security {status_emoji}",
+        f"```",
+        f"{make_score_bar(security_score)} {'PASSED' if report.is_safe else 'ISSUES FOUND'}",
+        f"```",
+        "",
+        f"### Quality {quality_emoji}",
+        f"```",
+        f"{make_score_bar(quality_score)} {'Clean' if report.is_clean else 'Needs work'}",
+        f"```",
         "",
         f"### Issues Found:",
         f"- 🔴 Critical: {critical_count}",

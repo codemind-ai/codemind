@@ -1,6 +1,17 @@
 # 🛡️ CodeMind MCP - AI Security & Quality Guardian
 
 <p align="center">
+<pre align="center">
+   ___          _      __  __ _           _ 
+  / __\___   __| | ___|  \/  (_)_ __   __| |
+ / /  / _ \ / _` |/ _ \ |\/| | | '_ \ / _` |
+/ /__| (_) | (_| |  __/ |  | | | | | | (_| |
+\____/\___/ \__,_|\___|_|  |_|_|_| |_|\__,_|
+</pre>
+</p>
+
+<p align="center">
+  <strong>🛡️ AI Security & Quality Guardian</strong><br>
   <em>Think before ship.</em>
 </p>
 
