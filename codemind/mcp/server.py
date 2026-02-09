@@ -1,13 +1,14 @@
 """CodeMind MCP Server.
 
 Exposes CodeMind functionality as an MCP server with tools for:
+- Up-to-date documentation fetching (like Context7)
+- Security and quality auditing (Guardian)
 - Reviewing git diffs with AI prompts
-- Managing review history
-- Validating AI response output
+- Auto-fixing code issues
 """
 
 from pathlib import Path
-from typing import Optional
+from typing import Optional, List
 
 from mcp.server.fastmcp import FastMCP
 
@@ -24,16 +25,21 @@ from ..history import (
     ReviewEntry
 )
 from .guard import Guardian, GuardType, GuardReport, GuardIssue
+from .docs import (
+    get_fetcher,
+    detect_frameworks,
+    LibraryInfo,
+    DocumentationResult,
+    LIBRARY_ALIASES,
+    HAS_HTTPX
+)
 from ..llm.fixer import CodeFixer
 from ..llm import get_llm_provider
-from ..config import load_config
+from ..cli.config import load_config
 
 
 # Initialize MCP Server
-mcp = FastMCP(
-    "CodeMind",
-    version="0.1.0",
-)
+mcp = FastMCP("CodeMind")
 
 
 @mcp.tool()
@@ -271,42 +277,272 @@ Last Review: {stats['last_review']}
 """
 
 
+# =============================================================================
+# DOCUMENTATION TOOLS (Like Context7)
+# =============================================================================
+
+@mcp.tool()
+def resolve_library(name: str) -> dict:
+    """
+    Resolve a library or framework name to a documentation ID.
+    
+    Use this to find the correct library ID before calling query_docs.
+    Works like Context7's resolve-library-id.
+    
+    Examples:
+        resolve_library("react") → "/facebook/react"
+        resolve_library("next.js") → "/vercel/next.js"
+        resolve_library("fastapi") → "/tiangolo/fastapi"
+    
+    Args:
+        name: Library or framework name (e.g., "react", "django", "express")
+    
+    Returns:
+        Dict with library_id, name, and description
+    """
+    if not HAS_HTTPX:
+        return {
+            "success": False,
+            "error": "Documentation fetching requires httpx. Install with: pip install httpx"
+        }
+    
+    try:
+        fetcher = get_fetcher()
+        if not fetcher:
+            return {
+                "success": False,
+                "error": "Could not initialize documentation fetcher"
+            }
+        
+        result = fetcher.resolve_library(name)
+        
+        if result:
+            return {
+                "success": True,
+                "library_id": result.library_id,
+                "name": result.name,
+                "description": result.description,
+                "snippet_count": result.snippet_count,
+                "hint": f"Use query_docs(\"{result.library_id}\", \"your question\") to fetch documentation"
+            }
+        else:
+            # Return available aliases as suggestions
+            suggestions = [k for k in LIBRARY_ALIASES.keys() if name.lower() in k][:5]
+            return {
+                "success": False,
+                "error": f"Could not resolve library '{name}'",
+                "suggestions": suggestions if suggestions else list(LIBRARY_ALIASES.keys())[:10]
+            }
+            
+    except Exception as e:
+        return {
+            "success": False,
+            "error": str(e)
+        }
+
+
+@mcp.tool()
+def query_docs(library_id: str, query: str, max_tokens: int = 5000) -> dict:
+    """
+    Fetch up-to-date documentation for a library.
+    
+    Use this to get current, version-specific documentation and code examples.
+    Works like Context7's query-docs.
+    
+    IMPORTANT: Call resolve_library first to get the correct library_id,
+    unless you already know it (e.g., "/facebook/react", "/vercel/next.js").
+    
+    Examples:
+        query_docs("/facebook/react", "useState hook examples")
+        query_docs("/vercel/next.js", "app router middleware")
+        query_docs("/tiangolo/fastapi", "dependency injection")
+    
+    Args:
+        library_id: Context7-compatible library ID (e.g., "/facebook/react")
+        query: The question or topic to get documentation for
+        max_tokens: Maximum tokens in response (default: 5000)
+    
+    Returns:
+        Dict with documentation content, source URL, and success status
+    """
+    if not HAS_HTTPX:
+        return {
+            "success": False,
+            "error": "Documentation fetching requires httpx. Install with: pip install httpx"
+        }
+    
+    try:
+        fetcher = get_fetcher()
+        if not fetcher:
+            return {
+                "success": False,
+                "error": "Could not initialize documentation fetcher"
+            }
+        
+        result = fetcher.query_docs(library_id, query, max_tokens)
+        
+        if result.success:
+            return {
+                "success": True,
+                "library_id": result.library_id,
+                "query": result.query,
+                "documentation": result.content,
+                "source_url": result.source_url,
+                "hint": "Use this documentation to write current, verified code"
+            }
+        else:
+            return {
+                "success": False,
+                "library_id": library_id,
+                "query": query,
+                "error": result.error
+            }
+            
+    except Exception as e:
+        return {
+            "success": False,
+            "error": str(e)
+        }
+
+
+@mcp.tool()
+def detect_code_libraries(code: str) -> dict:
+    """
+    Detect frameworks and libraries used in a code snippet.
+    
+    Analyzes imports and patterns to identify libraries, then suggests
+    documentation queries for each.
+    
+    Args:
+        code: Source code to analyze
+    
+    Returns:
+        Dict with detected libraries and suggested documentation queries
+    """
+    detected = detect_frameworks(code)
+    
+    if not detected:
+        return {
+            "success": True,
+            "detected": [],
+            "message": "No specific frameworks detected. Code appears to use standard library only."
+        }
+    
+    suggestions = []
+    for lib in detected:
+        lib_id = LIBRARY_ALIASES.get(lib.lower())
+        suggestions.append({
+            "library": lib,
+            "library_id": lib_id,
+            "suggested_action": f"query_docs(\"{lib_id}\", \"best practices and patterns\")" if lib_id else f"resolve_library(\"{lib}\")"
+        })
+    
+    return {
+        "success": True,
+        "detected": detected,
+        "suggestions": suggestions,
+        "hint": "Fetch documentation for these libraries to ensure you're using current APIs"
+    }
+
+
+# =============================================================================
+# GUARDIAN TOOLS (Security & Quality)
+# =============================================================================
+
+
 @mcp.tool()
 def guard_code(code: str, language: str = "python", filename: str = "snippet.code") -> dict:
     """
-    Perform a security and quality audit on a code snippet.
+    🛡️ Perform comprehensive security and quality audit on code.
     
-    Checks for security vulnerabilities, 'AI slop', and clean code violations.
+    DETECTS:
+    - SQL Injection vulnerabilities
+    - XSS (Cross-Site Scripting)
+    - Command Injection
+    - Path Traversal
+    - Credential Exposure
+    - Unsafe Deserialization
+    - SSRF (Server-Side Request Forgery)
+    - AI Slop (redundant comments, poor naming)
+    - And 50+ more security patterns
     
     Args:
         code: The code content to audit
-        language: Programming language (python, javascript, etc.)
-        filename: Optional filename for context
+        language: Programming language (python, javascript, typescript, etc.)
+        filename: Optional filename for better context
     
     Returns:
-        Audit report including security score and list of issues
+        Comprehensive audit report with issues categorized by type and severity
     """
     guardian = Guardian()
     report = guardian.audit(code, filename)
     
-    issues_list = [
-        {
-            "type": issue.type.value,
+    # Categorize issues
+    security_issues = []
+    quality_issues = []
+    vulnerability_summary = {}
+    
+    for issue in report.issues:
+        issue_dict = {
             "severity": issue.severity.value,
             "message": issue.message,
             "line": issue.line,
-            "snippet": issue.code_snippet
+            "snippet": issue.code_snippet,
+            "suggestion": issue.suggestion,
+            "vulnerability_type": issue.vulnerability_type
         }
-        for issue in report.issues
+        
+        if issue.type == GuardType.SECURITY:
+            security_issues.append(issue_dict)
+            vuln_type = issue.vulnerability_type or "OTHER"
+            if vuln_type not in vulnerability_summary:
+                vulnerability_summary[vuln_type] = 0
+            vulnerability_summary[vuln_type] += 1
+        else:
+            quality_issues.append(issue_dict)
+    
+    # Generate severity counts
+    critical_count = sum(1 for i in report.issues if i.severity.value == "critical")
+    warning_count = sum(1 for i in report.issues if i.severity.value == "warning")
+    info_count = sum(1 for i in report.issues if i.severity.value == "info")
+    
+    # Build formatted summary
+    status_emoji = "✅" if report.is_safe else "🚨"
+    quality_emoji = "✨" if report.is_clean else "⚠️"
+    
+    summary_lines = [
+        f"## 🛡️ Guardian Audit: {report.score}/100",
+        "",
+        f"{status_emoji} **Security**: {'PASSED' if report.is_safe else 'CRITICAL ISSUES FOUND'}",
+        f"{quality_emoji} **Quality**: {'Clean' if report.is_clean else 'Needs improvement'}",
+        "",
+        f"### Issues Found:",
+        f"- 🔴 Critical: {critical_count}",
+        f"- 🟡 Warning: {warning_count}",
+        f"- 🔵 Info: {info_count}",
     ]
+    
+    if vulnerability_summary:
+        summary_lines.append("")
+        summary_lines.append("### Vulnerabilities by Type:")
+        for vuln_type, count in sorted(vulnerability_summary.items()):
+            summary_lines.append(f"- {vuln_type}: {count}")
     
     return {
         "success": True,
         "score": report.score,
         "is_safe": report.is_safe,
         "is_clean": report.is_clean,
-        "issues": issues_list,
-        "summary": f"Audit complete. Score: {report.score}/100. Found {len(issues_list)} issues."
+        "security_issues": security_issues,
+        "quality_issues": quality_issues,
+        "vulnerability_summary": vulnerability_summary,
+        "counts": {
+            "critical": critical_count,
+            "warning": warning_count,
+            "info": info_count,
+            "total": len(report.issues)
+        },
+        "summary": "\n".join(summary_lines)
     }
 
 
@@ -368,24 +604,244 @@ def improve_code(code: str, issue_descriptions: Optional[str] = None, filename: 
         }
 
 
+@mcp.tool()
+def scan_and_fix(code: str, language: str = "python", filename: str = "code.py") -> dict:
+    """
+    🔒 SECURITY SCANNER: Detect and auto-fix vulnerabilities in one action.
+    
+    Scans for dangerous patterns and immediately provides fixed code:
+    - SQL Injection → Parameterized queries
+    - XSS → Proper escaping/sanitization
+    - Command Injection → Safe subprocess calls
+    - Credential Exposure → Environment variables
+    - Path Traversal → Safe path handling
+    - And more...
+    
+    Args:
+        code: Source code to scan and fix
+        language: Programming language (python, javascript, typescript)
+        filename: Filename for context
+    
+    Returns:
+        Original issues found, fixed code, and diff showing changes
+    """
+    import difflib
+    
+    guardian = Guardian()
+    report = guardian.audit(code, filename)
+    
+    if not report.issues:
+        return {
+            "success": True,
+            "has_issues": False,
+            "score": 100,
+            "message": "✅ No security issues detected! Code is clean.",
+            "fixed_code": code
+        }
+    
+    # Categorize by vulnerability type
+    vuln_summary = {}
+    critical_issues = []
+    all_suggestions = []
+    
+    for issue in report.issues:
+        if issue.type == GuardType.SECURITY:
+            vuln_type = issue.vulnerability_type or "OTHER"
+            if vuln_type not in vuln_summary:
+                vuln_summary[vuln_type] = []
+            vuln_summary[vuln_type].append({
+                "line": issue.line,
+                "snippet": issue.code_snippet,
+                "message": issue.message,
+                "suggestion": issue.suggestion
+            })
+            
+            if issue.severity.value == "critical":
+                critical_issues.append(issue)
+        
+        if issue.suggestion:
+            all_suggestions.append(f"Line {issue.line}: {issue.message}\n   → FIX: {issue.suggestion}")
+    
+    # Try to auto-fix using LLM
+    fix_prompt = []
+    fix_prompt.append("Fix the following security vulnerabilities in this code:\n")
+    for issue in report.issues:
+        if issue.suggestion:
+            fix_prompt.append(f"- Line {issue.line}: {issue.message}")
+            fix_prompt.append(f"  Fix: {issue.suggestion}")
+    
+    fixed_code = code
+    diff_output = ""
+    fix_applied = False
+    
+    try:
+        config = load_config()
+        llm = get_llm_provider(
+            provider_type=config.llm.provider,
+            model=config.llm.model,
+            api_key=config.llm.api_key,
+            base_url=config.llm.base_url
+        )
+        fixer = CodeFixer(llm)
+        
+        fixed_code = fixer.generate_fix(filename, code, "\n".join(fix_prompt))
+        
+        # Generate diff
+        diff_lines = difflib.unified_diff(
+            code.splitlines(keepends=True),
+            fixed_code.splitlines(keepends=True),
+            fromfile=f"original/{filename}",
+            tofile=f"fixed/{filename}"
+        )
+        diff_output = "".join(diff_lines)
+        fix_applied = True
+        
+        # Verify fix
+        new_report = guardian.audit(fixed_code, filename)
+        new_score = new_report.score
+        
+    except Exception as e:
+        new_score = report.score
+        diff_output = f"Auto-fix unavailable: {e}\n\nManual fixes required:\n" + "\n".join(all_suggestions)
+    
+    # Build report
+    report_lines = [
+        "# 🔒 Security Scan Report",
+        "",
+        f"**Original Score:** {report.score}/100",
+    ]
+    
+    if fix_applied:
+        report_lines.append(f"**Fixed Score:** {new_score}/100")
+    
+    report_lines.extend([
+        "",
+        "## 🚨 Vulnerabilities Found:",
+        ""
+    ])
+    
+    for vuln_type, issues in vuln_summary.items():
+        report_lines.append(f"### {vuln_type} ({len(issues)} issue{'s' if len(issues) > 1 else ''})")
+        for issue in issues[:3]:  # Show max 3 per type
+            report_lines.append(f"- **Line {issue['line']}**: `{issue['snippet'][:60]}...`")
+            if issue['suggestion']:
+                report_lines.append(f"  - 💡 {issue['suggestion']}")
+        if len(issues) > 3:
+            report_lines.append(f"  - ...and {len(issues) - 3} more")
+        report_lines.append("")
+    
+    return {
+        "success": True,
+        "has_issues": True,
+        "original_score": report.score,
+        "fixed_score": new_score if fix_applied else None,
+        "fix_applied": fix_applied,
+        "vulnerabilities": vuln_summary,
+        "critical_count": len(critical_issues),
+        "total_issues": len(report.issues),
+        "fixed_code": fixed_code,
+        "diff": diff_output,
+        "report": "\n".join(report_lines),
+        "suggestions": all_suggestions[:10]  # Top 10 suggestions
+    }
+
+
+
 @mcp.resource("guardian://best-practices")
 def guardian_best_practices() -> str:
-    """Get security and clean code best practices."""
-    return """CodeMind Guardian - Best Practices
-=================================
+    """Get comprehensive security and clean code best practices."""
+    return """# 🛡️ CodeMind Guardian - Best Practices
 
-Security:
-1. Never hardcode secrets (passwords, keys, tokens). Use env vars.
-2. Sanitize all user input before using it in database queries or HTML.
-3. Avoid dangerous functions like eval(), exec(), or innerHTML with untrusted data.
-4. Use safe deserialization (e.g., yaml.safe_load instead of yaml.load).
+## Security Essentials
 
-Clean Code & AI Slop Prevention:
-1. Names should be descriptive. Avoid generic names like 'data' or 'result'.
-2. Comments should explain 'why', not 'what'. Avoid redundant comments.
-3. Keep functions focused on a single responsibility (SRP).
-4. Remove debugging statements (print, console.log) before commit.
+### Secrets & Credentials
+- ❌ NEVER hardcode passwords, API keys, tokens, or secrets
+- ✅ Use environment variables: `os.environ.get("API_KEY")`
+- ✅ Use secret managers (AWS Secrets Manager, HashiCorp Vault)
+- ✅ Add secrets to .gitignore and .env.example
+
+### Input Validation
+- ❌ NEVER trust user input directly
+- ✅ Validate and sanitize ALL user input
+- ✅ Use parameterized queries for databases:
+  ```python
+  # BAD: cursor.execute(f"SELECT * FROM users WHERE id = {user_id}")
+  # GOOD: cursor.execute("SELECT * FROM users WHERE id = ?", (user_id,))
+  ```
+
+### Dangerous Functions (AVOID)
+- Python: `eval()`, `exec()`, `pickle.load()` with untrusted data
+- JavaScript: `eval()`, `innerHTML`, `document.write()` with user input
+- General: `yaml.load()` → use `yaml.safe_load()`
+- General: `subprocess.shell=True` with user input
+
+### Authentication & Authorization
+- ✅ Hash passwords with bcrypt or argon2 (never MD5/SHA1)
+- ✅ Use HTTPS everywhere
+- ✅ Implement rate limiting
+- ✅ Validate JWT tokens server-side
+
+---
+
+## Clean Code Principles
+
+### Naming
+- ❌ Avoid: `data`, `result`, `temp`, `val`, `x`, `handler`
+- ✅ Use: `userProfile`, `validationErrors`, `cachedResponse`
+- ✅ Functions should describe actions: `calculateTotalPrice()`, `validateUserInput()`
+
+### Comments (No AI Slop)
+- ❌ Avoid: "// This function adds two numbers"
+- ❌ Avoid: "// Loop through the array"
+- ✅ Explain WHY not WHAT: "// Rate limit to prevent DDoS attacks"
+
+### SOLID Principles
+1. **Single Responsibility**: One function = one job
+2. **Open/Closed**: Extend, don't modify
+3. **Liskov Substitution**: Subtypes must be substitutable
+4. **Interface Segregation**: Small, focused interfaces
+5. **Dependency Inversion**: Depend on abstractions
+
+### DRY (Don't Repeat Yourself)
+- Extract repeated code into functions
+- Use constants for magic numbers/strings
+- Create reusable utilities
+
+---
+
+## Framework-Specific Patterns
+
+### React/Next.js
+- Use `useCallback` and `useMemo` for expensive operations
+- Avoid inline function definitions in JSX
+- Use React Query/SWR for data fetching
+- Validate props with TypeScript or PropTypes
+
+### FastAPI/Python
+- Use Pydantic models for request validation
+- Implement dependency injection for testing
+- Use async/await for I/O-bound operations
+- Add proper exception handlers
+
+### Express/Node.js
+- Use helmet.js for security headers
+- Validate with Joi or Zod
+- Use async error handlers
+- Implement proper logging
+
+---
+
+## Before Committing Checklist
+
+- [ ] No hardcoded secrets
+- [ ] All user input validated
+- [ ] No debug/print statements
+- [ ] No TODO comments left unresolved
+- [ ] Functions are small and focused
+- [ ] Variable names are descriptive
+- [ ] guard_code score ≥ 90
 """
+
 
 @mcp.prompt()
 def code_review_prompt(
@@ -440,24 +896,163 @@ To ensure high quality and security, please follow these steps:
 @mcp.prompt()
 def codemind() -> str:
     """
-    Activate the full CodeMind Guardian suite for security, quality, and clean code.
-    Use this to ensure your code is professional, safe, and free of 'AI slop'.
+    🛡️ USE CODEMIND - Unified security & quality workflow.
+    
+    Add "use codemind" at the end of ANY coding request to activate:
+    - Automatic documentation fetching for used frameworks
+    - Security vulnerability scanning (SQL injection, XSS, etc.)
+    - Code quality audit (no AI slop)
+    - Auto-fix for all detected issues
+    
+    Example: "Make me a login form with validation... use codemind"
     """
-    return """You have activated CodeMind Guardian. From now on, you must ensure that every piece of code you generate or modify meets the highest standards of security and cleanliness.
+    return '''🛡️ **CODEMIND ACTIVATED** - Security & Quality Mode
 
-Follow these rules:
-1. **Security First**: Before finalizing any code, use the `guard_code` tool to check for vulnerabilities.
-2. **No AI Slop**: Remove redundant comments (e.g., "// This function adds X"), use descriptive names, and follow SOLID/DRY principles.
-3. **Verify & Improve**: If `guard_code` returns a score < 90, you MUST use it to find issues and then use the `improve_code` tool (or manually refactor) until the code is perfect.
-4. **Best Practices**: Always reference `guardian://best-practices` for authoritative patterns.
+When the user adds "use codemind" to their request, you MUST follow this workflow:
 
-Your goal is to produce code that is indistinguishable from that of a senior system architect."""
+---
+
+## 🔄 AUTOMATIC WORKFLOW
+
+### STEP 1: Analyze Request
+Identify what the user is building:
+- What frameworks/libraries are needed? (React, FastAPI, Django, etc.)
+- What security-sensitive features? (auth, database, file upload, payments)
+- What language? (Python, JavaScript, TypeScript)
+
+### STEP 2: Fetch Documentation (AUTOMATIC)
+For each detected framework, automatically call:
+```
+resolve_library("framework_name")
+query_docs(library_id, "relevant topic")
+```
+
+Common scenarios:
+- Login/Register → fetch auth library docs (NextAuth, Passport, etc.)
+- Database → fetch ORM docs (Prisma, SQLAlchemy, Sequelize)
+- API → fetch framework docs (FastAPI, Express, etc.)
+- Forms → fetch validation docs (Zod, Pydantic)
+
+### STEP 3: Write Secure Code
+Follow these STRICT rules:
+
+**🔴 CRITICAL SECURITY (NEVER VIOLATE):**
+```
+❌ NEVER: password = "secret123"  
+✅ ALWAYS: password = os.environ.get("PASSWORD")
+
+❌ NEVER: cursor.execute(f"SELECT * FROM users WHERE id = {user_id}")
+✅ ALWAYS: cursor.execute("SELECT * FROM users WHERE id = ?", (user_id,))
+
+❌ NEVER: element.innerHTML = userInput
+✅ ALWAYS: element.textContent = userInput (or sanitize with DOMPurify)
+
+❌ NEVER: os.system(user_command)
+✅ ALWAYS: subprocess.run([cmd, arg], shell=False)
+
+❌ NEVER: eval(user_input) or exec(user_input)
+✅ ALWAYS: Use safe alternatives (JSON.parse, ast.literal_eval)
+```
+
+**🟡 CODE QUALITY (ALWAYS FOLLOW):**
+```
+❌ AVOID: data = get_data(); result = process(data)
+✅ PREFER: user_profile = fetch_user_profile(); validation_result = validate_input(user_profile)
+
+❌ AVOID: // This function returns the user
+✅ PREFER: No comment needed if function name is clear: get_user()
+
+❌ AVOID: try: ... except Exception: pass
+✅ PREFER: try: ... except SpecificError as e: logger.error(e)
+```
+
+### STEP 4: Scan & Fix (AUTOMATIC)
+Before presenting code, YOU MUST:
+
+```python
+# 1. Audit the code
+result = scan_and_fix(code=YOUR_CODE, language="python")
+
+# 2. Check result
+if result["has_issues"]:
+    # Use the fixed code instead!
+    YOUR_CODE = result["fixed_code"]
+
+# 3. If still has critical issues, fix manually
+if result["critical_count"] > 0:
+    # Apply suggestions from result["suggestions"]
+```
+
+**NEVER return code with:**
+- Score < 80
+- Any CRITICAL security issues
+- Hardcoded secrets
+- SQL injection vulnerabilities
+- XSS vulnerabilities
+
+---
+
+## 📋 QUICK REFERENCE
+
+| User Request | Auto-fetch Docs | Security Focus |
+|--------------|-----------------|----------------|
+| "login/register" | Auth library, JWT, bcrypt | Credential storage, session management |
+| "database CRUD" | ORM/driver docs | SQL injection, parameterized queries |
+| "file upload" | File handling, multer | Path traversal, file validation |
+| "payment integration" | Payment SDK docs | PCI compliance, secret management |
+| "API endpoints" | Framework docs | Input validation, rate limiting |
+| "forms" | Validation library | XSS, CSRF protection |
+
+---
+
+## 🎯 OUTPUT FORMAT
+
+When returning code to user, include:
+
+1. **Code** with security best practices applied
+2. **Security note** if applicable:
+   ```
+   🛡️ Security: Passwords hashed with bcrypt, SQL uses parameterized queries
+   ```
+3. **Setup instructions** for required env vars:
+   ```
+   📋 Required environment variables:
+   - DATABASE_URL: Your database connection string
+   - JWT_SECRET: Random secret for JWT tokens
+   ```
+
+---
+
+## ⚡ EXAMPLE FLOW
+
+**User:** "Make me a login system with email/password using FastAPI and PostgreSQL, use codemind"
+
+**You automatically:**
+1. `query_docs("/tiangolo/fastapi", "authentication JWT security")`
+2. `query_docs("/sqlalchemy/sqlalchemy", "parameterized queries")`
+3. Write code following security rules
+4. `scan_and_fix(code=login_code, language="python")`
+5. Return secure code with score ≥ 90
+
+---
+
+**Remember: You are the security gate. No vulnerable code passes through.**
+'''
 
 
-def run_server(transport: str = "stdio"):
-    """Run the MCP server with the specified transport."""
-    mcp.run(transport=transport)
+def run_mcp_server(transport: str = "stdio", host: str = "localhost", port: int = 8000):
+    """Run the MCP server with the specified transport.
+    
+    Args:
+        transport: Transport type ("stdio" or "streamable-http")
+        host: HTTP host for streamable-http transport
+        port: HTTP port for streamable-http transport
+    """
+    if transport == "streamable-http":
+        mcp.run(transport=transport, host=host, port=port)
+    else:
+        mcp.run(transport=transport)
 
 
 if __name__ == "__main__":
-    run_server()
+    run_mcp_server()
