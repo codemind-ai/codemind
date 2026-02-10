@@ -41,3 +41,5 @@ Thumbs.db
 # Project specific
 .codemind.yml
 *.log
+ROADMAP.md
+ROADMAP_EVO.md

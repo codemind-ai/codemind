@@ -1,8 +1,6 @@
 """codemind AI - Main CLI entrypoint.
 
 Think before ship. Standardized AI code reviews and commit messages.
-
-🏆 Vibeathon 2025 Entry
 """
 
 import sys
