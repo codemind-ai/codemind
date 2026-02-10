@@ -83,9 +83,9 @@
                     <span class="title-highlight">CodeMind</span> <span class="no-break">MCP <span class="title-underline">Guardian</span></span>
                 </h1>
                 <p class="hero-description">
-                    Enterprise-grade 🛡️ <strong>security for AI-generated code</strong>. 
+                    Enterprise-grade security for AI-generated code. 
                     SAST with 50+ rules, secrets detection, dependency CVE scanning, infrastructure auditing, and SARIF reports — all locally in your IDE.
-                    Just say <strong>"use codemind"</strong>.
+                    Just say <strong>"use codemind"</strong> to instantly secure your SaaS with rate limits, RLS, and more.
                 </p>
                 <div class="hero-cta">
                     <a href="#installation" class="btn btn-primary btn-lg">
@@ -173,6 +173,7 @@
                                             <li>🔍 <code style="background: #0d1117; padding: 2px 4px; border-radius: 4px;">deep_security_scan</code></li>
                                             <li>🔑 <code style="background: #0d1117; padding: 2px 4px; border-radius: 4px;">scan_secrets</code></li>
                                             <li>📦 <code style="background: #0d1117; padding: 2px 4px; border-radius: 4px;">scan_dependencies</code></li>
+                                            <li>🚀 <code style="background: #0d1117; padding: 2px 4px; border-radius: 4px;">audit_launch_checklist</code></li>
                                             <li>🏗️ <code style="background: #0d1117; padding: 2px 4px; border-radius: 4px;">scan_iac_file</code></li>
                                             <li>📋 <code style="background: #0d1117; padding: 2px 4px; border-radius: 4px;">export_security_report</code></li>
                                         </ul>
@@ -470,6 +471,9 @@ cursor.<span class="code-func">execute</span>(query, (user_id,))</code></pre>
                 <p class="section-description">
                     Enterprise-grade protection. 100% local. Zero cloud dependencies. Rivaling Snyk, Semgrep & CodeQL.
                 </p>
+                <div class="saas-badge">
+                    <span>Instant SaaS Security with "use codemind"</span>
+                </div>
             </div>
             <div class="features-grid">
                 <div class="feature-card feature-card-large">
@@ -478,9 +482,19 @@ cursor.<span class="code-func">execute</span>(query, (user_id,))</code></pre>
                             <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
                         </svg>
                     </div>
-                    <h3>🛡️ Deep Security Scan</h3>
+                    <h3>Deep Security Scan</h3>
                     <p>Multi-layer analysis combining SAST, secrets detection, and quality auditing in a single call. Get a security score with every code generation.</p>
                     <div class="feature-tag">deep_security_scan</div>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon feature-icon-secondary">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                            <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/>
+                        </svg>
+                    </div>
+                    <h3>Launch Readiness Audit</h3>
+                    <p>Proactive security: <strong>"use codemind"</strong> automatically secures your SaaS with rate limits, RLS, CAPTCHA, and server-side validation. Ship production-ready code every time.</p>
+                    <div class="feature-tag">audit_launch_checklist</div>
                 </div>
                 <div class="feature-card">
                     <div class="feature-icon">
@@ -488,7 +502,7 @@ cursor.<span class="code-func">execute</span>(query, (user_id,))</code></pre>
                             <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 15l-5-5 1.41-1.41L11 14.17l7.59-7.59L20 8l-9 9z"/>
                         </svg>
                     </div>
-                    <h3>🔍 SAST Scanner</h3>
+                    <h3>SAST Scanner</h3>
                     <p>50+ vulnerability patterns: SQL injection, XSS, SSRF, command injection, path traversal, and more. Auto-fix with AI.</p>
                 </div>
                 <div class="feature-card">
@@ -497,7 +511,7 @@ cursor.<span class="code-func">execute</span>(query, (user_id,))</code></pre>
                             <path d="M15 7h3a5 5 0 015 5 5 5 0 01-5 5h-3m-6 0H6a5 5 0 01-5-5 5 5 0 015-5h3M8 12h8"/>
                         </svg>
                     </div>
-                    <h3>🔑 Secrets Detection</h3>
+                    <h3>Secrets Detection</h3>
                     <p>30+ API key patterns (AWS, GCP, Stripe, GitHub, etc.) plus Shannon entropy analysis for unknown secrets. Zero false positives.</p>
                 </div>
                 <div class="feature-card">
@@ -506,7 +520,7 @@ cursor.<span class="code-func">execute</span>(query, (user_id,))</code></pre>
                             <path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/>
                         </svg>
                     </div>
-                    <h3>📦 SCA (Dependencies)</h3>
+                    <h3>SCA (Dependencies)</h3>
                     <p>Scan 12 lockfile formats for CVEs via OSV.dev. Python, Node.js, Go, Rust, Ruby, PHP — privacy-preserving, no source code sent.</p>
                 </div>
                 <div class="feature-card">
@@ -515,7 +529,7 @@ cursor.<span class="code-func">execute</span>(query, (user_id,))</code></pre>
                             <path d="M4 7V4h16v3M9 20h6M12 4v16"/>
                         </svg>
                     </div>
-                    <h3>🏗️ IaC Scanner</h3>
+                    <h3>IaC Scanner</h3>
                     <p>Dockerfile, GitHub Actions, docker-compose security. Catches root users, secrets in ENV, unpinned images, supply chain attacks.</p>
                 </div>
                 <div class="feature-card">
@@ -524,8 +538,17 @@ cursor.<span class="code-func">execute</span>(query, (user_id,))</code></pre>
                             <path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/>
                         </svg>
                     </div>
-                    <h3>📋 SARIF Reports</h3>
+                    <h3>SARIF Reports</h3>
                     <p>Industry-standard SARIF v2.1.0 with CWE/OWASP mapping. Plus HTML, Markdown, JSON, CSV exports for CI/CD integration.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon feature-icon-danger">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                            <path d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+                        </svg>
+                    </div>
+                    <h3>Safety Lock</h3>
+                    <p>Guarantees AI never deletes databases or critical data. Prevents <code>DROP</code>, <code>TRUNCATE</code>, and unconditional <code>DELETE</code> automatically.</p>
                 </div>
             </div>
         </div>
@@ -847,7 +870,6 @@ cursor.<span class="code-func">execute</span>(query, (user_id,))</code></pre>
             </div>
         </div>
     </footer>
-
     <script src="assets/js/main.js"></script>
 </body>
 </html>

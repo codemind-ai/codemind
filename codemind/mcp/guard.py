@@ -28,6 +28,7 @@ class GuardType(Enum):
     SECURITY = "security"
     QUALITY = "quality"
     AI_SLOP = "ai_slop"
+    DATA_LOSS = "data_loss"
 
 
 @functools.lru_cache(maxsize=256)
@@ -429,7 +430,6 @@ SECURITY_PATTERNS: List[Tuple[str, str, RuleSeverity, str, str, str]] = [
      "Avoid nested quantifiers in regex. Use possessive quantifiers or atomic groups",
      None,
      "REGEX_DOS"),
-    
     # RACE CONDITIONS
     (r'if\s+os\.path\.exists.*\n.*open\s*\(',
      "Race Condition: TOCTOU vulnerability",
@@ -437,6 +437,35 @@ SECURITY_PATTERNS: List[Tuple[str, str, RuleSeverity, str, str, str]] = [
      "Use try/except instead of check-then-use patterns",
      None,
      "RACE_CONDITION"),
+]
+
+
+# DESTRUCTIVE ACTION PATTERNS (Safety Lock)
+# Patterns that could lead to irreversible data loss
+DESTRUCTIVE_PATTERNS: List[Tuple[str, str, RuleSeverity, str, str]] = [
+    (r'\bDROP\s+(DATABASE|TABLE|SCHEMA|INDEX|COLLECTION)\b',
+     "Destructive Action: Deleting database objects",
+     RuleSeverity.CRITICAL,
+     "Ensure this action is intentional. Consider soft deletes or archiving instead.",
+     "DATA_LOSS"),
+    
+    (r'\bDELETE\s+FROM\s+\w+\s*(?!.*\bWHERE\b).*;',
+     "Destructive Action: Unconditional DELETE (missing WHERE clause)",
+     RuleSeverity.CRITICAL,
+     "NEVER delete all rows without a WHERE clause unless explicitly intended.",
+     "DATA_LOSS"),
+    
+    (r'\bTRUNCATE\s+(TABLE|COLLECTION)\b',
+     "Destructive Action: Truncating table/collection",
+     RuleSeverity.CRITICAL,
+     "Truncate is irreversible and bypasses triggers. Be extremely cautious.",
+     "DATA_LOSS"),
+    
+    (r'\bflushall\b|\bflushdb\b',
+     "Destructive Action: Wiping Redis/In-memory database",
+     RuleSeverity.CRITICAL,
+     "Flushing will clear all data in the database immediately.",
+     "DATA_LOSS"),
 ]
 
 
@@ -648,12 +677,32 @@ class Guardian:
     def __init__(self):
         self.security_guard = SecurityGuard()
         self.quality_guard = QualityGuard()
+        self._destructive_patterns = [
+            (_compile_pattern(p[0]), p[1], p[2], p[3], p[4])
+            for p in DESTRUCTIVE_PATTERNS
+        ]
     
     def audit(self, code: str, filename: str = "unknown") -> GuardReport:
         """Run complete security and quality audit."""
         issues = []
         issues.extend(self.security_guard.audit(code, filename))
         issues.extend(self.quality_guard.audit(code, filename))
+        
+        # Check destructive patterns (Safety Lock)
+        lines = code.splitlines()
+        for i, line in enumerate(lines, 1):
+            for pattern, msg, severity, suggestion, vuln_type in self._destructive_patterns:
+                if pattern.search(line):
+                    issues.append(GuardIssue(
+                        type=GuardType.DATA_LOSS,
+                        severity=severity,
+                        message=msg,
+                        file=filename,
+                        line=i,
+                        code_snippet=line.strip(),
+                        suggestion=suggestion,
+                        vulnerability_type=vuln_type
+                    ))
         
         # Add AST-based analysis (Phase E1)
         try:

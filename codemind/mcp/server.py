@@ -44,6 +44,7 @@ from ..cli.config import load_config
 from ..secrets import SecretsDetector
 from ..iac import IaCScanner
 from ..reports import SARIFGenerator, ReportFormatter
+from .checklist import LaunchAudit, generate_secure_boilerplate
 
 
 # Initialize MCP Server
@@ -1504,6 +1505,21 @@ def guardian_best_practices() -> str:
 - [ ] Functions are small and focused
 - [ ] Variable names are descriptive
 - [ ] guard_code score ≥ 90
+
+---
+
+## 🚀 The "Vibe Coder" Launch Checklist
+*Run `audit_launch_checklist()` to verify these automatically.*
+
+- **Rate Limits**: Protect your API from abuse and DDoS.
+- **Row Level Security (RLS)**: Ensure users can ONLY access their own data.
+- **CAPTCHA**: Protect auth and forms from bot spam/brute-force.
+- **Server-side Validation**: NEVER trust client-side data (use Zod/Pydantic).
+- **API Keys Secured**: No hardcoded keys in source code.
+- **Env Vars**: Use `.env` and `process.env`/`os.environ`.
+- **CORS Restrictions**: Limit origins to trusted domains only.
+- **Dependency Audit**: Scan for known vulnerabilities in your packages.
+- **Safety Lock**: Prevents accidental `DROP`, `TRUNCATE`, or `DELETE` without `WHERE`.
 """
 
 
@@ -1826,3 +1842,156 @@ def run_mcp_server(transport: str = "stdio", host: str = "localhost", port: int 
 
 if __name__ == "__main__":
     run_mcp_server()
+@mcp.tool()
+async def audit_launch_checklist(code: str, filename: str = "code.py") -> dict:
+    """
+    🚀 LAUNCH CHECKLIST AUDIT: Verify code against the essential production checklist.
+    
+    Checks for:
+    → Rate limits
+    → Row Level Security (RLS)
+    → CAPTCHA on auth + forms
+    → Server-side validation
+    → Env vars usage
+    → CORS restrictions
+    → Safety Lock (Destructive actions)
+    → (And runs Dependency + Secrets scan)
+    
+    Args:
+        code: Source code to audit
+        filename: Filename for context
+    
+    Returns:
+        Checklist report with passed/failed/warning status for each production-ready item.
+    """
+    auditor = LaunchAudit()
+    checklist_results = auditor.audit(code, filename)
+    
+    # Also run secrets scan
+    detector = SecretsDetector()
+    secret_findings = detector.scan(code, filename)
+    secrets_item = {
+        "id": "api_keys",
+        "name": "API Keys Secured",
+        "status": "passed" if not secret_findings else "failed",
+        "message": "No hardcoded secrets found." if not secret_findings else f"Found {len(secret_findings)} hardcoded secrets!",
+        "suggestion": "" if not secret_findings else "Move secrets to environment variables.",
+        "category": "Security"
+    }
+    
+    # Also check if it's a lockfile for dependency audit
+    from ..sca import DependencyScanner
+    scanner = DependencyScanner()
+    sca_item = {
+        "id": "dependencies",
+        "name": "Dependency Audit",
+        "status": "warning",
+        "message": "Run scan_dependencies() for a full audit.",
+        "suggestion": "Regularly audit dependencies for CVEs.",
+        "category": "Supply Chain"
+    }
+    
+    if filename.lower() in scanner.PARSERS:
+        report = scanner.scan_sync(Path(filename).parent)
+        sca_item.update({
+            "status": "passed" if not report.vulnerable else "failed",
+            "message": f"Found {len(report.vulnerable)} vulnerable packages." if report.vulnerable else "No vulnerable packages found in lockfile.",
+            "suggestion": "Update vulnerable dependencies to recommended versions." if report.vulnerable else ""
+        })
+
+    # Combine everything
+    all_items = checklist_results + [secrets_item, sca_item]
+    
+    passed_count = sum(1 for i in all_items if i.status == "passed")
+    failed_count = sum(1 for i in all_items if i.status == "failed")
+    warning_count = sum(1 for i in all_items if i.status == "warning")
+    
+    progress = int((passed_count / len(all_items)) * 100)
+    
+    # Format report
+    report_lines = [
+        f"# 🚀 Launch Readiness Report",
+        f"",
+        f"**Progress:** {progress}% compliant",
+        f"```",
+        f"Passed:  {passed_count} ✅",
+        f"Failed:  {failed_count} 🚨",
+        f"Warning: {warning_count} ⚠️",
+        f"```",
+        f"",
+        f"## 📋 Detailed Checklist",
+        f""
+    ]
+    
+    for item in all_items:
+        status_emoji = "✅" if item.status == "passed" else "🚨" if item.status == "failed" else "⚠️"
+        report_lines.append(f"### {status_emoji} {item.name}")
+        report_lines.append(f"- **Status:** {item.status.upper()}")
+        report_lines.append(f"- **Message:** {item.message}")
+        if item.suggestion:
+            report_lines.append(f"- **💡 Fix:** {item.suggestion}")
+        report_lines.append("")
+
+    return {
+        "success": True,
+        "progress": progress,
+        "passed": passed_count,
+        "failed": failed_count,
+        "warnings": warning_count,
+        "items": [
+            {
+                "id": i.id if hasattr(i, 'id') else i['id'],
+                "name": i.name if hasattr(i, 'name') else i['name'],
+                "status": i.status if hasattr(i, 'status') else i['status'],
+                "category": i.category if hasattr(i, 'category') else i['category'],
+                "message": i.message if hasattr(i, 'message') else i['message'],
+                "suggestion": i.suggestion if hasattr(i, 'suggestion') else i['suggestion'],
+            }
+            for i in all_items
+        ],
+        "report": "\n".join(report_lines),
+        "hint": "Use 'get_secure_boilerplate' to fix failed items."
+    }
+
+
+@mcp.tool()
+def get_secure_boilerplate(framework: str, feature: str) -> dict:
+    """
+    🛠️ Get secure boilerplate code for production features.
+    
+    Available Features:
+    - rate_limit: Rate limiting (Next.js, FastAPI, Express)
+    - rls: Row Level Security (SQL/PostgreSQL)
+    - captcha: CAPTCHA integration (Next.js/Turnstile)
+    - validation: Server-side validation (Zod, Pydantic)
+    - cors: Secure CORS config (Express)
+    
+    Available Frameworks:
+    - nextjs, fastapi, express, sql
+    
+    Args:
+        framework: Target framework/language
+        feature: Security feature to implement
+    
+    Returns:
+        Secure code snippet and implementation guide.
+    """
+    result = generate_secure_boilerplate(framework, feature)
+    
+    if not result:
+        return {
+            "success": False,
+            "error": f"No boilerplate found for {framework} + {feature}",
+            "suggestions": {
+                "Frameworks": ["nextjs", "fastapi", "express", "sql"],
+                "Features": ["rate_limit", "rls", "captcha", "validation", "cors"]
+            }
+        }
+    
+    return {
+        "success": True,
+        "title": result.title,
+        "code": result.code,
+        "description": result.description,
+        "language": "javascript" if framework in ["nextjs", "express"] else "python" if framework == "fastapi" else "sql"
+    }

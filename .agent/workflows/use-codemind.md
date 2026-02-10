@@ -81,7 +81,20 @@ Use scan_and_fix tool with:
 
 If issues are found, use the fixed code from the result.
 
-### Step 5: Format Response
+### Step 5: Launch readiness check
+// turbo
+
+If the code is part of a production feature (auth, forms, API), run the launch audit:
+
+```
+Use audit_launch_checklist tool with:
+- code: The final code
+- filename: "app.py" or "schema.sql"
+```
+
+If items fail, use `get_secure_boilerplate` to fetch missing security layers.
+
+### Step 6: Format Response
 
 Include in your response:
 
@@ -119,6 +132,8 @@ Include in your response:
 | `guard_code(code, language)` | Security & quality audit |
 | `scan_and_fix(code, language)` | Detect and auto-fix vulnerabilities |
 | `improve_code(code)` | Refactor and improve code |
+| `audit_launch_checklist(code)` | Essential production readiness scan |
+| `get_secure_boilerplate(framework, feature)` | Fetch secure production examples |
 
 ## Quick Trigger
 
@@ -126,6 +141,8 @@ When user adds any of these to their prompt:
 - "use codemind"
 - "secure code"
 - "production ready"
+- "ready to launch"
+- "ship it"
 
 Automatically activate this full workflow.
 
