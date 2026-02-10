@@ -5,6 +5,10 @@ Exposes CodeMind functionality as an MCP server with tools for:
 - Security and quality auditing (Guardian)
 - Reviewing git diffs with AI prompts
 - Auto-fixing code issues
+- Secrets detection (30+ API key patterns + entropy analysis)
+- Software Composition Analysis (dependency CVE scanning via OSV.dev)
+- Infrastructure as Code scanning (Dockerfile, GitHub Actions, docker-compose)
+- SARIF/HTML/Markdown report generation
 """
 
 from pathlib import Path
@@ -36,6 +40,9 @@ from .docs import (
 from ..llm.fixer import CodeFixer
 from ..llm import get_llm_provider
 from ..cli.config import load_config
+from ..secrets import SecretsDetector
+from ..iac import IaCScanner
+from ..reports import SARIFGenerator, ReportFormatter
 
 
 # Initialize MCP Server
@@ -282,7 +289,7 @@ Last Review: {stats['last_review']}
 # =============================================================================
 
 @mcp.tool()
-def resolve_library(name: str) -> dict:
+async def resolve_library(name: str) -> dict:
     """
     Resolve a library or framework name to a documentation ID.
     
@@ -314,6 +321,9 @@ def resolve_library(name: str) -> dict:
                 "error": "Could not initialize documentation fetcher"
             }
         
+        # resolve_library in fetcher is still synchronous in my edit, 
+        # but let's make it async if we want to be consistent. 
+        # For now I'll just call it since it's fast (handles aliases or quick GET).
         result = fetcher.resolve_library(name)
         
         if result:
@@ -342,7 +352,7 @@ def resolve_library(name: str) -> dict:
 
 
 @mcp.tool()
-def query_docs(library_id: str, query: str, max_tokens: int = 5000) -> dict:
+async def query_docs(library_id: str, query: str, max_tokens: int = 5000) -> dict:
     """
     Fetch up-to-date documentation for a library.
     
@@ -379,7 +389,7 @@ def query_docs(library_id: str, query: str, max_tokens: int = 5000) -> dict:
                 "error": "Could not initialize documentation fetcher"
             }
         
-        result = fetcher.query_docs(library_id, query, max_tokens)
+        result = await fetcher.query_docs_async(library_id, query, max_tokens)
         
         if result.success:
             return {
@@ -784,6 +794,619 @@ def scan_and_fix(code: str, language: str = "python", filename: str = "code.py")
 
 
 
+# ─────────────────────────────────────────────────────────
+# 🔑 SECRETS DETECTION TOOLS
+# ─────────────────────────────────────────────────────────
+
+@mcp.tool()
+def scan_secrets(code: str, filename: str = "unknown") -> dict:
+    """
+    🔑 Deep secrets detection with entropy analysis.
+    
+    Detects 30+ types of API keys, tokens, and credentials including:
+    - AWS, GCP, Azure credentials
+    - GitHub, GitLab, Bitbucket tokens
+    - Stripe, Twilio, SendGrid API keys
+    - OpenAI, Anthropic API keys
+    - Database connection strings with embedded passwords
+    - Private keys (RSA, SSH, PGP, EC)
+    - JWT tokens and session secrets
+    - Generic high-entropy strings
+    
+    Uses BOTH pattern matching AND Shannon entropy analysis
+    to catch even custom/unknown secret formats.
+    
+    Args:
+        code: Source code to scan for secrets
+        filename: Filename for context-aware filtering
+    
+    Returns:
+        Dict with findings, statistics, and formatted report
+    """
+    detector = SecretsDetector()
+    findings = detector.scan(code, filename)
+    stats = detector.get_statistics(findings)
+    report = detector.format_report(findings)
+    
+    return {
+        "success": True,
+        "has_secrets": len(findings) > 0,
+        "total_findings": len(findings),
+        "has_critical": stats.get("has_critical", False),
+        "findings": [
+            {
+                "type": f.type,
+                "service": f.service,
+                "severity": f.severity.value,
+                "message": f.message,
+                "line": f.line,
+                "redacted": f.redacted,
+                "suggestion": f.suggestion,
+                "cwe_id": f.cwe_id,
+            }
+            for f in findings
+        ],
+        "statistics": stats,
+        "report": report,
+    }
+
+
+# ─────────────────────────────────────────────────────────
+# 📦 SOFTWARE COMPOSITION ANALYSIS (SCA) TOOLS
+# ─────────────────────────────────────────────────────────
+
+@mcp.tool()
+async def scan_dependencies(project_path: str = ".") -> dict:
+    """
+    📦 Scan project dependencies for known CVEs.
+    
+    Analyzes lockfiles and checks against OSV.dev (Google's open-source
+    vulnerability database). Privacy-preserving: only package names and
+    versions are sent to the API — NO source code ever leaves the machine.
+    
+    Supports:
+    - Python: requirements.txt, Pipfile.lock, poetry.lock
+    - Node.js: package.json, package-lock.json, yarn.lock
+    - Go: go.mod, go.sum
+    - Rust: Cargo.lock
+    - Ruby: Gemfile.lock
+    - PHP: composer.lock
+    
+    Args:
+        project_path: Root directory of the project (default: current dir)
+    
+    Returns:
+        SCA report with vulnerable packages, CVE IDs, severity, and fix versions
+    """
+    from ..sca import DependencyScanner
+    
+    scanner = DependencyScanner()
+    report = scanner.scan_sync(project_path)
+    formatted = scanner.format_report(report)
+    
+    return {
+        "success": True,
+        "project_path": report.project_path,
+        "scanned_files": report.scanned_files,
+        "total_dependencies": report.total_dependencies,
+        "vulnerable_count": len(report.vulnerable),
+        "total_vulnerabilities": report.total_vulnerabilities,
+        "critical_count": report.critical_count,
+        "risk_score": report.risk_score,
+        "vulnerable": [
+            {
+                "name": vd.dependency.name,
+                "version": vd.dependency.version,
+                "ecosystem": vd.dependency.ecosystem,
+                "highest_severity": vd.highest_severity,
+                "fix_available": vd.fix_available,
+                "vulnerabilities": [
+                    {
+                        "id": v.id,
+                        "summary": v.summary,
+                        "severity": v.severity,
+                        "fixed_version": v.fixed_version,
+                        "references": v.references[:3],
+                    }
+                    for v in vd.vulnerabilities
+                ],
+            }
+            for vd in report.vulnerable
+        ],
+        "errors": report.errors,
+        "report": formatted,
+    }
+
+
+@mcp.tool()
+async def check_package(name: str, version: str, ecosystem: str = "PyPI") -> dict:
+    """
+    🔍 Check if a specific package version has known vulnerabilities.
+    
+    Quick single-package lookup against OSV.dev vulnerability database.
+    
+    Args:
+        name: Package name (e.g., "django", "express", "lodash")
+        version: Package version (e.g., "3.2.1", "4.18.2")
+        ecosystem: Package ecosystem — PyPI, npm, Go, crates.io, RubyGems, Packagist
+    
+    Returns:
+        Dict with vulnerability info, severity, and fix version if available
+    """
+    try:
+        import httpx
+    except ImportError:
+        return {
+            "success": False,
+            "error": "Package checking requires httpx. Install with: pip install httpx"
+        }
+    
+    try:
+        async with httpx.AsyncClient(timeout=15) as client:
+            response = await client.post(
+                "https://api.osv.dev/v1/query",
+                json={
+                    "package": {"name": name, "ecosystem": ecosystem},
+                    "version": version,
+                },
+            )
+            response.raise_for_status()
+            data = response.json()
+            vulns = data.get("vulns", [])
+            
+            if not vulns:
+                return {
+                    "success": True,
+                    "package": f"{name}@{version}",
+                    "ecosystem": ecosystem,
+                    "is_vulnerable": False,
+                    "message": f"✅ {name} v{version} has no known vulnerabilities."
+                }
+            
+            vuln_list = []
+            for v in vulns:
+                vuln_id = v.get("id", "UNKNOWN")
+                summary = v.get("summary", v.get("details", ""))[:200]
+                fixed = None
+                for affected in v.get("affected", []):
+                    for rng in affected.get("ranges", []):
+                        for event in rng.get("events", []):
+                            if "fixed" in event:
+                                fixed = event["fixed"]
+                vuln_list.append({
+                    "id": vuln_id,
+                    "summary": summary,
+                    "fixed_version": fixed,
+                })
+            
+            return {
+                "success": True,
+                "package": f"{name}@{version}",
+                "ecosystem": ecosystem,
+                "is_vulnerable": True,
+                "vulnerability_count": len(vuln_list),
+                "vulnerabilities": vuln_list,
+                "message": f"⚠️ {name} v{version} has {len(vuln_list)} known vulnerability(ies)."
+            }
+    except Exception as e:
+        return {"success": False, "error": str(e)}
+
+
+# ─────────────────────────────────────────────────────────
+# 🏗️ INFRASTRUCTURE AS CODE (IaC) TOOLS
+# ─────────────────────────────────────────────────────────
+
+@mcp.tool()
+def scan_iac_file(content: str, filename: str = "Dockerfile") -> dict:
+    """
+    🏗️ Scan Infrastructure as Code file for security misconfigurations.
+    
+    Auto-detects file type and applies relevant rules:
+    - Dockerfile: root user, secrets in ENV, unpinned images, curl|sh
+    - GitHub Actions: unpinned actions, script injection, excessive permissions
+    - docker-compose: privileged mode, host networking, hardcoded secrets
+    
+    Args:
+        content: File content to scan
+        filename: Filename (used for type detection — e.g., "Dockerfile", "ci.yml")
+    
+    Returns:
+        Dict with findings, severity breakdown, and formatted report
+    """
+    scanner = IaCScanner()
+    findings = scanner.scan_content(content, filename)
+    stats = scanner.get_statistics(findings)
+    report = scanner.format_report(findings)
+    
+    return {
+        "success": True,
+        "has_issues": len(findings) > 0,
+        "total_findings": len(findings),
+        "findings": [
+            {
+                "rule_id": f.rule_id,
+                "message": f.message,
+                "severity": f.severity.value,
+                "line": f.line,
+                "file_type": f.file_type,
+                "snippet": f.snippet,
+                "suggestion": f.suggestion,
+            }
+            for f in findings
+        ],
+        "statistics": stats,
+        "report": report,
+    }
+
+
+@mcp.tool()
+def scan_infrastructure(project_path: str = ".") -> dict:
+    """
+    🏗️ Scan ALL IaC files in a project directory.
+    
+    Finds and scans: Dockerfiles, GitHub Actions workflows,
+    docker-compose files, and more.
+    
+    Args:
+        project_path: Root directory to scan (default: current dir)
+    
+    Returns:
+        Dict with per-file findings and overall statistics
+    """
+    scanner = IaCScanner()
+    results = scanner.scan_directory(project_path)
+    
+    total = 0
+    critical = 0
+    all_findings = []
+    
+    file_reports = {}
+    for filepath, findings in results.items():
+        total += len(findings)
+        critical += sum(1 for f in findings if f.severity.value == "critical")
+        file_reports[filepath] = {
+            "findings_count": len(findings),
+            "findings": [
+                {
+                    "rule_id": f.rule_id,
+                    "message": f.message,
+                    "severity": f.severity.value,
+                    "line": f.line,
+                    "suggestion": f.suggestion,
+                }
+                for f in findings
+            ],
+        }
+        all_findings.extend(findings)
+    
+    return {
+        "success": True,
+        "files_scanned": len(results),
+        "total_findings": total,
+        "files": file_reports,
+        "report": scanner.format_report(all_findings) if all_findings else "✅ No IaC security issues found.",
+    }
+
+
+# ─────────────────────────────────────────────────────────
+# 🛡️ DEEP SCAN & REPORTING TOOLS
+# ─────────────────────────────────────────────────────────
+
+@mcp.tool()
+def deep_security_scan(
+    code: str,
+    language: str = "python",
+    filename: str = "code.py",
+    include_secrets: bool = True,
+    include_quality: bool = True,
+) -> dict:
+    """
+    🛡️ DEEP SCAN: Comprehensive multi-layer security analysis.
+    
+    Runs ALL security scanners in one call:
+    1. Guardian SAST — 50+ vulnerability patterns
+    2. Secrets Detection — 30+ API key/token patterns + entropy
+    3. Quality Analysis — AI slop detection
+    
+    Returns a unified report with OWASP classification.
+    
+    Args:
+        code: Source code to analyze
+        language: Programming language (python, javascript, typescript, go, etc.)
+        filename: Filename for context
+        include_secrets: Run secrets scanner (default: True)
+        include_quality: Run quality analysis (default: True)
+    
+    Returns:
+        Unified security report with all findings, scores, and recommendations
+    """
+    results = {
+        "success": True,
+        "scans_completed": [],
+    }
+    
+    all_issues_count = 0
+    has_critical = False
+    
+    # 1. Guardian SAST scan
+    guardian = Guardian()
+    report = guardian.audit(code, filename)
+    
+    security_issues = []
+    quality_issues = []
+    for issue in report.issues:
+        issue_dict = {
+            "message": issue.message,
+            "severity": issue.severity.value,
+            "line": issue.line,
+            "snippet": issue.code_snippet,
+            "suggestion": issue.suggestion,
+            "vulnerability_type": issue.vulnerability_type,
+        }
+        if issue.type == GuardType.SECURITY:
+            security_issues.append(issue_dict)
+            if issue.severity.value == "critical":
+                has_critical = True
+        elif include_quality:
+            quality_issues.append(issue_dict)
+    
+    all_issues_count += len(security_issues) + len(quality_issues)
+    results["sast"] = {
+        "score": report.score,
+        "security_issues": security_issues,
+        "quality_issues": quality_issues,
+    }
+    results["scans_completed"].append("sast")
+    
+    # 2. Secrets Detection
+    if include_secrets:
+        detector = SecretsDetector()
+        secret_findings = detector.scan(code, filename)
+        secret_stats = detector.get_statistics(secret_findings)
+        
+        results["secrets"] = {
+            "total": len(secret_findings),
+            "has_critical": secret_stats.get("has_critical", False),
+            "findings": [
+                {
+                    "type": f.type,
+                    "service": f.service,
+                    "severity": f.severity.value,
+                    "message": f.message,
+                    "line": f.line,
+                    "suggestion": f.suggestion,
+                }
+                for f in secret_findings
+            ],
+        }
+        all_issues_count += len(secret_findings)
+        if secret_stats.get("has_critical"):
+            has_critical = True
+        results["scans_completed"].append("secrets")
+    
+    # 3. IaC Scan (if applicable)
+    is_iac = filename.lower() in ["dockerfile", "docker-compose.yml", "docker-compose.yaml"] or "github/workflows" in filename.replace("\\", "/")
+    if is_iac:
+        iac_scanner = IaCScanner()
+        iac_findings = iac_scanner.scan_file_content(code, filename)
+        results["iac"] = {
+            "total": len(iac_findings),
+            "findings": [
+                {
+                    "type": f.type,
+                    "severity": f.severity.value if hasattr(f.severity, "value") else str(f.severity),
+                    "message": f.message,
+                    "line": f.line,
+                    "suggestion": f.suggestion,
+                }
+                for f in iac_findings
+            ]
+        }
+        all_issues_count += len(iac_findings)
+        results["scans_completed"].append("iac")
+
+    # 4. SCA Scan (if applicable)
+    from ..sca.scanner import DependencyScanner
+    sca_scanner = DependencyScanner()
+    if filename.lower() in sca_scanner.SUPPORTED_FILES:
+        sca_report = sca_scanner.scan_content(code, filename)
+        results["sca"] = {
+            "total_dependencies": sca_report.total_dependencies,
+            "vulnerabilities": [
+                {
+                    "package": v.package,
+                    "version": v.version,
+                    "severity": v.severity,
+                    "cve": v.cve_id,
+                    "fix_version": v.fix_version,
+                }
+                for v in sca_report.vulnerable
+            ]
+        }
+        all_issues_count += len(sca_report.vulnerable)
+        results["scans_completed"].append("sca")
+
+    # Calculate unified score
+    base_score = report.score
+    if include_secrets and secret_findings:
+        # Reduce score for secrets found
+        for sf in secret_findings:
+            if sf.severity.value == "critical":
+                base_score -= 15
+            elif sf.severity.value == "high":
+                base_score -= 10
+            elif sf.severity.value == "medium":
+                base_score -= 5
+    
+    if is_iac and iac_findings:
+        base_score -= (len(iac_findings) * 5)
+    
+    if "sca" in results and results["sca"]["vulnerabilities"]:
+        base_score -= (len(results["sca"]["vulnerabilities"]) * 10)
+    
+    final_score = max(0, min(100, base_score))
+    
+    results["overall"] = {
+        "score": final_score,
+        "total_issues": all_issues_count,
+        "has_critical": has_critical,
+        "is_safe": final_score >= 80 and not has_critical,
+        "grade": (
+            "A+" if final_score >= 95 else
+            "A" if final_score >= 90 else
+            "B" if final_score >= 80 else
+            "C" if final_score >= 70 else
+            "D" if final_score >= 60 else
+            "F"
+        ),
+    }
+    
+    # Build unified text report
+    report_lines = [
+        f"# 🛡️ CodeMind Deep Security Scan",
+        f"",
+        f"**Score:** {final_score}/100 (Grade: {results['overall']['grade']})",
+        f"**Status:** {'✅ PASSED' if results['overall']['is_safe'] else '🚨 ISSUES FOUND'}",
+        f"**Total Issues:** {all_issues_count}",
+        f"**Scans:** {', '.join(results['scans_completed'])}",
+        f"",
+    ]
+    
+    if security_issues:
+        report_lines.append(f"## 🔒 Security ({len(security_issues)} issues)")
+        for i in security_issues[:5]:
+            report_lines.append(f"- **Line {i['line']}** [{i['severity']}]: {i['message']}")
+        if len(security_issues) > 5:
+            report_lines.append(f"- ...and {len(security_issues) - 5} more")
+        report_lines.append("")
+    
+    if include_secrets and secret_findings:
+        report_lines.append(f"## 🔑 Secrets ({len(secret_findings)} found)")
+        for sf in secret_findings[:5]:
+            report_lines.append(f"- **Line {sf.line}** [{sf.service}]: {sf.message}")
+        report_lines.append("")
+    
+    if quality_issues:
+        report_lines.append(f"## ✨ Quality ({len(quality_issues)} issues)")
+        for i in quality_issues[:3]:
+            report_lines.append(f"- **Line {i['line']}**: {i['message']}")
+        report_lines.append("")
+    
+    results["report"] = "\n".join(report_lines)
+    
+    return results
+
+
+@mcp.tool()
+def export_security_report(
+    code: str,
+    language: str = "python",
+    filename: str = "code.py",
+    format: str = "sarif",
+) -> dict:
+    """
+    📋 Export security scan results in industry-standard formats.
+    
+    Formats:
+    - sarif: SARIF v2.1.0 (GitHub Code Scanning compatible)
+    - json: Structured JSON report
+    - markdown: Human-readable markdown
+    - html: Standalone dark-themed HTML report with visual score
+    - csv: Spreadsheet-compatible CSV
+    
+    Args:
+        code: Source code to scan
+        language: Programming language
+        filename: Source filename
+        format: Output format — sarif, json, markdown, html, csv
+    
+    Returns:
+        Dict with the formatted report content
+    """
+    # Run full scan
+    guardian = Guardian()
+    report = guardian.audit(code, filename)
+    
+    # Also run secrets scan
+    detector = SecretsDetector()
+    secret_findings = detector.scan(code, filename)
+    
+    # Build unified scan result dict
+    scan_result = {
+        "score": report.score,
+        "is_safe": report.score >= 80 and not any(
+            i.severity.value == "critical" for i in report.issues
+        ),
+        "total_issues": len(report.issues) + len(secret_findings),
+        "counts": {
+            "critical": sum(1 for i in report.issues if i.severity.value == "critical") + 
+                       sum(1 for s in secret_findings if s.severity.value == "critical"),
+            "warning": sum(1 for i in report.issues if i.severity.value == "warning"),
+            "info": sum(1 for i in report.issues if i.severity.value == "info"),
+            "total": len(report.issues) + len(secret_findings),
+        },
+        "security_issues": [
+            {
+                "severity": i.severity.value,
+                "vulnerability_type": i.vulnerability_type or "OTHER",
+                "message": i.message,
+                "line": i.line,
+                "file": filename,
+                "snippet": i.code_snippet,
+                "suggestion": i.suggestion,
+            }
+            for i in report.issues if i.type == GuardType.SECURITY
+        ],
+        "quality_issues": [
+            {
+                "severity": i.severity.value,
+                "message": i.message,
+                "line": i.line,
+                "snippet": i.code_snippet,
+                "suggestion": i.suggestion,
+            }
+            for i in report.issues if i.type == GuardType.QUALITY
+        ],
+        "secrets": [
+            {
+                "service": s.service,
+                "message": s.message,
+                "line": s.line,
+                "severity": s.severity.value,
+            }
+            for s in secret_findings
+        ],
+    }
+    
+    formatter = ReportFormatter()
+    
+    if format == "sarif":
+        sarif_gen = SARIFGenerator.from_guard_issues(report.issues, filename)
+        if secret_findings:
+            secret_sarif = SARIFGenerator.from_secret_findings(secret_findings)
+            sarif_gen.add_findings(secret_sarif.findings)
+        content = sarif_gen.to_json()
+    elif format == "html":
+        content = formatter.to_html(scan_result)
+    elif format == "markdown":
+        content = formatter.to_markdown(scan_result)
+    elif format == "csv":
+        content = formatter.to_csv(scan_result)
+    else:  # json
+        content = formatter.to_json(scan_result)
+    
+    return {
+        "success": True,
+        "format": format,
+        "content": content,
+        "scan_summary": {
+            "score": report.score,
+            "total_issues": scan_result["total_issues"],
+            "is_safe": scan_result["is_safe"],
+        },
+    }
+
+
 @mcp.resource("guardian://best-practices")
 def guardian_best_practices() -> str:
     """Get comprehensive security and clean code best practices."""
@@ -943,7 +1566,7 @@ def codemind() -> str:
     
     Example: "Make me a login form with validation... use codemind"
     """
-    return '''🛡️ **CODEMIND ACTIVATED** - Security & Quality Mode
+    return '''🛡️ **CODEMIND v2.0 ACTIVATED** - Full Security Suite
 
 When the user adds "use codemind" to their request, you MUST follow this workflow:
 
@@ -1007,17 +1630,18 @@ Follow these STRICT rules:
 Before presenting code, YOU MUST:
 
 ```python
-# 1. Audit the code
-result = scan_and_fix(code=YOUR_CODE, language="python")
+# 1. Deep security scan (SAST + Secrets + Quality)
+result = deep_security_scan(code=YOUR_CODE, language="python")
 
 # 2. Check result
-if result["has_issues"]:
-    # Use the fixed code instead!
-    YOUR_CODE = result["fixed_code"]
+if not result["overall"]["is_safe"]:
+    # Use scan_and_fix for auto-repair
+    fixed = scan_and_fix(code=YOUR_CODE, language="python")
+    YOUR_CODE = fixed["fixed_code"]
 
 # 3. If still has critical issues, fix manually
-if result["critical_count"] > 0:
-    # Apply suggestions from result["suggestions"]
+if result["overall"]["has_critical"]:
+    # Apply suggestions from result
 ```
 
 **NEVER return code with:**
@@ -1027,18 +1651,52 @@ if result["critical_count"] > 0:
 - SQL injection vulnerabilities
 - XSS vulnerabilities
 
+### STEP 5: IaC & Dependencies (WHEN APPLICABLE)
+If the user creates infrastructure files:
+```python
+# Scan Dockerfiles, GitHub Actions, docker-compose
+scan_iac_file(content=dockerfile_content, filename="Dockerfile")
+
+# Scan project dependencies for CVEs
+scan_dependencies(project_path=".")
+
+# Check a specific package
+check_package(name="django", version="3.2.1", ecosystem="PyPI")
+```
+
+---
+
+## 🧰 FULL TOOL ARSENAL
+
+| Tool | Purpose | When to Use |
+|------|---------|-------------|
+| `guard_code` | SAST — 50+ vulnerability patterns | Any code audit |
+| `scan_secrets` | 🔑 30+ API key/token detection + entropy | Code with credentials |
+| `scan_and_fix` | Scan + auto-fix in one action | Before returning code |
+| `deep_security_scan` | 🛡️ Multi-layer scan (SAST+Secrets+Quality) | Comprehensive analysis |
+| `scan_dependencies` | 📦 CVE scan via OSV.dev | Projects with lockfiles |
+| `check_package` | 🔍 Single package CVE lookup | Checking a specific dep |
+| `scan_iac_file` | 🏗️ Dockerfile/GHA/compose scanning | Infrastructure code |
+| `scan_infrastructure` | 🏗️ Scan all IaC files in project | Full project scan |
+| `export_security_report` | 📋 SARIF/HTML/Markdown/CSV reports | CI/CD integration |
+| `improve_code` | Auto-improve code quality | Fixing found issues |
+| `resolve_library` | Find library documentation IDs | Before querying docs |
+| `query_docs` | Fetch up-to-date library docs | Writing code |
+
 ---
 
 ## 📋 QUICK REFERENCE
 
-| User Request | Auto-fetch Docs | Security Focus |
-|--------------|-----------------|----------------|
-| "login/register" | Auth library, JWT, bcrypt | Credential storage, session management |
-| "database CRUD" | ORM/driver docs | SQL injection, parameterized queries |
-| "file upload" | File handling, multer | Path traversal, file validation |
-| "payment integration" | Payment SDK docs | PCI compliance, secret management |
-| "API endpoints" | Framework docs | Input validation, rate limiting |
-| "forms" | Validation library | XSS, CSRF protection |
+| User Request | Auto-fetch Docs | Security Tools to Use |
+|--------------|-----------------|----------------------|
+| "login/register" | Auth library, JWT, bcrypt | `deep_security_scan` + `scan_secrets` |
+| "database CRUD" | ORM/driver docs | `guard_code` + `scan_dependencies` |
+| "file upload" | File handling, multer | `guard_code` (path traversal) |
+| "payment integration" | Payment SDK docs | `scan_secrets` + `deep_security_scan` |
+| "API endpoints" | Framework docs | `guard_code` + `scan_and_fix` |
+| "Dockerfile" | Docker best practices | `scan_iac_file` |
+| "CI/CD pipeline" | GitHub Actions docs | `scan_iac_file` + `scan_infrastructure` |
+| "deploy" | Deployment docs | `scan_dependencies` + `scan_infrastructure` |
 
 ---
 
@@ -1057,6 +1715,10 @@ When returning code to user, include:
    - DATABASE_URL: Your database connection string
    - JWT_SECRET: Random secret for JWT tokens
    ```
+4. **Security score** from deep scan:
+   ```
+   📊 CodeMind Score: 95/100 (Grade: A) — ✅ PASSED
+   ```
 
 ---
 
@@ -1068,8 +1730,9 @@ When returning code to user, include:
 1. `query_docs("/tiangolo/fastapi", "authentication JWT security")`
 2. `query_docs("/sqlalchemy/sqlalchemy", "parameterized queries")`
 3. Write code following security rules
-4. `scan_and_fix(code=login_code, language="python")`
-5. Return secure code with score ≥ 90
+4. `deep_security_scan(code=login_code, language="python")`
+5. `scan_secrets(code=login_code)` — verify no hardcoded credentials
+6. Return secure code with score ≥ 90
 
 ---
 

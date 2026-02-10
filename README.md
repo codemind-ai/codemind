@@ -1,4 +1,4 @@
-# 🛡️ CodeMind MCP - AI Security & Quality Guardian
+# 🛡️ CodeMind MCP — AI Security Guardian
 
 <p align="center">
 <pre align="center">
@@ -11,7 +11,7 @@
 </p>
 
 <p align="center">
-  <strong>🛡️ AI Security & Quality Guardian</strong><br>
+  <strong>🛡️ Enterprise-Grade Security for AI-Generated Code</strong><br>
   <em>Think before ship.</em>
 </p>
 
@@ -22,11 +22,29 @@
 </p>
 
 <p align="center">
-  <img src="https://img.shields.io/pypi/v/codemind?color=blue&label=PyPI" alt="PyPI">
+  <img src="https://img.shields.io/badge/version-2.0.0-blue.svg" alt="Version">
   <img src="https://img.shields.io/badge/python-3.10+-green.svg" alt="Python">
-  <img src="https://img.shields.io/badge/MCP-Supported-purple.svg" alt="MCP">
+  <img src="https://img.shields.io/badge/MCP-Native-purple.svg" alt="MCP">
   <img src="https://img.shields.io/badge/license-MIT-blue.svg" alt="License">
+  <img src="https://img.shields.io/badge/privacy-100%25%20local-brightgreen.svg" alt="Privacy">
 </p>
+
+---
+
+## 🔥 What's New in v2.0
+
+CodeMind v2.0 transforms from a simple code guardian into a **full security platform** rivaling Snyk, Semgrep, and CodeQL — while staying 100% open-source and privacy-first.
+
+| Capability | Description | Status |
+|-----------|-------------|--------|
+| 🔍 **SAST** | 50+ vulnerability patterns (SQL injection, XSS, SSRF, etc.) | ✅ |
+| 🔑 **Secrets Detection** | 30+ API key/token patterns + Shannon entropy analysis | ✅ NEW |
+| 📦 **SCA** | Dependency CVE scanning via OSV.dev (12 lockfile formats) | ✅ NEW |
+| 🏗️ **IaC Scanning** | Dockerfile, GitHub Actions, docker-compose security | ✅ NEW |
+| 📋 **SARIF Reports** | Industry-standard output for GitHub Code Scanning & CI/CD | ✅ NEW |
+| 📊 **Multi-Format Reports** | HTML, Markdown, JSON, CSV export | ✅ NEW |
+| 🛡️ **Deep Scan** | Multi-layer analysis (SAST + Secrets + Quality) in one call | ✅ NEW |
+| ✨ **AI Slop Detection** | Catches redundant comments, generic names, poor patterns | ✅ |
 
 ---
 
@@ -35,13 +53,14 @@
 AI coding assistants generate code fast, but without oversight. You get:
 
 - ❌ **Security vulnerabilities** slipping through unnoticed
+- ❌ **Hardcoded API keys** committed to version control
+- ❌ **Vulnerable dependencies** with known CVEs
+- ❌ **Insecure Dockerfiles** running as root with secrets in ENV
 - ❌ **"AI slop"** — bloated, repetitive, low-quality code
-- ❌ **No code review** before pushing to production
-- ❌ **Hallucinated patterns** that don't follow best practices
 
 ## ✅ With CodeMind
 
-CodeMind MCP acts as your resident security and quality auditor. It reviews AI-generated code in real-time, catching issues before they reach your codebase.
+CodeMind MCP acts as your resident security team. It reviews AI-generated code in real-time across **5 security dimensions** — before issues reach your codebase.
 
 Add `use codemind` to your prompt:
 
@@ -100,6 +119,8 @@ async def login(request: LoginRequest, db = Depends(get_db)):
 - Credentials loaded from environment variables
 - Generic error messages (no user enumeration)
 
+📊 CodeMind Score: 95/100 (Grade: A) — ✅ PASSED
+
 📋 Required environment variables:
 - DATABASE_URL: PostgreSQL connection string
 - JWT_SECRET: Secret key for JWT token signing
@@ -115,8 +136,14 @@ async def login(request: LoginRequest, db = Depends(get_db)):
 # MCP Server (recommended - just works!)
 pip install codemind
 
-# With full CLI automation features (IDE injection, clipboard)
+# With full CLI automation features
 pip install codemind[cli]
+
+# With AST analysis engine
+pip install codemind[analysis]
+
+# Everything
+pip install codemind[all]
 ```
 
 
@@ -182,6 +209,57 @@ Add to your Windsurf MCP configuration:
 
 ---
 
+## 🔧 Available Tools
+
+CodeMind v2.0 exposes **14 MCP tools** that LLMs use automatically:
+
+### 🔍 Static Analysis (SAST)
+
+| Tool | Description |
+|------|-------------|
+| 🛡️ `guard_code` | Audit code for 50+ vulnerability patterns and quality issues |
+| 🔒 `scan_and_fix` | Detect vulnerabilities and auto-fix them in one action |
+| ✨ `improve_code` | AI-powered code improvement with Guardian verification |
+| 🛡️ `deep_security_scan` | **Multi-layer scan**: SAST + Secrets + Quality in one call |
+
+### 🔑 Secrets Detection
+
+| Tool | Description |
+|------|-------------|
+| 🔑 `scan_secrets` | Detect 30+ API key/token types + Shannon entropy analysis |
+
+### 📦 Software Composition Analysis (SCA)
+
+| Tool | Description |
+|------|-------------|
+| 📦 `scan_dependencies` | Scan project lockfiles for CVEs via OSV.dev |
+| 🔍 `check_package` | Check a single package version for known vulnerabilities |
+
+### 🏗️ Infrastructure as Code (IaC)
+
+| Tool | Description |
+|------|-------------|
+| 🏗️ `scan_iac_file` | Scan Dockerfile, GitHub Actions, or docker-compose |
+| 🏗️ `scan_infrastructure` | Scan all IaC files in a project directory |
+
+### 📋 Reporting & Export
+
+| Tool | Description |
+|------|-------------|
+| 📋 `export_security_report` | Export as SARIF v2.1.0, HTML, Markdown, JSON, or CSV |
+
+### 📖 Documentation & Workflow
+
+| Tool | Description |
+|------|-------------|
+| 📖 `resolve_library` | Find library documentation IDs (like Context7) |
+| 📖 `query_docs` | Fetch up-to-date library documentation and examples |
+| 📊 `review_diff` | Generate AI review prompt for current git diff |
+| 🛡️ `codemind` | Activate full Guardian workflow with `use codemind` |
+| 📖 `best-practices` | **Resource**: Security & clean code reference guide |
+
+---
+
 ## 🤖 AI Agent System Prompt
 
 Add this system prompt to your AI agent to activate CodeMind automatically:
@@ -193,8 +271,9 @@ When writing or modifying code, ALWAYS follow this workflow:
 
 1. **Fetch Documentation**: Before coding, use `query_docs()` to get current API docs
 2. **Security First**: Never hardcode secrets, use parameterized queries, validate all input
-3. **Scan Before Delivery**: Run `scan_and_fix(code)` before presenting code to user
-4. **Include Context**: Add security notes and required env vars to your response
+3. **Deep Scan**: Run `deep_security_scan(code)` before presenting code to user
+4. **Secrets Check**: Run `scan_secrets(code)` to verify no credentials leak
+5. **Include Context**: Add security notes, env vars, and CodeMind score to your response
 
 CRITICAL RULES:
 - ❌ NEVER: password = "secret123" → ✅ ALWAYS: os.environ.get("PASSWORD")
@@ -230,21 +309,47 @@ Once connected, simply type in your chat:
 
 > **You:** "use codemind"
 >
-> **AI:** "🛡️ Guardian Mode Activated! I've audited your code. Here are the security and quality findings..."
+> **AI:** "🛡️ Guardian Mode Activated! I've audited your code across 5 security dimensions. Here are the findings..."
 
 ---
 
-## 🔧 Available Tools
+## 🏗️ Architecture
 
-CodeMind MCP provides the following tools that LLMs can use:
+```
+┌──────────────────────────────────────────────────────┐
+│                   CodeMind MCP v2.0                   │
+├──────────┬──────────┬──────────┬──────────┬──────────┤
+│   SAST   │ Secrets  │   SCA    │   IaC    │ Reports  │
+│  50+     │  30+     │  12      │  Docker  │  SARIF   │
+│ patterns │ patterns │ lockfile │  GHA     │  HTML    │
+│ + quality│ + entropy│ formats  │  Compose │  MD/CSV  │
+├──────────┴──────────┴──────────┴──────────┴──────────┤
+│              Guardian Engine (Core)                   │
+├──────────────────────────────────────────────────────┤
+│          MCP Protocol (stdio / streamable-http)       │
+├────────┬─────────┬──────────┬────────────┬───────────┤
+│ Cursor │ Claude  │ VS Code  │  Windsurf  │  Any MCP  │
+│        │ Desktop │ Copilot  │            │  Client   │
+└────────┴─────────┴──────────┴────────────┴───────────┘
+```
 
-| Tool | Description |
-|------|-------------|
-| 🛡️ `codemind` | Activate Guardian Mode — full security and quality audit for the current session. |
-| 🔍 `guard_code` | Audit any code snippet for vulnerabilities, "AI slop", and anti-patterns. |
-| ✨ `improve_code` | Automatically fix security issues and refactor for cleanliness. |
-| 📊 `review_diff` | Generate a structured AI review prompt for your current git diff. |
-| 📖 `best-practices` | **Resource**: Direct access to security and clean code patterns. |
+---
+
+## 🆚 How CodeMind Compares
+
+| Feature | CodeMind | Snyk | Semgrep | CodeQL |
+|---------|----------|------|---------|--------|
+| **Local-first** | ✅ 100% | ❌ Cloud | ⚠️ Partial | ⚠️ Partial |
+| **Privacy** | ✅ No telemetry | ❌ Cloud scan | ⚠️ Optional | ⚠️ GitHub |
+| **MCP Native** | ✅ Built-in | ❌ No | ❌ No | ❌ No |
+| **SAST** | ✅ 50+ rules | ✅ | ✅ | ✅ |
+| **Secrets** | ✅ 30+ patterns | ✅ | ✅ | ❌ |
+| **SCA** | ✅ OSV.dev | ✅ | ⚠️ Limited | ❌ |
+| **IaC** | ✅ Docker/GHA | ✅ | ⚠️ Limited | ❌ |
+| **SARIF** | ✅ v2.1.0 | ✅ | ✅ | ✅ |
+| **Auto-fix** | ✅ AI-powered | ✅ | ⚠️ Limited | ❌ |
+| **Open Source** | ✅ MIT | ❌ Freemium | ⚠️ Partial | ✅ |
+| **Price** | **Free** | $$$  | Freemium | Free |
 
 ---
 
@@ -281,8 +386,9 @@ git push
 
 ## 🔒 Privacy & Philosophy
 
-- ✅ **100% Local**: Your code never leaves your machine.
-- ✅ **Privacy-First**: No telemetry, no cloud, no API keys required.
+- ✅ **100% Local**: All scanning happens on your machine — code never leaves.
+- ✅ **Privacy-First**: No telemetry, no cloud, no API keys required for core features.
+- ✅ **SCA Privacy**: Only package names/versions sent to OSV.dev — never source code.
 - ✅ **Universal**: Works with Cursor, Claude Code, Windsurf, VS Code, and more.
 - ✅ **User-Owned AI**: Leverages the AI assistant you're already using.
 
@@ -290,8 +396,9 @@ git push
 
 ## 🎯 Who Is This For?
 
-- **AI-Native Developers** — Who want a second set of eyes on AI-generated code.
-- **Privacy-Focused Teams** — Who need code quality without cloud dependencies.
+- **AI-Native Developers** — Who want enterprise-grade security on AI-generated code.
+- **Privacy-Focused Teams** — Who need Snyk-level protection without cloud dependencies.
+- **DevSecOps Engineers** — Who need SARIF reports for CI/CD pipeline integration.
 - **"Vibe Coders"** — Who need structure and security without slowing down.
 
 ---
@@ -326,38 +433,31 @@ MIT License — See [LICENSE](LICENSE) for details.
 
 ## 🗺️ Roadmap & Future Goals
 
-We're just getting started. Here's our journey from Vibeathon victory to the biggest goal.
-
 ```mermaid
 graph TD
-    A[🏆 <b>Vibeathon Win</b><br/>NOW] -->|Weeks 1-4| B[🌱 <b>Community Build</b>]
-    B -->|Months 1-3| C[🚀 <b>Feature Expansion</b>]
-    C -->|Months 3-6| D[💰 <b>Monetization</b>]
+    A[✅ <b>v2.0 Released</b><br/>SAST+Secrets+SCA+IaC] -->|Next| B[🔬 <b>AST Engine</b><br/>tree-sitter analysis]
+    B -->|Then| C[� <b>Taint Tracking</b><br/>Dataflow analysis]
+    C -->|Then| D[🤖 <b>Agentic Workflows</b><br/>Auto-remediation]
     D -->|Goal| E[🦄 <b>Y Combinator</b>]
 
-    style A fill:#3B82F6,stroke:#3B82F6,color:#fff
+    style A fill:#22c55e,stroke:#22c55e,color:#fff
     style B fill:#1c1c22,stroke:#3B82F6
     style C fill:#1c1c22,stroke:#3B82F6
     style D fill:#1c1c22,stroke:#3B82F6
     style E fill:#1c1c22,stroke:#facc15,stroke-width:2px
 ```
 
-### ✨ The Journey Details
+### ✨ What's Next
 
-1.  **🏆 Vibeathon Win (NOW)**: Competing with our MCP Security Guardian.
-    *   *Focus*: Security First, Privacy, and AI-Native experience.
-2.  **🌱 Community Build (Weeks 1-4)**: Growing the open-source community.
-    *   *Focus*: GitHub stars, Discord members, and real user feedback.
-3.  **🚀 Feature Expansion (Months 1-3)**: Professional-grade tooling.
-    *   *Focus*: VS Code Extension, JetBrains support, and Team features.
-4.  **💰 Monetization (Months 3-6)**: Sustainable growth.
-    *   *Focus*: Pro & Enterprise tiers for security-conscious teams.
-5.  **🦄 Y Combinator (Goal)**: Scaling to protect every developer.
-    *   *Focus*: Global adoption and defining the standard for AI code security.
+1. **🔬 AST Engine**: `tree-sitter` integration for semantic code analysis beyond regex.
+2. **🔄 Taint Tracking**: Source-to-sink dataflow analysis for complex vulnerability chains.
+3. **� Custom Rules**: Semgrep-inspired YAML rule language for community-driven rules.
+4. **🤖 Agentic Workflows**: Autonomous vulnerability detection → fix → verify loops.
+5. **🦄 Y Combinator**: Scaling to protect every developer worldwide.
 
 ---
 
 <p align="center">
-  <strong>CodeMind</strong> — <em>Think before ship.</em>
+  <strong>CodeMind v2.0</strong> — <em>Enterprise security. Open source. Privacy first.</em>
 </p>
 

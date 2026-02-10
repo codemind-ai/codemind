@@ -51,13 +51,27 @@ def doctor():
     except Exception as e:
         terminal.console.print(f"  [red]✗ Invalid configuration: {e}[/red]")
 
+    # 5. Security Engine Status (v2.0)
+    terminal.console.print("\n[bold]Checking Security Engines...[/bold]")
+    try:
+        from ...mcp.guard import Guardian
+        g = Guardian()
+        terminal.console.print("  [green]✓ Guardian SAST Engine (Regex + AST) initialized[/green]")
+        
+        try:
+            import httpx
+            terminal.console.print("  [green]✓ SCA Engine: httpx is available[/green]")
+        except ImportError:
+            terminal.console.print("  [yellow]⚠️  SCA Engine: httpx not found (scan_dependencies may fail)[/yellow]")
+            
+        from ...secrets import SecretsDetector
+        s = SecretsDetector()
+        terminal.console.print("  [green]✓ Secrets Detection Engine initialized[/green]")
+    except Exception as e:
+        terminal.console.print(f"  [red]✗ Security engine initialization failed: {e}[/red]")
+
     # 5. IDE Status
-    from ...ide.detect import detect_preferred_ide
-    ide = detect_preferred_ide()
-    if ide:
-        terminal.console.print(f"  [green]✓ Detected running IDE: {ide.display_name}[/green]")
-    else:
-        terminal.console.print("  [yellow]⚠️  No supported AI IDE detected[/yellow]")
+    terminal.console.print("  [blue]ℹ️  CodeMind uses the system clipboard to integrate with AI IDEs. Just paste the review prompt into your chat window (e.g. Cursor, Claude Code, or VS Code).[/blue]")
 
     # 6. LLM Connectivity (Standalone)
     if config.llm.provider != "ide":

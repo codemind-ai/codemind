@@ -21,6 +21,7 @@ from typing import Optional, List, Dict, Tuple
 
 from ..rules.engine import RuleEngine, RuleMatch, RuleSeverity
 from ..rules.presets import get_preset
+from ..analysis.ast_engine import ASTAnalyzer, Finding as ASTFinding
 
 
 class GuardType(Enum):
@@ -91,10 +92,8 @@ class GuardReport:
         return fixed
 
 
-# =============================================================================
-# SECURITY PATTERNS - SQL Injection, XSS, Command Injection, etc.
-# =============================================================================
-
+# SECURITY PATTERNS
+# Common security vulnerability signatures for multi-language detection
 SECURITY_PATTERNS: List[Tuple[str, str, RuleSeverity, str, str, str]] = [
     # SQL INJECTION PATTERNS
     # Pattern, Message, Severity, Suggestion, AutoFix hint, Vulnerability type
@@ -490,10 +489,8 @@ class SecurityGuard:
         return issues
 
 
-# =============================================================================
-# AI SLOP PATTERNS - Quality and Clean Code
-# =============================================================================
-
+# AI SLOP PATTERNS
+# Quality and clean code signatures to reduce AI-generated noise
 AI_SLOP_PATTERNS: List[Tuple[str, str, RuleSeverity, Optional[str]]] = [
     # Redundant comments (AI loves these)
     (r"//\s*This function (adds|subtracts|multiplies|divides|returns|creates|gets|sets)", 
@@ -658,12 +655,57 @@ class Guardian:
         issues.extend(self.security_guard.audit(code, filename))
         issues.extend(self.quality_guard.audit(code, filename))
         
+        # Add AST-based analysis (Phase E1)
+        try:
+            # Determine language from filename extension or default to python
+            language = "python"
+            if filename.endswith(".js") or filename.endswith(".ts"):
+                language = "javascript"
+            
+            ast_analyzer = ASTAnalyzer()
+            ast_findings = ast_analyzer.analyze(code, language)
+            
+            for f in ast_findings:
+                severity_map = {
+                    "CRITICAL": RuleSeverity.CRITICAL,
+                    "HIGH": RuleSeverity.HIGH,
+                    "MEDIUM": RuleSeverity.MEDIUM,
+                    "LOW": RuleSeverity.LOW,
+                    "INFO": RuleSeverity.INFO
+                }
+                
+                issue = GuardIssue(
+                    type=GuardType.SECURITY,
+                    severity=severity_map.get(f.severity, RuleSeverity.MEDIUM),
+                    message=f.message,
+                    file=filename,
+                    line=f.line,
+                    code_snippet=None, # AST findings might not have snippet yet
+                    suggestion=f.suggestion,
+                    vulnerability_type=f.type,
+                    explanation=f"{f.owasp_category} ({f.cwe_id})" if f.cwe_id else None
+                )
+                
+                # Deduplicate with regex findings
+                is_duplicate = any(
+                    i.vulnerability_type == issue.vulnerability_type and i.line == issue.line 
+                    for i in issues
+                )
+                if not is_duplicate:
+                    issues.append(issue)
+        except Exception:
+            pass
+
         # Calculate score with weighted penalties
         score = 100
         for issue in issues:
             if issue.severity == RuleSeverity.CRITICAL:
                 score -= 25  # Critical issues are very costly
             elif issue.severity == RuleSeverity.WARNING:
+                score -= 10
+            elif issue.severity == RuleSeverity.HIGH:
+                score -= 20
+            elif issue.severity == RuleSeverity.MEDIUM:
                 score -= 10
             else:
                 score -= 2

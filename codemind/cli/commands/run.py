@@ -7,25 +7,23 @@ from typing import Optional
 import click
 
 from ...ui import terminal
-from ...ide.inject import inject_prompt, InjectionResult
+from ...ide.inject import inject_prompt
 from ...history import save_review
 from ...llm import get_llm_provider
 from ..config import load_config
 from ...git.diff import get_diff, DiffExtractor
 from ...git.context import get_context
 from ...prompt.builder import build_prompt, PromptConfig
-from ...ide.detect import IDEType, IDE_TYPE_MAP
 
 
 @click.command()
 @click.option("--hook", is_flag=True, hidden=True, help="Called from git hook")
 @click.option("--base", "-b", default=None, help="Base ref for diff (default: auto-detect)")
-@click.option("--no-inject", is_flag=True, help="Don't auto-inject, just copy to clipboard")
-@click.option("--dry-run", is_flag=True, help="Show what would happen without injecting")
-@click.option("--preview", is_flag=True, help="Show the prompt before injecting")
+@click.option("--dry-run", is_flag=True, help="Show what would happen without copying")
+@click.option("--preview", is_flag=True, help="Show the prompt before copying")
 @click.option("--interactive", "-i", is_flag=True, help="Interactive mode for reviewing AI feedback")
 @click.option("--vibe", is_flag=True, help="Enable 'Vibecoding' mode (encouraging, high-performance focus)")
-def run(hook: bool, base: Optional[str], no_inject: bool, dry_run: bool, preview: bool, interactive: bool, vibe: bool):
+def run(hook: bool, base: Optional[str], dry_run: bool, preview: bool, interactive: bool, vibe: bool):
     """Run AI code review on current changes."""
     terminal.print_header()
     
@@ -132,22 +130,11 @@ def run(hook: bool, base: Optional[str], no_inject: bool, dry_run: bool, preview
             terminal.console.print("\n[bold cyan]━━━ AI Review Feedback ━━━[/bold cyan]\n")
             terminal.console.print(ai_response)
             terminal.console.print("\n[bold cyan]━━━━━━━━━━━━━━━━━━━━━━━━━[/bold cyan]\n")
-        elif no_inject or not config.ide.auto_inject:
-            # Just copy to clipboard
-            from ...ide.inject import copy_to_clipboard
-            copy_to_clipboard(built_prompt.content)
-            terminal.print_prompt_ready()
         else:
-            # Auto-inject (will detect running IDE)
-            report = inject_prompt(
-                built_prompt.content,
-                auto_submit=config.ide.auto_submit
-            )
-            
-            if report.result == InjectionResult.SUCCESS:
-                terminal.print_prompt_ready(report.ide.display_name)
-            else:
-                terminal.print_prompt_ready()  # Fallback message
+            # Always copy to clipboard (modern reliable approach)
+            from ...ide.inject import inject_prompt
+            inject_prompt(built_prompt.content)
+            terminal.print_prompt_ready()
         
         # Save to history
         save_review(

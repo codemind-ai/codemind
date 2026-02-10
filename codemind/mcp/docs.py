@@ -242,123 +242,79 @@ class DocumentationFetcher:
         
         return None
     
-    def query_docs(
+    async def query_docs_async(
         self, 
         library_id: str, 
         query: str,
         max_tokens: int = 5000
     ) -> DocumentationResult:
-        """
-        Fetch documentation for a specific query.
-        
-        Args:
-            library_id: Context7-compatible library ID (e.g., "/facebook/react")
-            query: The question or topic to get documentation for
-            max_tokens: Maximum tokens in response (default: 5000)
-            
-        Returns:
-            DocumentationResult with the fetched content
-        """
+        """Fetch documentation asynchronously."""
         try:
-            url = f"{CONTEXT7_API_BASE}{CONTEXT7_CONTEXT_ENDPOINT}"
-            response = self.client.get(
-                url,
-                params={
-                    "libraryId": library_id,
-                    "query": query,
-                    "maxTokens": max_tokens
-                },
-                headers=self._get_headers()
-            )
-            
-            if response.status_code == 200:
-                data = response.json()
-                content = data.get("context", data.get("content", ""))
-                
-                if content:
-                    return DocumentationResult(
-                        library_id=library_id,
-                        query=query,
-                        content=content,
-                        source_url=data.get("sourceUrl"),
-                        success=True
-                    )
-                else:
-                    return DocumentationResult(
-                        library_id=library_id,
-                        query=query,
-                        content="",
-                        success=False,
-                        error="No documentation found for this query."
-                    )
-            
-            elif response.status_code == 404:
-                return DocumentationResult(
-                    library_id=library_id,
-                    query=query,
-                    content="",
-                    success=False,
-                    error=f"Library '{library_id}' not found in documentation index."
-                )
-            
-            elif response.status_code == 429:
-                return DocumentationResult(
-                    library_id=library_id,
-                    query=query,
-                    content="",
-                    success=False,
-                    error="Rate limit exceeded. Try again later or use an API key."
-                )
-            
-            else:
-                return DocumentationResult(
-                    library_id=library_id,
-                    query=query,
-                    content="",
-                    success=False,
-                    error=f"API error: {response.status_code}"
+            async with httpx.AsyncClient(timeout=30.0) as client:
+                url = f"{CONTEXT7_API_BASE}{CONTEXT7_CONTEXT_ENDPOINT}"
+                response = await client.get(
+                    url,
+                    params={
+                        "libraryId": library_id,
+                        "query": query,
+                        "maxTokens": max_tokens
+                    },
+                    headers=self._get_headers()
                 )
                 
-        except httpx.TimeoutException:
-            return DocumentationResult(
-                library_id=library_id,
-                query=query,
-                content="",
-                success=False,
-                error="Request timed out. Try again."
-            )
+                if response.status_code == 200:
+                    data = response.json()
+                    content = data.get("context", data.get("content", ""))
+                    if content:
+                        return DocumentationResult(
+                            library_id=library_id,
+                            query=query,
+                            content=content,
+                            source_url=data.get("sourceUrl"),
+                            success=True
+                        )
+                
+                # Handle specific error codes with helpful messages
+                error_map = {
+                    401: "Unauthorized: Please check your Context7 API key.",
+                    404: f"Library '{library_id}' not found. Try resolve_library first.",
+                    429: "Rate limit exceeded. Consider adding an API key for higher limits.",
+                }
+                error_msg = error_map.get(response.status_code, f"API error: {response.status_code}")
+                
+                return DocumentationResult(
+                    library_id=library_id,
+                    query=query,
+                    content="",
+                    success=False,
+                    error=error_msg
+                )
         except Exception as e:
             return DocumentationResult(
                 library_id=library_id,
                 query=query,
                 content="",
                 success=False,
-                error=str(e)
+                error=f"Connection failed: {str(e)}"
             )
-    
+
     def close(self):
         """Close the HTTP client."""
-        self.client.close()
+        if hasattr(self, 'client'):
+            self.client.close()
 
 
 def detect_frameworks(code: str) -> List[str]:
-    """
-    Detect frameworks and libraries used in code.
-    
-    Args:
-        code: Source code to analyze
-        
-    Returns:
-        List of detected library names
-    """
+    """Detect frameworks and libraries used in code."""
     detected = []
     
+    # AST-based detection would be better, but regex is faster for quick scanning
     patterns = [
         # Python imports
         (r"from\s+(fastapi|django|flask|pytest|numpy|pandas|requests|httpx)\b", 1),
         (r"import\s+(fastapi|django|flask|pytest|numpy|pandas|requests|httpx)\b", 1),
         
-        # JavaScript/TypeScript imports
+        # JS/TS imports
         (r"from\s+['\"]react['\"]", "react"),
         (r"from\s+['\"]next", "nextjs"),
         (r"from\s+['\"]vue['\"]", "vue"),
@@ -368,7 +324,7 @@ def detect_frameworks(code: str) -> List[str]:
         (r"from\s+['\"]@prisma", "prisma"),
         (r"from\s+['\"]@supabase", "supabase"),
         
-        # Common patterns
+        # Modern patterns
         (r"createClient\s*\(\s*\)", "supabase"),
         (r"useQuery|useMutation", "tanstack-query"),
         (r"useState|useEffect|useCallback", "react"),
@@ -377,24 +333,25 @@ def detect_frameworks(code: str) -> List[str]:
     ]
     
     for pattern, lib in patterns:
-        if re.search(pattern, code, re.IGNORECASE):
-            lib_name = lib if isinstance(lib, str) else None
-            if lib_name and lib_name not in detected:
+        match = re.search(pattern, code, re.IGNORECASE)
+        if match:
+            # If lib is 1, take the first group from regex
+            lib_name = match.group(1) if lib == 1 else lib
+            if lib_name and lib_name.lower() not in [d.lower() for d in detected]:
                 detected.append(lib_name)
     
     return detected
 
 
-# Singleton instance for convenience
+# Singleton instance maintenance
 _fetcher: Optional[DocumentationFetcher] = None
 
-
-def get_fetcher(api_key: Optional[str] = None) -> DocumentationFetcher:
+def get_fetcher(api_key: Optional[str] = None) -> Optional[DocumentationFetcher]:
     """Get or create a DocumentationFetcher instance."""
     global _fetcher
     if _fetcher is None:
         try:
             _fetcher = DocumentationFetcher(api_key)
-        except ImportError:
+        except (ImportError, Exception):
             return None
     return _fetcher

@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="CodeMind Documentation - Complete guide to CLI commands, configuration, and usage.">
-    <meta name="keywords" content="codemind, documentation, CLI, code review, AI, git hooks">
-    <title>Documentation - CodeMind</title>
+    <meta name="description" content="CodeMind v2.0 Documentation — MCP Security Tools: SAST, Secrets Detection, SCA, IaC Scanning, SARIF Reports.">
+    <meta name="keywords" content="codemind, documentation, MCP, SAST, SCA, secrets, IaC, SARIF, security, code review, AI">
+    <title>Documentation - CodeMind v2.0</title>
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -56,6 +56,21 @@
                     <a href="#how-it-works" class="sidebar-link">How It Works</a>
                 </div>
                 <div class="sidebar-section">
+                    <h4>🛡️ MCP Security Tools</h4>
+                    <a href="#guardian-mode" class="sidebar-link">Guardian Mode</a>
+                    <a href="#tool-deep-scan" class="sidebar-link">deep_security_scan</a>
+                    <a href="#tool-guard" class="sidebar-link">guard_code</a>
+                    <a href="#tool-scan-fix" class="sidebar-link">scan_and_fix</a>
+                    <a href="#tool-secrets" class="sidebar-link">scan_secrets</a>
+                    <a href="#tool-sca" class="sidebar-link">scan_dependencies</a>
+                    <a href="#tool-package" class="sidebar-link">check_package</a>
+                    <a href="#tool-iac" class="sidebar-link">scan_iac_file</a>
+                    <a href="#tool-infra" class="sidebar-link">scan_infrastructure</a>
+                    <a href="#tool-report" class="sidebar-link">export_security_report</a>
+                    <a href="#tool-docs" class="sidebar-link">Documentation Tools</a>
+                    <a href="#cmd-serve" class="sidebar-link">serve (MCP Server)</a>
+                </div>
+                <div class="sidebar-section">
                     <h4>CLI Commands</h4>
                     <a href="#cmd-install" class="sidebar-link">install</a>
                     <a href="#cmd-uninstall" class="sidebar-link">uninstall</a>
@@ -71,8 +86,6 @@
                     <a href="#cmd-template" class="sidebar-link">template</a>
                     <a href="#cmd-detect" class="sidebar-link">detect</a>
                     <a href="#cmd-history" class="sidebar-link">history</a>
-                    <a href="#guardian-mode" class="sidebar-link">Guardian Mode (MCP)</a>
-                    <a href="#cmd-serve" class="sidebar-link">serve (MCP Server)</a>
                 </div>
                 <div class="sidebar-section">
                     <h4>Configuration</h4>
@@ -95,14 +108,14 @@
             <div class="docs-content">
                 <!-- Header -->
                 <div class="docs-header">
-                    <h1>CodeMind Documentation</h1>
-                    <p class="docs-lead">Complete guide to using CodeMind as your MCP Security & Quality Guardian.</p>
+                    <h1>CodeMind v2.0 Documentation</h1>
+                    <p class="docs-lead">Complete guide to CodeMind's 14 MCP security tools — SAST, Secrets, SCA, IaC, and SARIF reporting.</p>
                 </div>
 
                 <!-- Guardian Mode -->
                 <section id="guardian-mode">
-                    <h2>🛡️ Guardian Mode</h2>
-                    <p>CodeMind's primary feature is the MCP Guardian, which protects your codebase from security vulnerabilities and "AI slop".</p>
+                    <h2>🛡️ Guardian Mode (v2.0)</h2>
+                    <p>CodeMind v2.0 is a comprehensive security platform with <strong>5 engines</strong> and <strong>14 MCP tools</strong>. Activate everything with a single trigger.</p>
                     
                     <article id="use-codemind">
                         <h3>Activating via "use codemind"</h3>
@@ -110,23 +123,129 @@
                         <div class="code-block">
                             <pre><code>"use codemind"</code></pre>
                         </div>
-                        <p>This activates the Guardian suite, instructing the AI to audit every line of code it generates using CodeMind's tools.</p>
+                        <p>This activates the full Guardian v2.0 suite: SAST scanning, secrets detection, SCA, IaC auditing, documentation fetching, and auto-fix.</p>
                     </article>
 
                     <article id="mcp-tools">
-                        <h3>Guardian tools</h3>
+                        <h3>All MCP Tools (14)</h3>
+                        
+                        <h4>🔍 Static Analysis (SAST)</h4>
                         <ul class="tool-list">
-                            <li>
+                            <li id="tool-guard">
                                 <strong><code>guard_code</code></strong>
-                                <p>Audits a snippet for security (XSS, SQLi, Secrets) and quality (slop detection).</p>
+                                <p>Comprehensive security & quality audit — 50+ patterns for SQLi, XSS, SSRF, command injection, path traversal, credential exposure, and AI slop detection. Returns a scored report.</p>
+                            </li>
+                            <li id="tool-scan-fix">
+                                <strong><code>scan_and_fix</code></strong>
+                                <p>Detects vulnerabilities and auto-fixes them using LLM. Returns original issues, fixed code, and a diff.</p>
                             </li>
                             <li>
                                 <strong><code>improve_code</code></strong>
-                                <p>Automatically refactors code to fix issues found by the auditor.</p>
+                                <p>Automatically refactors code to fix security and quality issues found by the auditor.</p>
+                            </li>
+                        </ul>
+
+                        <h4 id="tool-deep-scan">🛡️ Deep Security Scan</h4>
+                        <ul class="tool-list">
+                            <li>
+                                <strong><code>deep_security_scan</code></strong>
+                                <p>Multi-layer analysis combining SAST + Secrets + Quality in one call. Runs all engines and returns a unified security score, severity breakdown, and formatted report.</p>
+                            </li>
+                        </ul>
+
+                        <h4 id="tool-secrets">🔑 Secrets Detection</h4>
+                        <ul class="tool-list">
+                            <li>
+                                <strong><code>scan_secrets</code></strong>
+                                <p>Deep secrets detection with 30+ API key patterns (AWS, GCP, Stripe, GitHub, etc.) plus Shannon entropy analysis to catch unknown/custom secrets. Minimizes false positives via file-type filtering.</p>
+                            </li>
+                        </ul>
+
+                        <h4 id="tool-sca">📦 Software Composition Analysis (SCA)</h4>
+                        <ul class="tool-list">
+                            <li>
+                                <strong><code>scan_dependencies</code></strong>
+                                <p>Scans lockfiles (requirements.txt, package-lock.json, yarn.lock, go.sum, Cargo.lock, etc.) and checks against Google's OSV.dev vulnerability database. Privacy-preserving: only package names & versions are sent.</p>
+                            </li>
+                            <li id="tool-package">
+                                <strong><code>check_package</code></strong>
+                                <p>Quick single-package CVE lookup. Pass a name, version, and ecosystem (PyPI, npm, Go, etc.) to check for known vulnerabilities.</p>
+                            </li>
+                        </ul>
+
+                        <h4 id="tool-iac">🏗️ Infrastructure as Code (IaC)</h4>
+                        <ul class="tool-list">
+                            <li>
+                                <strong><code>scan_iac_file</code></strong>
+                                <p>Scans Dockerfiles, GitHub Actions workflows, and docker-compose files for security misconfigurations — root user, secrets in ENV, unpinned images, supply chain attacks, excessive permissions.</p>
+                            </li>
+                            <li id="tool-infra">
+                                <strong><code>scan_infrastructure</code></strong>
+                                <p>Scans ALL IaC files in a project directory automatically. Finds and audits Dockerfiles, CI workflows, and compose files.</p>
+                            </li>
+                        </ul>
+
+                        <h4 id="tool-report">📋 Reporting</h4>
+                        <ul class="tool-list">
+                            <li>
+                                <strong><code>export_security_report</code></strong>
+                                <p>Exports scan results as SARIF v2.1.0 (GitHub Code Scanning compatible), JSON, Markdown, HTML, or CSV. Includes CWE/OWASP mappings and code snippets.</p>
+                            </li>
+                        </ul>
+
+                        <h4 id="tool-docs">📚 Documentation</h4>
+                        <ul class="tool-list">
+                            <li>
+                                <strong><code>resolve_library</code></strong>
+                                <p>Resolve a library name to a documentation ID (like Context7).</p>
                             </li>
                             <li>
+                                <strong><code>query_docs</code></strong>
+                                <p>Fetch up-to-date documentation for any library with code examples.</p>
+                            </li>
+                            <li>
+                                <strong><code>detect_code_libraries</code></strong>
+                                <p>Detect frameworks and libraries in code snippets and suggest documentation queries.</p>
+                            </li>
+                        </ul>
+
+                        <h4>🔧 Git & Review</h4>
+                        <ul class="tool-list">
+                            <li>
+                                <strong><code>review_diff</code></strong>
+                                <p>Generate an AI code review prompt from git diff changes.</p>
+                            </li>
+                            <li>
+                                <strong><code>validate_ai_response</code></strong>
+                                <p>Validate AI review output format and check for critical issues.</p>
+                            </li>
+                            <li>
+                                <strong><code>get_review_history</code></strong>
+                                <p>Get recent code review history and statistics.</p>
+                            </li>
+                            <li>
+                                <strong><code>get_git_context</code></strong>
+                                <p>Get current git repository context (branch, upstream, state).</p>
+                            </li>
+                        </ul>
+
+                        <h4>📖 Resources & Prompts</h4>
+                        <ul class="tool-list">
+                            <li>
                                 <strong><code>guardian://best-practices</code></strong>
-                                <p>A resource containing authoritative patterns for safe and clean code.</p>
+                                <p>Resource with authoritative security & clean code best practices.</p>
+                            </li>
+                            <li>
+                                <strong><code>code_review_prompt</code></strong>
+                                <p>Generate a guided prompt for AI code review (general, security, performance, refactor).</p>
+                            </li>
+                            <li>
+                                <strong><code>secure_implementation_prompt</code></strong>
+                                <p>Generate a prompt to implement code with security in mind.</p>
+                            </li>
+                            <li>
+                                <strong><code>codemind</code></strong>
+                                <p>The unified "use codemind" prompt that orchestrates the full workflow.</p>
                             </li>
                         </ul>
                     </article>
@@ -516,12 +635,22 @@ codemind config --show</code></pre>
                             </tbody>
                         </table>
 
-                        <h4>Available MCP Tools</h4>
+                        <h4>Available MCP Tools (14)</h4>
                         <ul>
-                            <li><code>review_diff</code> - Generate review prompt for git changes</li>
-                            <li><code>validate_ai_response</code> - Validate AI review output</li>
-                            <li><code>get_review_history</code> - Get recent reviews</li>
-                            <li><code>get_git_context</code> - Get git repository info</li>
+                            <li>🔍 <code>guard_code</code> — SAST audit (50+ patterns)</li>
+                            <li>🔧 <code>scan_and_fix</code> — Detect + auto-fix vulnerabilities</li>
+                            <li>✨ <code>improve_code</code> — Refactor and improve code</li>
+                            <li>🛡️ <code>deep_security_scan</code> — Multi-layer security analysis</li>
+                            <li>🔑 <code>scan_secrets</code> — 30+ API key patterns + entropy</li>
+                            <li>📦 <code>scan_dependencies</code> — SCA via OSV.dev</li>
+                            <li>🔍 <code>check_package</code> — Single package CVE check</li>
+                            <li>🏗️ <code>scan_iac_file</code> — Dockerfile/Actions/Compose security</li>
+                            <li>🏗️ <code>scan_infrastructure</code> — Full project IaC scan</li>
+                            <li>📋 <code>export_security_report</code> — SARIF/JSON/MD/HTML/CSV</li>
+                            <li>📚 <code>resolve_library</code> — Library ID resolution</li>
+                            <li>📖 <code>query_docs</code> — Documentation fetching</li>
+                            <li>🔎 <code>detect_code_libraries</code> — Framework detection</li>
+                            <li>📝 <code>review_diff</code> — Git diff review prompt</li>
                         </ul>
                     </article>
                 </section>
@@ -722,5 +851,3 @@ prompt:
     </script>
 </body>
 </html>
-</CodeContent>
-<parameter name="EmptyFile">false
