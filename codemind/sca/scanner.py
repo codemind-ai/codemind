@@ -345,8 +345,12 @@ class DependencyScanner:
 
     def _parse_requirements_txt(self, path: Path, ecosystem: str) -> List[Dependency]:
         """Parse Python requirements.txt."""
-        deps = []
         content = path.read_text(encoding="utf-8", errors="ignore")
+        return self._parse_requirements_txt_from_content(content, path.name, ecosystem)
+
+    def _parse_requirements_txt_from_content(self, content: str, filename: str, ecosystem: str) -> List[Dependency]:
+        """Parse Python requirements.txt from string content."""
+        deps = []
         for line in content.splitlines():
             line = line.strip()
             if not line or line.startswith("#") or line.startswith("-"):
@@ -358,7 +362,7 @@ class DependencyScanner:
                     name=match.group(1).lower(),
                     version=match.group(2),
                     ecosystem=ecosystem,
-                    lockfile=path.name,
+                    lockfile=filename,
                 ))
         return deps
 
