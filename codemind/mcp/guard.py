@@ -399,7 +399,29 @@ SECURITY_PATTERNS: List[Tuple[str, str, RuleSeverity, str, str, str]] = [
      None,
      None,
      "SECURITY_HEADER"),
-    
+     
+    (r'X-Requested-With',
+     "Security Myth: X-Requested-With header",
+     RuleSeverity.WARNING,
+     "Do NOT rely on X-Requested-With for security. It can be easily spoofed by non-browser clients and doesn't protect against CSRF in modern browsers.",
+     None,
+     "SECURITY_MYTH"),
+
+    # AUTH & BRUTE FORCE
+    (r'password\s*==\s*|password\s*!=\s*',
+     "Auth: Direct password comparison",
+     RuleSeverity.CRITICAL,
+     "Use timing-safe comparison (e.g., secrets.compare_digest) and proper hashing (Argon2/Scrypt).",
+     None,
+     "AUTH_SECURITY"),
+
+    (r'jwt\.decode\s*\([^)]*verify\s*=\s*False',
+     "Auth: JWT decoding without verification",
+     RuleSeverity.CRITICAL,
+     "Always verify JWT signatures! verify=True",
+     None,
+     "AUTH_SECURITY"),
+
     # OPEN REDIRECT
     (r'redirect\s*\(\s*(?:user|input|req\.|request|params)',
      "Open Redirect: User input in redirect",

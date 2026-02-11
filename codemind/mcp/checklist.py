@@ -79,6 +79,29 @@ class LaunchAudit:
                 r"DELETE\s+FROM\s+\w+\s*(?!.*\bWHERE\b)",
                 r"TRUNCATE\s+(TABLE|COLLECTION)",
                 r"flushall|flushdb"
+            ],
+            "csrf": [
+                r"csrf",
+                r"xsrf",
+                r"SameSite=Strict",
+                r"SameSite=Lax",
+                r"Antiforgery"
+            ],
+            "brute_force": [
+                r"lockout",
+                r"max_attempts",
+                r"delay",
+                r"sleep",
+                r"fail_count"
+            ],
+            "auth_secure": [
+                r"argon2",
+                r"scrypt",
+                r"bcrypt",
+                r"jwt\.sign",
+                r"exp:",
+                r"aud:",
+                r"iss:"
             ]
         }
 
@@ -136,6 +159,24 @@ class LaunchAudit:
              results.append(ChecklistItem("safety_lock", "Safety Lock", "failed", "Destructive action detected!", "Review code for DROP, TRUNCATE, or unconditional DELETE. Ensure these are intentional.", "Safety"))
         else:
              results.append(ChecklistItem("safety_lock", "Safety Lock", "passed", "No destructive actions detected. Safety lock engaged.", "", "Safety"))
+
+        # 10. CSRF Protection
+        if any(re.search(p, code, re.I) for p in self.patterns["csrf"]):
+            results.append(ChecklistItem("csrf", "CSRF Protection", "passed", "Detected CSRF protection or SameSite patterns.", "", "Protection"))
+        else:
+            results.append(ChecklistItem("csrf", "CSRF Protection", "failed", "No CSRF protection detected.", "Use CSRF tokens or set cookies to SameSite=Strict/Lax. X-Requested-With is NOT enough.", "Protection"))
+
+        # 11. Brute Force Protection
+        if any(re.search(p, code, re.I) for p in self.patterns["brute_force"]):
+            results.append(ChecklistItem("brute_force", "Brute Force Protection", "passed", "Detected brute-force protection (lockouts/delays).", "", "Protection"))
+        else:
+            results.append(ChecklistItem("brute_force", "Brute Force Protection", "failed", "No brute-force protection detected.", "Implement account lockout, IP-based rate limiting, or artificial login delays.", "Protection"))
+
+        # 12. Auth Security (Hashing/JWT)
+        if any(re.search(p, code, re.I) for p in self.patterns["auth_secure"]):
+            results.append(ChecklistItem("auth_secure", "Session/Auth Security", "passed", "Detected secure hashing or robust JWT configuration.", "", "Authentication"))
+        else:
+            results.append(ChecklistItem("auth_secure", "Session/Auth Security", "warning", "Incomplete auth security detected.", "Ensure passwords use Argon2/Scrypt and JWTs have expiration (exp), audience (aud), and issuer (iss).", "Authentication"))
 
         return results
 
