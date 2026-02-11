@@ -16,13 +16,16 @@
 </p>
 
 <p align="center">
+  <a href="https://pypi.org/project/codemind-mcp/">📦 PyPI</a> •
   <a href="https://codemind-ai.github.io/codemind">📖 Documentation</a> •
   <a href="#installation">🚀 Quick Start</a> •
   <a href="#available-tools">🔧 Tools</a>
 </p>
 
 <p align="center">
-  <img src="https://img.shields.io/badge/version-2.0.0-blue.svg" alt="Version">
+  <a href="https://pypi.org/project/codemind-mcp/">
+    <img src="https://img.shields.io/pypi/v/codemind-mcp.svg" alt="PyPI Version">
+  </a>
   <img src="https://img.shields.io/badge/python-3.10+-green.svg" alt="Python">
   <img src="https://img.shields.io/badge/MCP-Native-purple.svg" alt="MCP">
   <img src="https://img.shields.io/badge/license-MIT-blue.svg" alt="License">
@@ -52,7 +55,8 @@ CodeMind transforms your AI coding assistant (Cursor, Windsurf, Claude Desktop) 
 ### Installation
 
 ```bash
-pip install codemind
+# Global installation (recommended for CLI usage)
+pip install codemind-mcp
 ```
 
 ### IDE Configuration (MCP)
@@ -62,7 +66,7 @@ Add the following to your MCP server configuration:
 ```json
 {
   "mcpServers": {
-    "codemind": {
+"codemind": {
       "command": "codemind",
       "args": ["serve"]
     }
