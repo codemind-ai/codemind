@@ -2415,3 +2415,147 @@ section {
         width: 32px;
     }
 }
+/* === Clawdbot Integration Section === */
+.clawdbot-section {
+    padding: var(--space-24) 0;
+    background: var(--color-bg-primary);
+    border-top: 1px solid var(--color-border);
+}
+
+.setup-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-12);
+    align-items: center;
+    margin-top: var(--space-12);
+}
+
+.setup-steps {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-8);
+}
+
+.setup-step {
+    display: flex;
+    gap: var(--space-6);
+    padding: var(--space-6);
+    background: var(--color-bg-secondary);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-xl);
+    transition: all var(--transition-base);
+}
+
+.setup-step:hover {
+    border-color: var(--color-border-brand);
+    transform: translateX(10px);
+    background: var(--color-bg-elevated);
+}
+
+.step-number {
+    width: 32px;
+    height: 32px;
+    background: var(--color-brand);
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    flex-shrink: 0;
+    box-shadow: 0 0 15px var(--color-brand-subtle);
+}
+
+.step-content h4 {
+    font-size: var(--text-lg);
+    margin-bottom: var(--space-2);
+}
+
+.step-content p {
+    color: var(--color-text-secondary);
+    font-size: var(--text-sm);
+    margin-bottom: var(--space-4);
+}
+
+.code-snippet-small {
+    background: #090c10;
+    padding: var(--space-3) var(--space-4);
+    border-radius: var(--radius-md);
+    border: 1px solid #30363d;
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    color: var(--color-brand-light);
+}
+
+.trigger-box {
+    background: var(--color-brand-subtle);
+    padding: var(--space-3) var(--space-4);
+    border-radius: var(--radius-md);
+    border: 1px dashed var(--color-brand);
+    font-style: italic;
+    color: var(--color-text-primary);
+    font-size: var(--text-sm);
+}
+
+/* Config Window Visual */
+.config-window {
+    background: #0d1117;
+    border: 1px solid #30363d;
+    border-radius: var(--radius-xl);
+    overflow: hidden;
+    box-shadow: 0 24px 50px rgba(0, 0, 0, 0.4);
+}
+
+.window-header {
+    background: #161b22;
+    padding: var(--space-3) var(--space-4);
+    display: flex;
+    align-items: center;
+    gap: var(--space-4);
+    border-bottom: 1px solid #30363d;
+}
+
+.window-dots {
+    display: flex;
+    gap: 6px;
+}
+
+.window-dots span {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: #30363d;
+}
+
+.window-dots span:nth-child(1) { background: #ff5f56; }
+.window-dots span:nth-child(2) { background: #ffbd2e; }
+.window-dots span:nth-child(3) { background: #27c93f; }
+
+.window-title {
+    color: #8b949e;
+    font-size: 11px;
+    font-family: var(--font-mono);
+}
+
+.window-content {
+    padding: var(--space-6);
+    background: #0d1117;
+}
+
+.window-content pre {
+    margin: 0;
+    font-family: var(--font-mono);
+    font-size: 13px;
+    line-height: 1.6;
+    color: #d4d4d4;
+}
+
+.window-content code {
+    color: #9cdcfe;
+}
+
+@media (max-width: 992px) {
+    .setup-grid {
+        grid-template-columns: 1fr;
+    }
+}
