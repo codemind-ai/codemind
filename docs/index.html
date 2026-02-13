@@ -80,8 +80,9 @@
                     <span class="title-highlight">CodeMind</span> <span class="no-break">MCP <span class="title-underline">Guardian</span></span>
                 </h1>
                 <p class="hero-description">
-                    CodeMind is your local security architect for the AI era. It audits AI-generated code across five dimensions—SAST, secrets, dependencies, infrastructure, and launch readiness. Simply say <strong>"use codemind"</strong> to instantly secure your SaaS with production-ready rate limiting, RLS, and zero security debt.
+                    CodeMind is the specialized security guardian for the modern web. Built for <strong>Next.js</strong>, <strong>React</strong>, and <strong>full-stack JavaScript</strong>, it audits AI-generated code across five dimensions—SAST, secrets, dependencies, infrastructure, and launch readiness. Simply say <strong>"use codemind"</strong> to ship production-ready SaaS with zero security debt.
                 </p>
+
                 <div class="hero-cta">
                     <a href="#installation" class="btn btn-primary btn-lg">
                         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -358,26 +359,29 @@
                         <div class="comparison-header">
                             <span class="comparison-badge comparison-badge-bad">❌ Without CodeMind</span>
                         </div>
-                        <pre class="comparison-code"><code><span class="code-comment"># AI generates vulnerable code</span>
-<span class="code-keyword">password</span> = <span class="code-string">"secret123"</span>  <span class="code-bad"># Hardcoded!</span>
+                        <pre class="comparison-code"><code><span class="code-comment">// AI generates vulnerable React code</span>
+<span class="code-keyword">const</span> apiKey = <span class="code-string">"sk-123456789"</span>; <span class="code-bad">// Leaked!</span>
 
-<span class="code-keyword">query</span> = <span class="code-string">f"SELECT * FROM users WHERE id = </span><span class="code-bad">{user_id}</span><span class="code-string">"</span>
-<span class="code-comment"># SQL Injection vulnerability!</span>
-
-cursor.<span class="code-func">execute</span>(query)</code></pre>
+<span class="code-keyword">return</span> (
+  <span class="code-tag">&lt;div</span> <span class="code-attr">dangerouslySetInnerHTML</span>={{ 
+    __html: <span class="code-bad">userInput</span> 
+  }} <span class="code-tag">/&gt;</span>
+); <span class="code-comment">// XSS vulnerability!</span></code></pre>
                     </div>
                     <div class="comparison-card comparison-after">
                         <div class="comparison-header">
                             <span class="comparison-badge comparison-badge-good">✅ With CodeMind</span>
                         </div>
-                        <pre class="comparison-code"><code><span class="code-comment"># CodeMind enforces security</span>
-<span class="code-keyword">password</span> = os.environ.<span class="code-func">get</span>(<span class="code-string">"DB_PASSWORD"</span>)
+                        <pre class="comparison-code"><code><span class="code-comment">// CodeMind enforces security</span>
+<span class="code-keyword">const</span> apiKey = process.env.<span class="code-func">SECRET_KEY</span>;
 
-<span class="code-keyword">query</span> = <span class="code-string">"SELECT * FROM users WHERE id = ?"</span>
-<span class="code-comment"># Parameterized query - safe!</span>
-
-cursor.<span class="code-func">execute</span>(query, (user_id,))</code></pre>
+<span class="code-keyword">return</span> (
+  <span class="code-tag">&lt;div&gt;</span>
+    {<span class="code-func">sanitize</span>(userInput)}
+  <span class="code-tag">&lt;/div&gt;</span>
+); <span class="code-comment">// Safe and clean!</span></code></pre>
                     </div>
+
                 </div>
             </div>
         </div>
@@ -491,6 +495,17 @@ cursor.<span class="code-func">execute</span>(query, (user_id,))</code></pre>
                     <p>Proactive security: <strong>"use codemind"</strong> automatically secures your SaaS with rate limits, RLS, CAPTCHA, and server-side validation. Ship production-ready code every time.</p>
                     <div class="feature-tag">audit_launch_checklist</div>
                 </div>
+                <div class="feature-card">
+                    <div class="feature-icon feature-icon-brand">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                            <path d="M12 15V3m0 12l-4-4m4 4l4-4M2 17l.621 2.485A2 2 0 004.561 21h14.878a2 2 0 001.94-1.515L22 17"/>
+                        </svg>
+                    </div>
+                    <h3>Prompt Guardian</h3>
+                    <p>Shields against Jailbreaks, Context Hijacking, and Indirect Injection. The first MCP server with <strong>taint-aware</strong> prompt auditing and secure template generation.</p>
+                    <div class="feature-tag">audit_prompt</div>
+                </div>
+
                 <div class="feature-card">
                     <div class="feature-icon">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">

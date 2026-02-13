@@ -83,13 +83,14 @@ class GuardReport:
         fixed = original_code
         # Sort by line number descending to preserve line numbers during replacement
         fixable = sorted(
-            [i for i in self.issues if i.auto_fix and i.code_snippet],
+            [i for i in self.issues if i.auto_fix is not None and i.code_snippet],
             key=lambda x: x.line or 0,
             reverse=True
         )
         for issue in fixable:
-            if issue.code_snippet and issue.auto_fix:
+            if issue.code_snippet and issue.auto_fix is not None:
                 fixed = fixed.replace(issue.code_snippet, issue.auto_fix)
+
         return fixed
 
 
@@ -185,6 +186,29 @@ SECURITY_PATTERNS: List[Tuple[str, str, RuleSeverity, str, str, str]] = [
      "Avoid v-html with user input. Use v-text or sanitize content",
      None,
      "XSS"),
+    
+    # REACT / NEXT.JS SPECIFIC
+    (r'useEffect\s*\(\s*\(\s*\)\s*=>\s*\{.*(?:fetch|axios|request).*\$\{',
+     "Next.js/React: Potential CSRF or Data Leak in client-side useEffect",
+     RuleSeverity.WARNING,
+     "Use Server Components or Server Actions for data mutation. For fetching, use React Query or SWR with proper CSRF headers.",
+     None,
+     "CLIENT_SIDE_DATA_FETCH"),
+
+    (r'localStorage\.setItem\s*\(.*(?:token|key|secret|pass)',
+     "Security Risk: Sensitive data in localStorage",
+     RuleSeverity.HIGH,
+     "Avoid storing sensitive tokens in localStorage. Use HttpOnly cookies instead to prevent XSS-based theft.",
+     None,
+     "SENSITIVE_DATA_EXPOSURE"),
+
+    (r'process\.env\.NEXT_PUBLIC_[A-Z_]*_KEY\s*=',
+     "Next.js: Potential Secret Exposure in NEXT_PUBLIC_ variable",
+     RuleSeverity.HIGH,
+     "Only prefix public, safe values with NEXT_PUBLIC_. Private keys must NOT have this prefix.",
+     None,
+     "SECRET_EXPOSURE"),
+
     
     # Python XSS (Flask/Django)
     (r'\|\s*safe\b',
@@ -452,6 +476,64 @@ SECURITY_PATTERNS: List[Tuple[str, str, RuleSeverity, str, str, str]] = [
      "Avoid nested quantifiers in regex. Use possessive quantifiers or atomic groups",
      None,
      "REGEX_DOS"),
+    # PROMPT INJECTION & AI SECURITY
+    (r'(?i)(?:prompt|instruction|query|message)\s*=\s*f["\'].*\{.*\}',
+     "Potential Prompt Injection: User input in f-string prompt",
+     RuleSeverity.HIGH,
+     "Use clear delimiters (e.g., XML tags or triple quotes) and provide instructions on how to treat user input.",
+     None,
+     "PROMPT_INJECTION"),
+    
+    (r'(?i)(?:prompt|instruction|query|message)\s*=\s*["\'].*\+.*["\']',
+     "Potential Prompt Injection: String concatenation in prompt",
+     RuleSeverity.HIGH,
+     "Use template-based prompt construction with safe delimiters.",
+     None,
+     "PROMPT_INJECTION"),
+    
+    (r'(?i)(?:ignore\s+all\s+previous\s+instructions|system\s+prompt|disregard\s+prior\s+directives)',
+     "Direct Prompt Injection: Instruction override phrase detected",
+     RuleSeverity.CRITICAL,
+     "Ensure system instructions are properly framed and protected from user overrides.",
+     None,
+     "PROMPT_INJECTION"),
+
+    (r'(?i)(?:you\s+are\s+now\s+in\s+developer\s+mode|dan\s+mode|stay\s+in\s+character|hypothetical\s+scenario\s+where)',
+     "Jailbreak Attempt: Common evasion phrases detected",
+     RuleSeverity.CRITICAL,
+     "Block or flag prompts that attempt to bypass AI safety filters using persona shifts or hypothetical scenarios.",
+     None,
+     "JAILBREAK"),
+
+    (r'(?i)(?:forget\s+everything|start\s+fresh|clear\s+memory|new\s+session)',
+     "Context Hijacking: Attempt to clear or override context",
+     RuleSeverity.HIGH,
+     "Context hijacking can be used to bypass initial system guardrails.",
+     None,
+     "CONTEXT_HIJACKING"),
+     
+    (r'(?i)messages\s*=\s*\[.*role["\']:\s*["\']user["\'].*content["\']:\s*f["\']',
+     "Critical AI Security: Direct user input in ChatCompletion message",
+     RuleSeverity.CRITICAL,
+     "Implement input validation and use defensive prompting techniques to prevent injection.",
+     None,
+     "PROMPT_INJECTION"),
+
+    (r'(?i)<!--\s*(?:ignore|disregard|override).*-->',
+     "Indirect Prompt Injection Risk: Instruction hidden in HTML comment",
+     RuleSeverity.HIGH,
+     "Sanitize inputs to remove hidden instructions often used in secondary data sources (RAG, web crawling).",
+     None,
+     "INDIRECT_INJECTION"),
+
+    (r'(?i)\[\s*system\s*[:\s].*\]|\{\s*system\s*[:\s].*\}',
+     "Role Injection: Attempt to inject system-level instructions in data",
+     RuleSeverity.HIGH,
+     "Ensure that user-provided content cannot redefine system roles.",
+     None,
+     "ROLE_INJECTION"),
+
+
     # RACE CONDITIONS
     (r'if\s+os\.path\.exists.*\n.*open\s*\(',
      "Race Condition: TOCTOU vulnerability",
@@ -460,6 +542,7 @@ SECURITY_PATTERNS: List[Tuple[str, str, RuleSeverity, str, str, str]] = [
      None,
      "RACE_CONDITION"),
 ]
+
 
 
 # DESTRUCTIVE ACTION PATTERNS (Safety Lock)
@@ -545,29 +628,35 @@ class SecurityGuard:
 AI_SLOP_PATTERNS: List[Tuple[str, str, RuleSeverity, Optional[str]]] = [
     # Redundant comments (AI loves these)
     (r"//\s*This function (adds|subtracts|multiplies|divides|returns|creates|gets|sets)", 
-     "Redundant comment explaining obvious behavior", RuleSeverity.INFO, None),
+     "Redundant comment explaining obvious behavior", RuleSeverity.INFO, ""),
     (r"//\s*(Loop|Iterate) (through|over) (the|all)", 
-     "Redundant comment describing loop", RuleSeverity.INFO, None),
+     "Redundant comment describing loop", RuleSeverity.INFO, ""),
     (r"//\s*(Check|Verify) if", 
-     "Redundant comment describing condition", RuleSeverity.INFO, None),
+     "Redundant comment describing condition", RuleSeverity.INFO, ""),
     (r"//\s*Initialize|//\s*Declare|//\s*Define", 
-     "Redundant initialization comment", RuleSeverity.INFO, None),
+     "Redundant initialization comment", RuleSeverity.INFO, ""),
     (r"//\s*Return the result", 
-     "Redundant return comment", RuleSeverity.INFO, None),
+     "Redundant return comment", RuleSeverity.INFO, ""),
     (r"//\s*Import (the|necessary)", 
-     "Redundant import comment", RuleSeverity.INFO, None),
+     "Redundant import comment", RuleSeverity.INFO, ""),
     (r"//\s*Create (a|an|the) (new )?instance", 
-     "Redundant instantiation comment", RuleSeverity.INFO, None),
+     "Redundant instantiation comment", RuleSeverity.INFO, ""),
     
     # AI meta-comments
     (r"//.*as an AI (assistant|language model)", 
-     "AI-typical meta-comment (remove)", RuleSeverity.WARNING, None),
+     "AI-typical meta-comment (remove)", RuleSeverity.WARNING, ""),
     (r"//.*I (cannot|can't|don't have)", 
-     "AI self-reference comment", RuleSeverity.WARNING, None),
+     "AI self-reference comment", RuleSeverity.WARNING, ""),
     (r"#.*AI-generated|#.*Generated by", 
-     "AI attribution comment", RuleSeverity.INFO, None),
+     "AI attribution comment", RuleSeverity.INFO, ""),
     (r"//\s*Note:|#\s*Note:", 
-     "Potentially unnecessary 'Note:' comment", RuleSeverity.INFO, None),
+     "Potentially unnecessary 'Note:' comment", RuleSeverity.INFO, ""),
+    
+    # AI flowery language (Slop)
+    (r"(?i)\b(tapestry|shaping\s+the\s+future|ever-evolving\s+landscape|multifaceted|it's\s+important\s+to\s+note|delve\s+into|at\s+the\s+heart\s+of)\b",
+     "AI-typical flowery language (Slop detected)", RuleSeverity.INFO, None),
+
+
     
     # Verbose docstrings
     (r'""".*This (class|function|method) (represents|implements|creates|is used to)', 
@@ -766,6 +855,7 @@ class Guardian:
                     issues.append(issue)
         except Exception:
             pass
+
 
         # Calculate score with weighted penalties
         score = 100

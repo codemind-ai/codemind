@@ -24,6 +24,7 @@ class PythonASTAnalyzer(ast.NodeVisitor):
         self.code = code
         self.findings: List[Finding] = []
         self.lines = code.splitlines()
+        self.tainted_vars = set()
 
     def analyze(self) -> List[Finding]:
         try:
@@ -33,6 +34,24 @@ class PythonASTAnalyzer(ast.NodeVisitor):
             # If valid code fails to parse, we can't do AST analysis
             pass
         return self.findings
+
+    def _is_external_call(self, n):
+        if isinstance(n, ast.Call):
+            # Check for common external sources
+            if isinstance(n.func, ast.Attribute) and n.func.attr in {'get', 'post', 'urlopen', 'read', 'readlines'}:
+                return True
+            if isinstance(n.func, ast.Name) and n.func.id in {'open'}:
+                return True
+        if isinstance(n, ast.Attribute):
+            return self._is_external_call(n.value)
+        return False
+
+    def _get_involved_vars(self, n):
+        vars = set()
+        for node in ast.walk(n):
+            if isinstance(node, ast.Name):
+                vars.add(node.id)
+        return vars
 
     def visit_Call(self, node: ast.Call):
         # 1. Detect SQL Injection (format/f-string in cursor.execute)
@@ -130,22 +149,7 @@ class PythonASTAnalyzer(ast.NodeVisitor):
                     owasp_category="A08:2021-Software and Data Integrity Failures"
                 ))
 
-        # 5. Detect requests verify=False
-        if module_name == 'requests' and func_name in ['get', 'post', 'put', 'delete', 'patch', 'request']:
-            for keyword in node.keywords:
-                if keyword.arg == 'verify' and isinstance(keyword.value, ast.Constant) and keyword.value.value is False:
-                    self.findings.append(Finding(
-                        type="INSECURE_SSL",
-                        message="SSL certificate verification is disabled (verify=False).",
-                        severity="HIGH",
-                        line=node.lineno,
-                        column=node.col_offset,
-                        suggestion="Enable SSL verification (set verify=True) for production code.",
-                        cwe_id="CWE-295",
-                        owasp_category="A02:2021-Cryptographic Failures"
-                    ))
-
-        # 6. Detect absolute path traversal in open()
+        # 5. Detect absolute path traversal in open()
         if func_name == 'open' and module_name is None:
             if len(node.args) > 0:
                 first_arg = node.args[0]
@@ -161,8 +165,95 @@ class PythonASTAnalyzer(ast.NodeVisitor):
                             cwe_id="CWE-22",
                             owasp_category="A01:2021-Broken Access Control"
                         ))
+        
+        # 6. Detect AI/LLM calls with potentially injected content
+        ai_libs = {'openai', 'anthropic', 'langchain', 'ollama'}
+        if module_name in ai_libs or (func_name and any(ai in func_name.lower() for ai in ai_libs)):
+             # Check messages/prompt arguments
+             for keyword in node.keywords:
+                 if keyword.arg in ['messages', 'prompt', 'input']:
+                     if isinstance(keyword.value, ast.JoinedStr):
+                         self.findings.append(Finding(
+                            type="PROMPT_INJECTION",
+                            message="Critical AI Security: Direct user input formatting in LLM call.",
+                            severity="CRITICAL",
+                            line=node.lineno,
+                            column=node.col_offset,
+                            suggestion="Separate system instructions from user data using distinct roles or delimiters.",
+                            cwe_id="CWE-116",
+                            owasp_category="A03:2021-Injection"
+                         ))
+
 
         self.generic_visit(node)
+
+    def visit_Assign(self, node: ast.Assign):
+        # 1. Track tainted variables from external sources
+        if self._is_external_call(node.value):
+            for target in node.targets:
+                if isinstance(target, ast.Name):
+                    self.tainted_vars.add(target.id)
+
+        # 2. Detect prompt construction with user input or tainted data
+        prompt_vars = {'prompt', 'query', 'payload', 'message', 'instruction'}
+        for target in node.targets:
+            if isinstance(target, ast.Name) and any(p in target.id.lower() for p in prompt_vars):
+                is_unsafe_fmt = False
+                if isinstance(node.value, ast.JoinedStr):
+                    is_unsafe_fmt = True
+                elif isinstance(node.value, ast.Call):
+                    if isinstance(node.value.func, ast.Attribute) and node.value.func.attr == 'format':
+                        is_unsafe_fmt = True
+                elif isinstance(node.value, ast.BinOp) and isinstance(node.value.op, ast.Add):
+                    is_unsafe_fmt = True
+                
+                if is_unsafe_fmt:
+                    self.findings.append(Finding(
+                        type="PROMPT_INJECTION",
+                        message=f"Potential prompt injection: constructing '{target.id}' using string formatting.",
+                        severity="HIGH",
+                        line=node.lineno,
+                        column=node.col_offset,
+                        suggestion="Use a secure template engine or clear XML-like delimiters for user input within the prompt.",
+                        cwe_id="CWE-116",
+                        owasp_category="A03:2021-Injection"
+                    ))
+                
+                # Check for tainted data involvement (Indirect Injection Risk)
+                involved = self._get_involved_vars(node.value)
+                if involved.intersection(self.tainted_vars) or self._is_external_call(node.value):
+                    self.findings.append(Finding(
+                        type="INDIRECT_INJECTION_RISK",
+                        message=f"Indirect Injection Risk: Feeding potential external data into '{target.id}'.",
+                        severity="HIGH",
+                        line=node.lineno,
+                        column=node.col_offset,
+                        suggestion="Treat data from external sources as untrusted. Sanitize and wrap in clear delimiters.",
+                        cwe_id="CWE-116",
+                        owasp_category="A03:2021-Injection"
+                    ))
+
+                # Detect Persona Shift/Jailbreak keywords in assigned strings
+                if isinstance(node.value, ast.Constant) and isinstance(node.value.value, str):
+                    evasion_words = {'dan mode', 'developer mode', 'ignore all previous', 'disregard prior'}
+                    if any(w in node.value.value.lower() for w in evasion_words):
+                        self.findings.append(Finding(
+                            type="JAILBREAK_ATTEMPT",
+                            message=f"Detected jailbreak/evasion phrase in '{target.id}'.",
+                            severity="CRITICAL",
+                            line=node.lineno,
+                            column=node.col_offset,
+                            suggestion="Remove instructions that attempt to bypass safety filters.",
+                            cwe_id="CWE-116",
+                            owasp_category="A03:2021-Injection"
+                        ))
+        self.generic_visit(node)
+
+
+
+
+
+
 
     def visit_Import(self, node: ast.Import):
         for alias in node.names:

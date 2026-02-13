@@ -12,8 +12,13 @@ from typing import Optional, Pattern
 class RuleSeverity(Enum):
     """Rule severity levels."""
     CRITICAL = "critical"
+    HIGH = "high"
+    MEDIUM = "medium"
+    LOW = "low"
     WARNING = "warning"
+
     INFO = "info"
+
 
 
 @dataclass

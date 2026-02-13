@@ -36,13 +36,15 @@
 
 ## Technical Overview
 
-CodeMind transforms your AI coding assistant (Cursor, Windsurf, Claude Desktop) into a full security platform. It provides real-time oversight of AI-generated code across five security dimensions.
+CodeMind transforms your AI coding assistant (Cursor, Windsurf, Claude Desktop) into a full security platform for the modern web. Specialized for **Next.js**, **React**, and **TypeScript**, it provides real-time oversight of AI-generated code across five security dimensions.
+
 
 ### Core Capabilities
 
 | Module | Description |
 |:---|:---|
 | **SAST Engine** | Detection of SQL injection, XSS, SSRF, and command injection patterns. |
+| **Prompt Security** | Specialized detection for prompt injection and leak vulnerabilities. |
 | **Secrets Detection** | Identification of hardcoded API keys and tokens with entropy analysis. |
 | **SCA (Dependencies)** | Scanning project lockfiles (12 formats) for CVEs via OSV.dev. |
 | **IaC Scanning** | Security auditing for Dockerfiles, GitHub Actions, and docker-compose. |
@@ -85,22 +87,28 @@ When you use the `use codemind` trigger, the Guardian automatically enforces ess
 
 - **Rate Limiting**: Automatic protection against DDoS and brute-force attacks.
 - **Data Isolation**: Enforcement of Row Level Security (RLS) to ensure users only access their own data.
-- **Input Integrity**: Strict server-side validation using Zod or Pydantic.
-- **Bot Protection**: Seamless integration of CAPTCHA/Turnstile for public-facing forms.
-- **Secure Defaults**: Non-revealing error messages and secure CORS configurations.
+- **Zod Validation**: Strict server-side schema validation to prevent untrusted client data from reaching your database.
+- **Next.js & React Hardening**: Automated detection of unsafe `dangerouslySetInnerHTML`, exposed `NEXT_PUBLIC_` secrets, and insecure `localStorage` patterns.
+- **CSRF Protection**: Auditing for missing security headers and insecure client-side data mutations.
+- **Secure Default Props**: Enforcement of TypeScript best practices to eliminate "undefined" security gaps.
+- **Prompt Security**: Hardened system prompts and injection-resistant templates for AI feature implementations.
+
 
 ---
 
 ## Available Tools
 
-CodeMind exposes 14 MCP tools for seamless automated workflows:
+CodeMind exposes 15 MCP tools for seamless automated workflows:
 
-*   `guard_code`: Static analysis for vulnerabilities.
+*   `guard_code`: Static analysis for vulnerabilities (including Prompt Injection).
+*   `audit_prompt`: Specialized analyzer for AI prompt security and leaks.
+*   `generate_secure_prompt`: High-integrity template builder for resistant prompts.
 *   `scan_secrets`: Entropy-based credential detection.
 *   `scan_dependencies`: Software Composition Analysis.
 *   `scan_iac_file`: Infrastructure-as-Code auditing.
 *   `audit_launch_checklist`: Production readiness verification.
 *   `deep_security_scan`: Consolidated multi-layer analysis.
+
 
 ---
 
@@ -113,11 +121,15 @@ The transition from a hackathon project to a foundational security primitive.
 - [x] Core SAST pattern matching (50+ rules).
 - [x] Secrets detection and SCA integration.
 - [x] Launch Readiness Checklist.
+- [x] **Prompt Security**: Advanced injection & jailbreak detection.
 
 ### Phase 2: Intelligence (Post-Launch)
-- [ ] **Semantic Analysis**: Integration of `tree-sitter` for AST-based auditing.
+- [x] **Semantic Analysis**: AST-based auditing for Python (+ taint-aware prompt detection).
+- [x] **AI Slop Detection**: Pattern matching to remove redundant AI commentary.
 - [ ] **Taint Tracking**: Dataflow analysis to track untrusted input from source to sink.
+
 - [ ] **Custom Rule DSL**: YAML-based rule definition for community extensions.
+
 
 ### Phase 3: Autonomy (Scale)
 - [ ] **Agentic Remediation**: Autonomous fix-verify loops for complex vulnerabilities.
