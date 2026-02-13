@@ -613,55 +613,57 @@
                     <span class="gradient-text">Clawdbot</span>
                 </h2>
                 <p class="section-description">
-                    Empower your AI agent with advanced security skills and context-aware coding capabilities via MCP.
+                    Empower your AI agent with advanced security skills and context-aware coding capabilities via MCP. 
+                    Compatible with Claude Desktop, Cursor, and Windsurf.
                 </p>
             </div>
 
             <div class="setup-grid">
                 <div class="setup-steps">
-                    <div class="setup-step">
-                        <div class="step-number">1</div>
+                    <div class="setup-step" data-step="1">
+                        <div class="step-badge">Phase 1</div>
                         <div class="step-content">
-                            <h4>Install CodeMind</h4>
-                            <p>Get the latest version of the MCP server from PyPI or npm.</p>
+                            <h4>Install the Guardian</h4>
+                            <p>Get the core engine directly from PyPI. Zero cloud, 100% local.</p>
                             <div class="code-snippet-small">
-                                <code>pip install codemind-mcp</code>
+                                <code>pip install <span class="text-white">codemind-mcp</span></code>
                             </div>
                         </div>
                     </div>
-                    <div class="setup-step">
-                        <div class="step-number">2</div>
+                    <div class="setup-step" data-step="2">
+                        <div class="step-badge">Phase 2</div>
                         <div class="step-content">
                             <h4>Configure MCP Server</h4>
-                            <p>Update your Clawdbot or Claude Desktop configuration with the CodeMind command.</p>
+                            <p>Register CodeMind in your agent's config file (e.g., <code>claude_desktop_config.json</code>).</p>
                         </div>
                     </div>
-                    <div class="setup-step">
-                        <div class="step-number">3</div>
+                    <div class="setup-step" data-step="3">
+                        <div class="step-badge">Phase 3</div>
                         <div class="step-content">
-                            <h4>Activate Context7 Docs</h4>
-                            <p>Include the trigger phrase to enable deep documentation fetching and automated security auditing.</p>
+                            <h4>Activate in Chat</h4>
+                            <p>Use the trigger phrase in any code generation request to enable the guardian.</p>
                             <div class="trigger-box">
-                                "Audit this component. use codemind"
+                                "use <span class="gradient-text">codemind</span> to secure this"
                             </div>
                         </div>
                     </div>
                 </div>
                 
                 <div class="setup-visual">
+                    <div class="setup-visual-glow"></div>
                     <div class="config-window">
                         <div class="window-header">
                             <div class="window-dots"><span></span><span></span><span></span></div>
-                            <div class="window-title">clawdbot_config.json</div>
+                            <div class="window-title">mcp_config.json</div>
                         </div>
                         <div class="window-content">
 <pre><code>{
   "mcpServers": {
-    "CodeMind": {
-      "command": "codemind",
-      "args": ["serve"],
+    "<span class="color-json-key">codemind</span>": {
+      "command": "<span class="color-json-value">codemind</span>",
+      "args": ["<span class="color-json-value">serve</span>"],
       "env": {
-        "CONTEXT7_API_KEY": "YOUR_KEY"
+        "CONTEXT7_API_KEY": "<span class="color-json-muted">YOUR_KEY</span>"
       }
     }
   }
@@ -950,12 +952,12 @@
                         <div class="timeline-pulse"></div>
                     </div>
                     <div class="timeline-content">
-                        <div class="timeline-badge timeline-badge-current">NOW</div>
-                        <h3>🏆 Vibeathon Win(Current focus)</h3>
-                        <p>Competing in the hackathon with our MCP Security Guardian. Proving the concept works.</p>
+                        <div class="timeline-badge timeline-badge-current">Phase 1</div>
+                        <h3>🏆 Vibeathon Victory</h3>
+                        <p>Dominating the hackathon with our high-integrity MCP Security Guardian. Establishing the new standard for local-first AI auditing.</p>
                         <div class="timeline-tags">
-                            <span class="timeline-tag">MCP Server</span>
-                            <span class="timeline-tag">Guardian Suite</span>
+                            <span class="timeline-tag">MCP Dominance</span>
+                            <span class="timeline-tag">Safety Lock</span>
                         </div>
                     </div>
                 </div>
@@ -965,12 +967,12 @@
                         <div class="timeline-dot"></div>
                     </div>
                     <div class="timeline-content">
-                        <div class="timeline-badge">Weeks 1-4</div>
-                        <h3>🌱 Community Build</h3>
-                        <p>Growing our open-source community. GitHub stars, Discord members, real user feedback.</p>
+                        <div class="timeline-badge">Phase 2</div>
+                        <h3>🧠 Agentic Intelligence</h3>
+                        <p>Modular skill personas (Security, UI, Docs) and real-time intent discovery. Ahead of schedule on specialized agent behaviors.</p>
                         <div class="timeline-tags">
-                            <span class="timeline-tag">Open Source</span>
-                            <span class="timeline-tag">Community</span>
+                            <span class="timeline-tag">Skill Manager</span>
+                            <span class="timeline-tag">Intent Discovery</span>
                         </div>
                     </div>
                 </div>
@@ -980,12 +982,12 @@
                         <div class="timeline-dot"></div>
                     </div>
                     <div class="timeline-content">
-                        <div class="timeline-badge">Months 1-3</div>
-                        <h3>🚀 Feature Expansion</h3>
-                        <p>Native IDE extensions, more security patterns, team collaboration features.</p>
+                        <div class="timeline-badge">Phase 3</div>
+                        <h3>⚡ Self-Healing Security</h3>
+                        <p>Autonomous fix-verify loops and project-wide reasoning. Transforming AI from a coder into a self-securing developer.</p>
                         <div class="timeline-tags">
-                            <span class="timeline-tag">VS Code Extension</span>
-                            <span class="timeline-tag">Team Features</span>
+                            <span class="timeline-tag">Remediation Loops</span>
+                            <span class="timeline-tag">Taint tracking</span>
                         </div>
                     </div>
                 </div>
@@ -1010,11 +1012,11 @@
                         <div class="timeline-dot timeline-dot-goal"></div>
                     </div>
                     <div class="timeline-content">
-                        <div class="timeline-badge timeline-badge-goal">🎯 Goal</div>
-                        <h3>🦄 Y Combinator</h3>
-                        <p>Applying to YC with proven traction, revenue, and a clear path to scale.</p>
+                        <div class="timeline-badge timeline-badge-goal">Phase 4</div>
+                        <h3>🦄 Global Security Layer (YC)</h3>
+                        <p>Applying to YC with a mission to become the default security layer for AI-driven development. Scaling to 1M+ secure generations daily.</p>
                         <div class="timeline-tags">
-                            <span class="timeline-tag">Series A Ready</span>
+                            <span class="timeline-tag">Autonomous Guard</span>
                             <span class="timeline-tag">Global Scale</span>
                         </div>
                     </div>

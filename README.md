@@ -55,23 +55,26 @@ CodeMind transforms your AI coding assistant (Cursor, Windsurf, Claude Desktop) 
 
 ## Quick Start
 
-### Installation
+### 1. Installation
 
+Install the core engine from PyPI:
 ```bash
-# Global installation (recommended for CLI usage)
 pip install codemind-mcp
 ```
 
-### IDE Configuration (MCP)
+### 2. MCP Configuration
 
-Add the following to your MCP server configuration:
+Add CodeMind to your `claude_desktop_config.json` (or equivalent MCP client config):
 
 ```json
 {
   "mcpServers": {
-"codemind": {
+    "codemind": {
       "command": "codemind",
-      "args": ["serve"]
+      "args": ["serve"],
+      "env": {
+        "CONTEXT7_API_KEY": "your_optional_key_here"
+      }
     }
   }
 }
@@ -119,28 +122,31 @@ CodeMind exposes 15 MCP tools for seamless automated workflows:
 
 The transition from a hackathon project to a foundational security primitive.
 
-### Phase 1: Foundation (Vibeathon)
-- [x] Initial MCP Server implementation.
-- [x] Core SAST pattern matching (50+ rules).
-- [x] Secrets detection and SCA integration.
-- [x] Launch Readiness Checklist.
-- [x] **Prompt Security**: Advanced injection & jailbreak detection.
+### Phase 1: Foundation (Vibeathon Momentum)
+- [x] **Initial MCP Server**: Secure bridge between IDE and AI.
+- [x] **Core SAST Engine**: 50+ deep-scan rules for modern web.
+- [x] **Secrets & SCA**: Entropy-based scanning and dependency auditing.
+- [x] **Prompt Security**: Industry-leading injection & jailbreak detection.
+- [ ] **Vibeathon Grand Finale**: Winning the vibeathon (goal!!)
 
-### Phase 2: Intelligence (Post-Launch)
-- [x] **Semantic Analysis**: AST-based auditing for Python (+ taint-aware prompt detection).
-- [x] **AI Slop Detection**: Pattern matching to remove redundant AI commentary.
-### Phase 3: Autonomy (Scale)
-- [x] **Modular Skill System**: Plugin-based architecture for specialized agentic personas.
+### Phase 2: Intelligence & Personas (Ahead of Schedule)
+- [x] **Modular Skill System**: Plugin-based architecture for Security, UI, and Docs experts.
+- [x] **Intent Discovery**: Real-time semantic task classification.
+- [x] **AI Slop Detection**: Eliminating redundant commentary from AI responses.
 - [x] **Safety Lock**: Hard-coded constraints for destructive database operations.
-- [x] **Intent Discovery**: Real-time semantic detection of user tasks.
-- [ ] **Taint Tracking**: Dataflow analysis to track untrusted input from source to sink.
-- [ ] **Agentic Remediation**: Autonomous fix-verify loops for complex vulnerabilities.
-- [ ] **CI/CD Native**: Direct integration with GitHub Actions as a first-class citizen.
+- [x] **Semantic Analysis**: AST-based auditing for Python & JavaScript.
 
-### Phase 4: Expansion (Y Combinator Funding)
-- [ ] **Universal Integration**: Support for all major LLM providers and coding platforms.
-- [ ] **Real-time Protection**: Runtime monitoring for AI-agent executed tasks.
-- [ ] **Global Standard**: Becoming the default security layer for AI-driven software development.
+### Phase 3: Total Autonomy (The Scale Phase)
+- [ ] **Self-Healing Code**: Autonomous fix-verify loops for complex vulnerabilities.
+- [ ] **Project-Wide Reasoning**: Cross-file dependency analysis and taint-tracking.
+- [ ] **CI/CD Native**: Seamless integration with GitHub Actions as a first-class security citizen.
+- [ ] **Local LLM Fine-tuning**: Custom models optimized for security-first code generation.
+
+### Phase 4: Global Transformation (YC & Beyond)
+- [ ] **Universal Security Primitive**: The default security layer for all AI-driven development.
+- [ ] **Real-time Runtime Protection**: Monitoring AI-agent actions in production environments.
+- [ ] **Enterprise Autonomous Guardian**: Team-wide security analytics with zero data leak.
+- [ ] **The AI-Sec Standard**: Leading the certification for secure AI-assistants.
 
 ---
 
