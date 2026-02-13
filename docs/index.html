@@ -118,75 +118,214 @@
             </div>
             <div class="hero-visual">
                 <div class="ide-container">
-                    <div class="ide-sidebar">
-                        <div class="ide-sidebar-icon"></div>
-                        <div class="ide-sidebar-icon" style="background: var(--color-brand); opacity: 0.6;"></div>
-                        <div class="ide-sidebar-icon"></div>
-                    </div>
-                    <div class="ide-main">
-                        <div class="ide-header">
-                            <span>codemind — Refocusing Project on MCP</span>
+                    <!-- Activity Bar -->
+                    <div class="ide-activity-bar">
+                        <div class="activity-top">
+                            <div class="activity-icon active" title="Explorer">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                                    <path d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"/>
+                                </svg>
+                            </div>
+                            <div class="activity-icon" title="Search">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                                    <circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/>
+                                </svg>
+                            </div>
+                            <div class="activity-icon" title="Source Control">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                                    <circle cx="18" cy="18" r="3"/><circle cx="6" cy="6" r="3"/><path d="M13 6h3a2 2 0 012 2v7"/><line x1="6" y1="9" x2="6" y2="21"/>
+                                </svg>
+                            </div>
+                            <div class="activity-icon" title="Run and Debug">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                                    <path d="M8 5.8a2.8 2.8 0 1 1 4.4 3.5l-4.4 4.5"/><path d="m11 13 4-4"/><path d="M12 2v2"/><path d="M17 22v-2"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="M12 11a4 4 0 1 0 5 5"/>
+                                </svg>
+                            </div>
+                            <div class="activity-icon" title="Extensions">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                                    <path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/>
+                                    <path d="M3.27 6.96L12 12.01l8.73-5.05"/><path d="M12 22.08V12"/>
+                                </svg>
+                            </div>
                         </div>
-                        <div class="ide-content">
-                            <div class="ide-editor">
-                                <div style="color: #6a9955;">// settings.json</div>
-                                <div style="margin-top: 12px; font-size: 12px;">
-                                    <span style="color: #d4d4d4;">{</span><br>
-                                    &nbsp;&nbsp;<span style="color: #9cdcfe;">"mcp"</span><span style="color: #d4d4d4;">: {</span><br>
-                                    &nbsp;&nbsp;&nbsp;&nbsp;<span style="color: #9cdcfe;">"servers"</span><span style="color: #d4d4d4;">: {</span><br>
-                                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: #9cdcfe;">"CodeMind"</span><span style="color: #d4d4d4;">: {</span><br>
-                                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: #9cdcfe;">"command"</span><span style="color: #d4d4d4;">:</span> <span style="color: #ce9178;">"codemind"</span><span style="color: #d4d4d4;">,</span><br>
-                                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: #9cdcfe;">"args"</span><span style="color: #d4d4d4;">: [</span><span style="color: #ce9178;">"serve"</span><span style="color: #d4d4d4;">]</span><br>
-                                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: #d4d4d4;">}</span><br>
-                                    &nbsp;&nbsp;&nbsp;&nbsp;<span style="color: #d4d4d4;">}</span><br>
-                                    &nbsp;&nbsp;<span style="color: #d4d4d4;">}</span><br>
-                                    <span style="color: #d4d4d4;">}</span>
+                        <div class="activity-bottom">
+                            <div class="activity-icon" title="Settings">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                                    <circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-2 2 2 2 0 01-2-2v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83 0 2 2 0 010-2.83l.06-.06a1.65 1.65 0 00.33-1.82 1.65 1.65 0 00-1.51-1H3a2 2 0 01-2-2 2 2 0 012-2h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 010-2.83 2 2 0 012.83 0l.06.06a1.65 1.65 0 001.82.33H9a1.65 1.65 0 001-1.51V3a2 2 0 012-2 2 2 0 012 2v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 0 2 2 0 010 2.83l-.06.06a1.65 1.65 0 00-.33 1.82V9a1.65 1.65 0 001.51 1H21a2 2 0 012 2 2 2 0 01-2 2h-.09a1.65 1.65 0 00-1.51 1z"/>
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Explorer Panel -->
+                    <div class="ide-explorer">
+                        <div class="explorer-header">EXPLORER</div>
+                        <div class="explorer-section">
+                            <div class="explorer-title">
+                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M9 18l6-6-6-6"/>
+                                </svg>
+                                CODEMIND-PROJECT
+                            </div>
+                            <div class="explorer-tree">
+                                <div class="tree-item folder closed">
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
+                                    <span class="file-icon">📁</span> src
                                 </div>
-                                <div style="margin-top: 24px; color: var(--color-text-muted);">
-                                    // Proactive Guardian mode
+                                <div class="tree-item folder closed">
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
+                                    <span class="file-icon">📁</span> components
+                                </div>
+                                <div class="tree-item file">
+                                    <span class="file-icon" style="color: #61dafb;">⚛</span> App.js
+                                </div>
+                                <div class="tree-item file active">
+                                    <span class="file-icon" style="color: #f1e05a;">{ }</span> settings.json
+                                </div>
+                                <div class="tree-item file">
+                                    <span class="file-icon" style="color: #89e051;">📄</span> README.md
+                                </div>
+                                <div class="tree-item file">
+                                    <span class="file-icon" style="color: #ce9178;">📦</span> package.json
                                 </div>
                             </div>
-                            <div class="ide-chat-panel">
-                                <div class="chat-header">
-                                    <span>Chat — Claude Opus 4.5</span>
+                        </div>
+                    </div>
+
+                    <div class="ide-main">
+                        <!-- Editor Tabs -->
+                        <div class="ide-tabs">
+                            <div class="tab">
+                                <span>App.js</span>
+                                <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M18 6L6 18M6 6l12 12"/></svg>
+                            </div>
+                            <div class="tab active">
+                                <span>settings.json</span>
+                                <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M18 6L6 18M6 6l12 12"/></svg>
+                            </div>
+                            <div class="tab">
+                                <span>README.md</span>
+                                <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M18 6L6 18M6 6l12 12"/></svg>
+                            </div>
+                        </div>
+
+                        <!-- Editor Content -->
+                        <div class="ide-editor-container">
+                            <div class="editor-line-numbers">
+                                <span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>10</span><span>11</span>
+                            </div>
+                            <div class="ide-editor">
+                                <div class="code-line"><span style="color: #6a9955;">// settings.json</span></div>
+                                <div class="code-line"><span style="color: #d4d4d4;">{</span></div>
+                                <div class="code-line">&nbsp;&nbsp;<span style="color: #9cdcfe;">"mcp"</span><span style="color: #d4d4d4;">: {</span></div>
+                                <div class="code-line">&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: #9cdcfe;">"servers"</span><span style="color: #d4d4d4;">: {</span></div>
+                                <div class="code-line">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: #9cdcfe;">"CodeMind"</span><span style="color: #d4d4d4;">: {</span></div>
+                                <div class="code-line">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: #9cdcfe;">"command"</span><span style="color: #d4d4d4;">:</span> <span style="color: #ce9178;">"codemind"</span><span style="color: #d4d4d4;">,</span></div>
+                                <div class="code-line">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: #9cdcfe;">"args"</span><span style="color: #d4d4d4;">: [</span><span style="color: #ce9178;">"serve"</span><span style="color: #d4d4d4;">]</span></div>
+                                <div class="code-line">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: #d4d4d4;">}</span></div>
+                                <div class="code-line">&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: #d4d4d4;">}</span></div>
+                                <div class="code-line">&nbsp;&nbsp;<span style="color: #d4d4d4;">}</span></div>
+                                <div class="code-line"><span style="color: #d4d4d4;">}</span></div>
+                            </div>
+                        </div>
+
+                        <!-- Status Bar -->
+                        <div class="ide-status-bar">
+                            <div class="status-left">
+                                <div class="status-item">
                                     <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                        <path d="M18 6L6 18M6 6l12 12"/>
+                                        <circle cx="18" cy="18" r="3"/><circle cx="6" cy="6" r="3"/><path d="M13 6h3a2 2 0 012 2v7"/><line x1="6" y1="9" x2="6" y2="21"/>
                                     </svg>
+                                    main*
                                 </div>
-                                <div class="chat-messages">
-                                    <div class="chat-msg chat-msg-ai">
-                                        <div class="ai-header">🛡️ CodeMind Guardian</div>
-                                        I am ready. Use <strong>"use codemind"</strong> to activate full security & quality auditing for this session.
-                                    </div>
-                                    <div class="chat-msg chat-msg-user">
-                                        use codemind
-                                    </div>
-                                    <div class="chat-msg chat-msg-ai">
-                                        <div class="ai-header">🛡️ CodeMind Guardian</div>
-                                        <strong>Guardian v2.0 Activated.</strong><br>
-                                        Full security suite engaged:
-                                        <ul style="margin-top: 8px; padding-left: 16px; display: flex; flex-direction: column; gap: 4px;">
-                                            <li>🔍 <code style="background: #0d1117; padding: 2px 4px; border-radius: 4px;">deep_security_scan</code></li>
-                                            <li>🔑 <code style="background: #0d1117; padding: 2px 4px; border-radius: 4px;">scan_secrets</code></li>
-                                            <li>📦 <code style="background: #0d1117; padding: 2px 4px; border-radius: 4px;">scan_dependencies</code></li>
-                                            <li>🚀 <code style="background: #0d1117; padding: 2px 4px; border-radius: 4px;">audit_launch_checklist</code></li>
-                                            <li>🏗️ <code style="background: #0d1117; padding: 2px 4px; border-radius: 4px;">scan_iac_file</code></li>
-                                            <li>📋 <code style="background: #0d1117; padding: 2px 4px; border-radius: 4px;">export_security_report</code></li>
-                                        </ul>
-                                    </div>
+                                <div class="status-item">
+                                    <span style="color: #f48771;">✖ 0</span>
+                                    <span style="color: #cca700;">⚠ 0</span>
                                 </div>
-                                <div class="chat-footer">
-                                    <div class="chat-input" style="box-shadow: 0 0 15px var(--color-brand-subtle);">
-                                        <div class="chat-input-text">use codemind</div>
-                                        <div class="chat-input-actions">
-                                            <div class="chat-pills">
-                                                <div class="chat-pill chat-pill-active">🛡️ Guardian</div>
-                                                <div class="chat-pill">Claude 4.5</div>
-                                            </div>
-                                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--color-brand)" stroke-width="2">
-                                                <path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/>
-                                            </svg>
+                            </div>
+                            <div class="status-right">
+                                <div class="status-item">Ln 6, Col 18</div>
+                                <div class="status-item">Spaces: 2</div>
+                                <div class="status-item">UTF-8</div>
+                                <div class="status-item">JSON</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Chat Panel -->
+                    <div class="ide-chat-panel">
+                        <div class="chat-header">
+                            <div class="chat-title">
+                                <span class="chat-icon">💬</span>
+                                <span>Chat — Claude Opus 4.6</span>
+                            </div>
+                            <div class="chat-header-actions">
+                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 6L6 18M6 6l12 12"/></svg>
+                            </div>
+                        </div>
+                        <div class="chat-messages">
+                            <div class="chat-msg chat-msg-ai">
+                                <div class="ai-header">
+                                    <span>CodeMind Guardian</span>
+                                </div>
+                                <div class="ai-content">
+                                    I am ready. Use <strong>"use codemind"</strong> to activate full security & quality auditing for this session.
+                                </div>
+                            </div>
+                            
+                            <div class="chat-cta-action">
+                                <button class="btn-use-codemind">use codemind</button>
+                            </div>
+
+                            <div class="chat-msg chat-msg-ai">
+                                <div class="ai-header">
+                                    
+                                    <span>CodeMind Guardian</span>
+                                </div>
+                                <div class="ai-content">
+                                    <strong>Guardian v2.0 Activated.</strong><br>
+                                    Full security suite engaged:
+                                    <div class="guardian-report">
+                                        <div class="report-item">
+                                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--color-brand-light)" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+                                            deep_security_scan
                                         </div>
+                                        <div class="report-item">
+                                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#cca700" stroke-width="2.5"><path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3L15.5 7.5z"/></svg>
+                                            scan_secrets
+                                        </div>
+                                        <div class="report-item">
+                                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#28c840" stroke-width="2.5"><path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/><path d="M3.27 6.96L12 12.01l8.73-5.05"/><path d="M12 22.08V12"/></svg>
+                                            scan_dependencies
+                                        </div>
+                                        <div class="report-item">
+                                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#ff5f57" stroke-width="2.5"><path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z"/><path d="m12 15-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z"/><path d="M9 12H4s.5-1 1-4c2 0 3 .5 3 .5l1.5-1.5S10 6 12 5s3 .5 3 .5l-2.5 2.5a1 1 0 0 1-1.5 0c-.39-.39-1-.39-1.41 0a1 1 0 0 0 0 1.41c.39.39.39 1 0 1.41a1 1 0 0 1-1.41 0c-.39-.39-1-.39-1.41 0a2 2 0 0 0 0 2.82c.39.39.39 1 0 1.41z"/></svg>
+                                            audit_launch_checklist
+                                        </div>
+                                        <div class="report-item">
+                                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" stroke-width="2.5"><path d="M2 20h20"/><path d="M14 10V4a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v16"/><path d="M18 20V14a2 2 0 0 0-2-2h-3"/><path d="M18 10h4"/><path d="M22 10V6a2 2 0 0 0-2-2h-2"/></svg>
+                                            scan_iac_file
+                                        </div>
+                                        <div class="report-item">
+                                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#e6edf3" stroke-width="2.5"><path d="M14.5 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/></svg>
+                                            export_security_report
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="chat-footer">
+                            <div class="chat-input-wrapper">
+                                <div class="chat-input-field">Ask anything...</div>
+                                <div class="chat-input-tools">
+                                    <div class="tool-pills">
+                                        <span class="tool-pill active"> Guardian</span>
+                                        <span class="tool-pill">Fast</span>
+                                    </div>
+                                    <div class="send-icon">
+                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                            <path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/>
+                                        </svg>
                                     </div>
                                 </div>
                             </div>
