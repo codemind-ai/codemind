@@ -822,7 +822,7 @@ def activate_skill(skill_name: str) -> dict:
         return {
             "success": True,
             "message": f"Skill '{active.name}' activated.",
-            "system_prompt": active.system_prompt
+            "system_prompt": active.get_full_prompt()
         }
     return {
         "success": False,

@@ -447,7 +447,11 @@
             <div class="mcp-diagram">
                 <div class="mcp-flow">
                     <div class="mcp-node mcp-node-ide">
-                        <div class="mcp-node-icon">💻</div>
+                        <div class="mcp-node-icon">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/>
+                            </svg>
+                        </div>
                         <div class="mcp-node-label">Your IDE</div>
                         <div class="mcp-node-examples">Cursor, VS Code, Windsurf</div>
                     </div>
@@ -456,7 +460,11 @@
                         <div class="mcp-arrow-label">You ask for code</div>
                     </div>
                     <div class="mcp-node mcp-node-ai">
-                        <div class="mcp-node-icon">🤖</div>
+                        <div class="mcp-node-icon">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M12 8V4H8"/><rect x="4" y="8" width="16" height="12" rx="2"/><path d="M2 14h2"/><path d="M20 14h2"/><path d="M15 13v2"/><path d="M9 13v2"/>
+                            </svg>
+                        </div>
                         <div class="mcp-node-label">AI Assistant</div>
                         <div class="mcp-node-examples">Claude, GPT-4, Gemini</div>
                     </div>
@@ -465,7 +473,11 @@
                         <div class="mcp-arrow-label">MCP Protocol</div>
                     </div>
                     <div class="mcp-node mcp-node-codemind">
-                        <div class="mcp-node-icon">🛡️</div>
+                        <div class="mcp-node-icon">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--color-brand)" stroke-width="2">
+                                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                            </svg>
+                        </div>
                         <div class="mcp-node-label">CodeMind Server</div>
                         <div class="mcp-node-examples">Local Security Guardian</div>
                     </div>
@@ -475,19 +487,40 @@
             <!-- MCP Benefits -->
             <div class="mcp-benefits">
                 <div class="mcp-benefit">
-                    <div class="mcp-benefit-icon">🔒</div>
+                    <div class="mcp-benefit-icon">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                        </svg>
+                    </div>
                     <h4>100% Local</h4>
                     <p>Your code never leaves your machine. CodeMind runs entirely on your computer.</p>
                 </div>
                 <div class="mcp-benefit">
-                    <div class="mcp-benefit-icon">🔌</div>
+                    <div class="mcp-benefit-icon">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M18 13V6a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v3"/><path d="M7 15l2 2 4-4"/><rect x="14" y="11" width="7" height="9" rx="1"/>
+                        </svg>
+                    </div>
                     <h4>Universal Protocol</h4>
                     <p>Works with any AI that supports MCP — one tool for all your coding assistants.</p>
                 </div>
                 <div class="mcp-benefit">
-                    <div class="mcp-benefit-icon">⚡</div>
+                    <div class="mcp-benefit-icon">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/>
+                        </svg>
+                    </div>
                     <h4>Real-time Auditing</h4>
                     <p>Every line gets checked instantly. Security issues caught before they're written.</p>
+                </div>
+                <div class="mcp-benefit">
+                    <div class="mcp-benefit-icon">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--color-brand)" stroke-width="2">
+                            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/><line x1="8" y1="16" x2="16" y2="16"/>
+                        </svg>
+                    </div>
+                    <h4>DB Safety Lock</h4>
+                    <p>Guarantees AI never deletes databases. Prevents DROP, TRUNCATE, and dangerous DELETE commands.</p>
                 </div>
             </div>
             
@@ -499,27 +532,29 @@
                         <div class="comparison-header">
                             <span class="comparison-badge comparison-badge-bad">❌ Without CodeMind</span>
                         </div>
-                        <pre class="comparison-code"><code><span class="code-comment">// AI generates vulnerable React code</span>
-<span class="code-keyword">const</span> apiKey = <span class="code-string">"sk-123456789"</span>; <span class="code-bad">// Leaked!</span>
+                        <pre class="comparison-code"><code><span class="code-comment">// AI generates vulnerable DB query</span>
+<span class="code-keyword">const</span> query = <span class="code-string">`SELECT * FROM users 
+               WHERE id = '</span>${req.body.id}<span class="code-string">'`</span>;
 
-<span class="code-keyword">return</span> (
-  <span class="code-tag">&lt;div</span> <span class="code-attr">dangerouslySetInnerHTML</span>={{ 
-    __html: <span class="code-bad">userInput</span> 
-  }} <span class="code-tag">/&gt;</span>
-); <span class="code-comment">// XSS vulnerability!</span></code></pre>
+<span class="code-comment">// Vulnerable password hash</span>
+<span class="code-keyword">const</span> hash = md5(password);
+
+<span class="code-keyword">return</span> db.execute(<span class="code-bad">query</span>);
+<span class="code-comment">// SQL Injection & Weak Crypto!</span></code></pre>
                     </div>
                     <div class="comparison-card comparison-after">
                         <div class="comparison-header">
                             <span class="comparison-badge comparison-badge-good">✅ With CodeMind</span>
                         </div>
-                        <pre class="comparison-code"><code><span class="code-comment">// CodeMind enforces security</span>
-<span class="code-keyword">const</span> apiKey = process.env.<span class="code-func">SECRET_KEY</span>;
+                        <pre class="comparison-code"><code><span class="code-comment">// CodeMind enforces parameterized queries</span>
+<span class="code-keyword">const</span> sql = <span class="code-string">"SELECT * FROM users WHERE id = ?"</span>;
+<span class="code-keyword">const</span> user = <span class="code-keyword">await</span> db.execute(sql, [req.body.id]);
 
-<span class="code-keyword">return</span> (
-  <span class="code-tag">&lt;div&gt;</span>
-    {<span class="code-func">sanitize</span>(userInput)}
-  <span class="code-tag">&lt;/div&gt;</span>
-); <span class="code-comment">// Safe and clean!</span></code></pre>
+<span class="code-comment">// Enforces Argon2/Bcrypt with Salt</span>
+<span class="code-keyword">const</span> hash = <span class="code-keyword">await</span> argon2.hash(password);
+
+<span class="code-keyword">return</span> user;
+<span class="code-comment">// SQLi Protected & Strong Crypto!</span></code></pre>
                     </div>
 
                 </div>

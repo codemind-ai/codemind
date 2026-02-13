@@ -43,12 +43,13 @@ CodeMind transforms your AI coding assistant (Cursor, Windsurf, Claude Desktop) 
 
 | Module | Description |
 |:---|:---|
+| **Modular Skills** | Plugin-based agentic personas (Security, UI, Docs) with specialized prompts. |
+| **Safety Lock** | Hard-coded protection against DROP, TRUNCATE, and unconditional DELETE. |
+| **Intent Discovery**| Automatic detection of the optimal skill/persona for any given task. |
 | **SAST Engine** | Detection of SQL injection, XSS, SSRF, and command injection patterns. |
 | **Prompt Security** | Specialized detection for prompt injection and leak vulnerabilities. |
-| **Secrets Detection** | Identification of hardcoded API keys and tokens with entropy analysis. |
-| **SCA (Dependencies)** | Scanning project lockfiles (12 formats) for CVEs via OSV.dev. |
+| **Secrets Detection**| Identification of hardcoded API keys and tokens with entropy analysis. |
 | **IaC Scanning** | Security auditing for Dockerfiles, GitHub Actions, and docker-compose. |
-| **SARIF Reporting** | Industry-standard output for CI/CD integration and GitHub Code Scanning. |
 
 ---
 
@@ -101,12 +102,14 @@ When you use the `use codemind` trigger, the Guardian automatically enforces ess
 CodeMind exposes 15 MCP tools for seamless automated workflows:
 
 *   `guard_code`: Static analysis for vulnerabilities (including Prompt Injection).
+*   `detect_intent`: 🧠 Automatically identifies the best Skill for a given task.
+*   `activate_skill`: Manually switch between agentic personas (Security, UI, Docs).
+*   `run_workflow`: 🚀 Execute complex multi-step actions (e.g., `/deploy`, `/audit-deep`).
+*   `list_skills`: View all available modular personas and their capabilities.
 *   `audit_prompt`: Specialized analyzer for AI prompt security and leaks.
-*   `generate_secure_prompt`: High-integrity template builder for resistant prompts.
 *   `scan_secrets`: Entropy-based credential detection.
-*   `scan_dependencies`: Software Composition Analysis.
+*   `scan_dependencies`: Software Composition Analysis (SCA).
 *   `scan_iac_file`: Infrastructure-as-Code auditing.
-*   `audit_launch_checklist`: Production readiness verification.
 *   `deep_security_scan`: Consolidated multi-layer analysis.
 
 
@@ -126,15 +129,13 @@ The transition from a hackathon project to a foundational security primitive.
 ### Phase 2: Intelligence (Post-Launch)
 - [x] **Semantic Analysis**: AST-based auditing for Python (+ taint-aware prompt detection).
 - [x] **AI Slop Detection**: Pattern matching to remove redundant AI commentary.
-- [ ] **Taint Tracking**: Dataflow analysis to track untrusted input from source to sink.
-
-- [ ] **Custom Rule DSL**: YAML-based rule definition for community extensions.
-
-
 ### Phase 3: Autonomy (Scale)
+- [x] **Modular Skill System**: Plugin-based architecture for specialized agentic personas.
+- [x] **Safety Lock**: Hard-coded constraints for destructive database operations.
+- [x] **Intent Discovery**: Real-time semantic detection of user tasks.
+- [ ] **Taint Tracking**: Dataflow analysis to track untrusted input from source to sink.
 - [ ] **Agentic Remediation**: Autonomous fix-verify loops for complex vulnerabilities.
 - [ ] **CI/CD Native**: Direct integration with GitHub Actions as a first-class citizen.
-- [ ] **Enterprise Dashboard**: Local analytics for team-wide security posture.
 
 ### Phase 4: Expansion (Y Combinator Funding)
 - [ ] **Universal Integration**: Support for all major LLM providers and coding platforms.
