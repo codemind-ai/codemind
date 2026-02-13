@@ -147,6 +147,12 @@
                                     <path d="M3.27 6.96L12 12.01l8.73-5.05"/><path d="M12 22.08V12"/>
                                 </svg>
                             </div>
+                            <div class="activity-icon active" title="Skills">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--color-brand)" stroke-width="1.5">
+                                    <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/>
+                                    <path d="M12 14.5V22l8-10h-7.5l1-8-8 10h6.5" opacity="0.3"/>
+                                </svg>
+                            </div>
                         </div>
                         <div class="activity-bottom">
                             <div class="activity-icon" title="Settings">
@@ -157,36 +163,46 @@
                         </div>
                     </div>
 
-                    <!-- Explorer Panel -->
+                    <!-- Skill Manager Panel -->
                     <div class="ide-explorer">
-                        <div class="explorer-header">EXPLORER</div>
+                        <div class="explorer-header">SKILL REGISTRY</div>
                         <div class="explorer-section">
                             <div class="explorer-title">
-                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <path d="M9 18l6-6-6-6"/>
-                                </svg>
-                                CODEMIND-PROJECT
+                                AVAILABLE SKILLS
                             </div>
                             <div class="explorer-tree">
-                                <div class="tree-item folder closed">
-                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
-                                    <span class="file-icon">📁</span> src
+                                <div class="skill-item active">
+                                    <div class="skill-info">
+                                        <div class="skill-status"></div>
+                                        <span>Security Guardian</span>
+                                    </div>
+                                    <div class="skill-badge">v2.0</div>
                                 </div>
-                                <div class="tree-item folder closed">
-                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
-                                    <span class="file-icon">📁</span> components
+                                <div class="skill-item">
+                                    <div class="skill-info">
+                                        <div class="skill-status"></div>
+                                        <span>UI Architect</span>
+                                    </div>
                                 </div>
-                                <div class="tree-item file">
-                                    <span class="file-icon" style="color: #61dafb;">⚛</span> App.js
+                                <div class="skill-item active">
+                                    <div class="skill-info">
+                                        <div class="skill-status"></div>
+                                        <span>Documentation Specialist</span>
+                                    </div>
+                                    <div class="skill-badge">New</div>
                                 </div>
-                                <div class="tree-item file active">
-                                    <span class="file-icon" style="color: #f1e05a;">{ }</span> settings.json
+                                <div class="skill-item active">
+                                    <div class="skill-info">
+                                        <div class="skill-status"></div>
+                                        <span>Context Resolver</span>
+                                    </div>
+                                    <div class="skill-badge">Core</div>
                                 </div>
-                                <div class="tree-item file">
-                                    <span class="file-icon" style="color: #89e051;">📄</span> README.md
-                                </div>
-                                <div class="tree-item file">
-                                    <span class="file-icon" style="color: #ce9178;">📦</span> package.json
+                                <div class="skill-item">
+                                    <div class="skill-info">
+                                        <div class="skill-status"></div>
+                                        <span>Test Generator</span>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -205,6 +221,10 @@
                             </div>
                             <div class="tab">
                                 <span>README.md</span>
+                                <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M18 6L6 18M6 6l12 12"/></svg>
+                            </div>
+                            <div class="tab">
+                                <span style="color: var(--color-brand-light);">⚡ deploy.skill</span>
                                 <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M18 6L6 18M6 6l12 12"/></svg>
                             </div>
                         </div>
@@ -229,27 +249,7 @@
                             </div>
                         </div>
 
-                        <!-- Status Bar -->
-                        <div class="ide-status-bar">
-                            <div class="status-left">
-                                <div class="status-item">
-                                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                        <circle cx="18" cy="18" r="3"/><circle cx="6" cy="6" r="3"/><path d="M13 6h3a2 2 0 012 2v7"/><line x1="6" y1="9" x2="6" y2="21"/>
-                                    </svg>
-                                    main*
-                                </div>
-                                <div class="status-item">
-                                    <span style="color: #f48771;">✖ 0</span>
-                                    <span style="color: #cca700;">⚠ 0</span>
-                                </div>
-                            </div>
-                            <div class="status-right">
-                                <div class="status-item">Ln 6, Col 18</div>
-                                <div class="status-item">Spaces: 2</div>
-                                <div class="status-item">UTF-8</div>
-                                <div class="status-item">JSON</div>
-                            </div>
-                        </div>
+
                     </div>
 
                     <!-- Chat Panel -->
@@ -283,6 +283,7 @@
                                     <span>CodeMind Guardian</span>
                                 </div>
                                 <div class="ai-content">
+                                    <div style="margin-bottom: 8px; font-size: 10px; color: var(--color-brand-light); opacity: 0.8; font-weight: 700;">🧠 INTENT DETECTED: SECURITY AUDIT</div>
                                     <strong>Guardian v2.0 Activated.</strong><br>
                                     Full security suite engaged:
                                     <div class="guardian-report">
